@@ -1,10 +1,16 @@
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
+import com.forcetower.sagres.parsers.SagresBasicParser
+import com.forcetower.sagres.utils.ConnectedStates
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
@@ -31,13 +37,19 @@ import org.junit.runners.MethodSorters
 
 @ExperimentalCoroutinesApi
 class LoginTest : BaseSagresTest() {
+    @Before
+    fun sessionClean() {
+        instance.clearSession()
+    }
+
     @Test
     fun loginCorrectly() = runBlockingTest {
         val callback = instance.login(credential.username, credential.password)
         assertEquals(200, callback.code)
         assertEquals(Status.SUCCESS, callback.status)
         assertNotNull(callback.document)
-        success = callback
+        assertEquals(ConnectedStates.CONNECTED, SagresBasicParser.isConnected(callback.document))
+        assertEquals("joão paulo santos sena", SagresBasicParser.getName(callback.document)?.toLowerCase())
     }
 
     @Test
@@ -45,15 +57,5 @@ class LoginTest : BaseSagresTest() {
         val callback = instance.login("johnwickdauefs", "eu virei um cachorro da uefs")
         assertEquals(401, callback.code)
         assertEquals(Status.INVALID_LOGIN, callback.status)
-    }
-
-    @Test
-    fun connectedStudentAfterLogin() = runBlockingTest {
-        instance.login("", "")
-
-    }
-
-    companion object {
-        lateinit var success: BaseCallback<*>
     }
 }

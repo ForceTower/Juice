@@ -34,9 +34,7 @@ abstract class BaseSagresTest {
         @JvmStatic
         fun init() {
             val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
-            val environment = File("enviroment.json").also {
-                println(it.absolutePath)
-            }.readText()
+            val environment = File("environment.json").readText()
             credential = gson.fromJson(environment, SagresCredential::class.java)
             SagresNavigator.initialize(null)
             instance = SagresNavigator.instance
