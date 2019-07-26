@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@
 
 package com.forcetower.sagres.operation.messages
 
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.database.model.SClass
-import com.forcetower.sagres.database.model.SDisciplineResumed
-import com.forcetower.sagres.database.model.SLinker
-import com.forcetower.sagres.database.model.SMessage
-import com.forcetower.sagres.database.model.SMessageScope
-import com.forcetower.sagres.database.model.SPerson
+import com.forcetower.sagres.database.model.SagresClass
+import com.forcetower.sagres.database.model.SagresDisciplineResumed
+import com.forcetower.sagres.database.model.SagresLinker
+import com.forcetower.sagres.database.model.SagresMessage
+import com.forcetower.sagres.database.model.SagresMessageScope
+import com.forcetower.sagres.database.model.SagresPerson
 import com.forcetower.sagres.operation.Dumb
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
@@ -35,6 +34,8 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import timber.log.Timber
+import timber.log.debug
+import timber.log.error
 import java.util.ArrayList
 import java.util.concurrent.Executor
 
@@ -57,7 +58,7 @@ class MessagesOperation(
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                val result = mutableListOf<SMessage>()
+                val result = mutableListOf<SagresMessage>()
                 val body = response.body!!.string()
                 val first = Gson().fromJson(body, MessageResponse::class.java)
                 result += first.messages
@@ -75,31 +76,32 @@ class MessagesOperation(
         }
     }
 
-    private fun fetchAllMessages(first: MessageResponse): List<SMessage> {
-        val result = mutableListOf<SMessage>()
+    private fun fetchAllMessages(first: MessageResponse): List<SagresMessage> {
+        val result = mutableListOf<SagresMessage>()
         var nextLink = first.older
+        var link = nextLink?.getLink()
         try {
-            while (nextLink != null) {
-                val call = SagresCalls.getLink(nextLink)
+            while (link != null) {
+                val call = SagresCalls.getLink(link)
                 val response = call.execute()
                 if (response.isSuccessful) {
                     val body = response.body!!.string()
                     val value = Gson().fromJson(body, MessageResponse::class.java)
                     result += value.messages
                     nextLink = value.older
+                    link = nextLink?.getLink()
                 } else {
-                    Timber.d("Invalid response, aborting with code ${response.code}")
-                    nextLink = null
+                    Timber.debug { "Invalid response, aborting with code ${response.code}" }
+                    link = null
                 }
             }
         } catch (t: Throwable) {
-            Timber.d("Fetch got interrupted because of exception")
-            Timber.e(t)
+            Timber.debug { "Fetch got interrupted because of exception" }
         }
         return result
     }
 
-    private fun successMeasures(messages: List<SMessage>) {
+    private fun successMeasures(messages: List<SagresMessage>) {
         try {
             val items = messages.toMutableList()
             items.sort()
@@ -112,10 +114,9 @@ class MessagesOperation(
 
     private fun successMeasures(body: String) {
         try {
-            val type = object : TypeToken<Dumb<ArrayList<SMessage>>>() {}.type
-            val dMessages = Gson().fromJson<Dumb<ArrayList<SMessage>>>(body, type)
-            val items = dMessages.items
-            items.sort()
+            val type = object : TypeToken<Dumb<List<SagresMessage>>>() {}.type
+            val dMessages = Gson().fromJson<Dumb<List<SagresMessage>>>(body, type)
+            val items = dMessages.items.sorted()
             for (message in items) {
                 extractDetailsIfNeeded(message)
             }
@@ -126,26 +127,28 @@ class MessagesOperation(
         }
     }
 
-    private fun extractDetailsIfNeeded(message: SMessage) {
-        val person = getPerson(message.sender)
+    private fun extractDetailsIfNeeded(message: SagresMessage) {
+        val linker = message.sender ?: return
+        val person = getPerson(linker)
         if (person != null)
             message.senderName = person.name
         else {
             if (message.senderProfile == 3) {
                 message.senderName = ".UEFS."
             }
-            Timber.d("SPerson is Invalid")
         }
 
         // Message is from a teacher
         if (message.senderProfile == 2) {
-            val scope = getScope(message.scopes)
+            val scopes = message.scopes
+            scopes ?: return
+            val scope = getScope(scopes)
             if (scope != null) {
                 val clazz = getClazz(scope)
                 if (clazz != null) {
                     val discipline = getDiscipline(clazz)
                     if (discipline != null) {
-                        Timber.d("Setting up the discipline name: ${discipline.name}")
+                        Timber.debug { "Setting up the discipline name: ${discipline.name}" }
                         message.discipline = discipline.name
                         message.disciplineCode = discipline.code
                         message.objective = discipline.objective
@@ -155,130 +158,99 @@ class MessagesOperation(
         }
     }
 
-    private fun getPerson(linker: SLinker): SPerson? {
-        val link = linker.link
-        val id = link.split("=".toRegex()).last()
-        val person = SagresNavigator.instance.database.personDao().getPersonDirect(id)
+    private fun getPerson(linker: SagresLinker): SagresPerson? {
+        val href = linker.getLink() ?: return null
 
-        if (person != null) {
-            Timber.d("Returned from cache")
-            return person
-        }
-
-        val call = SagresCalls.getLink(linker)
+        val call = SagresCalls.getLink(href)
 
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val value = gson.fromJson(body, SPerson::class.java)
-                SagresNavigator.instance.database.personDao().insert(value)
-                return value
+                return gson.fromJson(body, SagresPerson::class.java)
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.error(e) { "Failed..." }
         }
 
         return null
     }
 
-    private fun getScope(scopes: SLinker): SMessageScope? {
-        val link = scopes.link
-        Timber.d("Link -> $link")
-        val scope = SagresNavigator.instance.database.messageScopeDao().getMessageScopeDirect(link)
-
-        if (scope != null) {
-            Timber.d("Returned scope from cache")
-            return scope
-        }
-
-        val call = SagresCalls.getLink(scopes)
+    private fun getScope(scopes: SagresLinker): SagresMessageScope? {
+        val link = scopes.getLink() ?: return null
+        val call = SagresCalls.getLink(link)
 
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                Timber.d("Scope body: $body")
-                val token = object : TypeToken<Dumb<ArrayList<SMessageScope>>>() {}.type
-                val scoping = gson.fromJson<Dumb<ArrayList<SMessageScope>>>(body, token)
+                Timber.debug { "Scope body: $body" }
+                val token = object : TypeToken<Dumb<ArrayList<SagresMessageScope>>>() {}.type
+                val scoping = gson.fromJson<Dumb<ArrayList<SagresMessageScope>>>(body, token)
                 val items = scoping.items
                 if (items.isNotEmpty()) {
                     val scoped = items[0]
                     val linker = scoped.clazzLinker
                     if (linker != null) {
-                        scoped.clazzLink = linker.link
+                        scoped.clazzLink = linker.getLink()
                         scoped.sagresId = link
-                        SagresNavigator.instance.database.messageScopeDao().insert(scoped)
                     } else {
-                        Timber.d("Scope linker was null")
+                        Timber.debug { "Scope linker was null" }
                     }
                     return scoped
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.error(e) { "Failed..." }
         }
 
         return null
     }
 
-    private fun getClazz(scope: SMessageScope): SClass? {
+    private fun getClazz(scope: SagresMessageScope): SagresClass? {
         val link = scope.clazzLink ?: return null
-
-        val clazz = SagresNavigator.instance.database.clazzDao().getClazzDirect(link)
-        if (clazz != null) {
-            Timber.d("Returning clazz from cache")
-            return clazz
-        }
 
         val call = SagresCalls.getLink(link)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val clazzed = gson.fromJson(body, SClass::class.java)
-                if (clazzed.discipline != null) {
-                    clazzed.disciplineLink = clazzed.discipline.link
+                val clazzed = gson.fromJson(body, SagresClass::class.java)
+                val discipline = clazzed.discipline
+                if (discipline != null) {
+                    clazzed.disciplineLink = discipline.getLink()
                     clazzed.link = link
-                    SagresNavigator.instance.database.clazzDao().insert(clazzed)
                 } else {
-                    Timber.d("Clazz linker was null")
+                    Timber.debug { "Clazz linker was null" }
                 }
                 return clazzed
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.error(e) { "Failed..." }
         }
 
         return null
     }
 
-    private fun getDiscipline(clazz: SClass): SDisciplineResumed? {
+    private fun getDiscipline(clazz: SagresClass): SagresDisciplineResumed? {
         val link = clazz.disciplineLink ?: return null
-
-        val discipline = SagresNavigator.instance.database.disciplineDao().getDisciplineDirect(link)
-        if (discipline != null) {
-            Timber.d("Returned discipline from cache")
-            return discipline
-        }
 
         val call = SagresCalls.getLink(link)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val disciplined = gson.fromJson(body, SDisciplineResumed::class.java)
+                val disciplined = gson.fromJson(body, SagresDisciplineResumed::class.java)
 
                 val department = disciplined.department
                 if (department != null) {
-                    disciplined.departmentLink = department.link
+                    disciplined.departmentLink = department.getLink()
                     disciplined.link = link
-                    SagresNavigator.instance.database.disciplineDao().insert(disciplined)
                 }
                 return disciplined
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.error(e) { "Failed..." }
         }
 
         return null
@@ -286,10 +258,10 @@ class MessagesOperation(
 
     private data class MessageResponse(
         @SerializedName("maisAntigos")
-        var older: SLinker? = null,
+        var older: SagresLinker? = null,
         @SerializedName("maisRecentes")
-        var newer: SLinker? = null,
+        var newer: SagresLinker? = null,
         @SerializedName("itens")
-        var messages: List<SMessage> = emptyList()
+        var messages: List<SagresMessage> = emptyList()
     )
 }

@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,15 @@
 
 package com.forcetower.sagres.operation.servicerequest
 
-import com.forcetower.sagres.database.model.SRequestedService
+import com.forcetower.sagres.database.model.SagresRequestedService
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 
 class RequestedServicesCallback(status: Status) : BaseCallback<RequestedServicesCallback>(status) {
-    var services: List<SRequestedService> = emptyList()
+    var services: List<SagresRequestedService> = emptyList()
         private set
 
-    fun services(services: List<SRequestedService>): RequestedServicesCallback {
+    fun services(services: List<SagresRequestedService>): RequestedServicesCallback {
         this.services = services
         return this
     }

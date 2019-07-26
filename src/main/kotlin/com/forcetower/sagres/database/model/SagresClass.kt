@@ -20,41 +20,11 @@
 
 package com.forcetower.sagres.database.model
 
-class SPerson(
+data class SagresClass(
     var id: Long,
-    name: String,
-    var exhibitionName: String?,
-    private var cpf: String?,
-    var email: String?
-) {
-    var name: String? = null
-        get() {
-            this.name = field!!.trim { it <= ' ' }
-            return field
-        }
-    var sagresId: String? = null
-    var isMocked: Boolean = false
-
-    val unique: String
-        get() = cpf!!.toLowerCase() + ".." + id
-
-    init {
-        this.name = name
-        this.isMocked = false
-    }
-
-    fun getCpf(): String? {
-        if (cpf == null) return null
-
-        cpf = cpf!!.trim { it <= ' ' }
-        return cpf
-    }
-
-    fun setCpf(cpf: String) {
-        this.cpf = cpf
-    }
-
-    override fun toString(): String {
-        return "ID: $id - Name: $name"
-    }
-}
+    var description: String?,
+    var kind: String?,
+    var link: String?,
+    var disciplineLink: String?,
+    var discipline: SagresLinker? = null
+)

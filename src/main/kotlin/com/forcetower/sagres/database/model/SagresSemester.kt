@@ -22,7 +22,7 @@ package com.forcetower.sagres.database.model
 
 import com.forcetower.sagres.database.Timestamped
 
-data class SSemester(
+data class SagresSemester(
     var uefsId: Long,
     var name: String?,
     var codename: String?,
@@ -30,7 +30,7 @@ data class SSemester(
     var end: String?,
     var startClasses: String?,
     var endClasses: String?
-) : Comparable<SSemester>, Timestamped {
+) : Comparable<SagresSemester>, Timestamped {
 
     val startInMillis: Long
         get() = getInMillis(start!!, -1)
@@ -44,7 +44,7 @@ data class SSemester(
     val endClassesInMillis: Long
         get() = getInMillis(endClasses!!, -1)
 
-    override fun compareTo(other: SSemester): Int {
+    override fun compareTo(other: SagresSemester): Int {
         return try {
             val o1 = name
             val o2 = other.name
@@ -63,9 +63,9 @@ data class SSemester(
     }
 
     companion object {
-        fun getCurrentSemester(semesters: List<SSemester>?): SSemester {
+        fun getCurrentSemester(semesters: List<SagresSemester>?): SagresSemester {
             if (semesters == null || semesters.isEmpty()) {
-                return SSemester(0, "2018.2", "20182", "", "", "", "")
+                return SagresSemester(0, "2018.2", "20182", "", "", "", "")
             }
             return semesters.sorted()[0]
         }

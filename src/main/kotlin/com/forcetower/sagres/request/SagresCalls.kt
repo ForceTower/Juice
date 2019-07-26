@@ -20,6 +20,7 @@
 
 package com.forcetower.sagres.request
 
+import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.impl.SagresNavigatorImpl
 import okhttp3.Call
 import okhttp3.FormBody
@@ -122,11 +123,11 @@ object SagresCalls {
         return getCall(SagresRequests.demandPage)
     }
 
-//    fun createDemand(list: List<SDemandOffer>, document: Document): Call {
-//        val body = SagresForms.makeFormBodyForDemand(list, document)
-//        val request = SagresRequests.createDemandWithParams(body)
-//        return getCall(request)
-//    }
+    fun createDemand(list: List<SagresDemandOffer>, document: Document): Call {
+        val body = SagresForms.makeFormBodyForDemand(list, document)
+        val request = SagresRequests.createDemandWithParams(body)
+        return getCall(request)
+    }
 
     fun getRequestedServices(): Call {
         return getCall(SagresRequests.requestedServices)

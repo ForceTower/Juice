@@ -1,3 +1,10 @@
+import com.forcetower.sagres.SagresNavigator
+import com.forcetower.sagres.database.model.SagresCredential
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import org.junit.BeforeClass
+import java.io.File
+
 /*
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
@@ -18,26 +25,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.operation.demand
-
-import com.forcetower.sagres.database.model.SagresDemandOffer
-import com.forcetower.sagres.operation.BaseCallback
-import com.forcetower.sagres.operation.Status
-
-class DemandOffersCallback(status: Status) : BaseCallback<DemandOffersCallback>(status) {
-    private var offers: List<SagresDemandOffer>? = null
-
-    fun getOffers() = offers
-
-    fun offers(offers: List<SagresDemandOffer>?): DemandOffersCallback {
-        this.offers = offers
-        return this
-    }
-
+abstract class BaseSagresTest {
     companion object {
-        fun copyFrom(callback: BaseCallback<*>): DemandOffersCallback {
-            return DemandOffersCallback(callback.status).message(callback.message).code(callback.code).throwable(
-                callback.throwable).document(callback.document)
+        lateinit var instance: SagresNavigator
+        lateinit var credential: SagresCredential
+
+        @BeforeClass
+        @JvmStatic
+        fun init() {
+            val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
+            val environment = File("enviroment.json").also {
+                println(it.absolutePath)
+            }.readText()
+            credential = gson.fromJson(environment, SagresCredential::class.java)
+            SagresNavigator.initialize(null)
+            instance = SagresNavigator.instance
         }
     }
 }

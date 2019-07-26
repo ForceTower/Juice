@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SMaterialLink
+import com.forcetower.sagres.database.model.SagresMaterialLink
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import timber.log.Timber
@@ -28,8 +28,8 @@ import timber.log.debug
 
 object SagresMaterialsParser {
     @JvmStatic
-    fun extractMaterials(document: Document): List<SMaterialLink> {
-        val materials = mutableListOf<SMaterialLink>()
+    fun extractMaterials(document: Document): List<SagresMaterialLink> {
+        val materials = mutableListOf<SagresMaterialLink>()
         var elements = document.select("label[class=\"material_apoio_arquivo\"]")
         for (element in elements) {
             elementProcessing(element, materials)
@@ -53,13 +53,13 @@ object SagresMaterialsParser {
     }
 
     @JvmStatic
-    private fun elementProcessing(element: Element, materials: MutableList<SMaterialLink>) {
+    private fun elementProcessing(element: Element, materials: MutableList<SagresMaterialLink>) {
         val a = element.selectFirst("a") ?: return
 
         val link = if (a.attr("href").isEmpty()) a.attr("href") else a.attr("HREF")
         val name = element.parent()?.parent()?.parent()?.parent()?.parent()?.parent()?.selectFirst("td")?.text() ?: "Arquivo"
         Timber.debug { "Defined new material $name at $link" }
 
-        materials.add(SMaterialLink(name, link))
+        materials.add(SagresMaterialLink(name, link))
     }
 }

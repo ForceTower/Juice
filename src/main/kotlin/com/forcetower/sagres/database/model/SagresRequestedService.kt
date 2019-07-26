@@ -20,17 +20,12 @@
 
 package com.forcetower.sagres.database.model
 
-data class SDiscipline(
-    var semester: String?,
-    var name: String?,
-    var code: String?,
-    var credits: Int = 0,
-    var missedClasses: Int = 0,
-    var lastClass: String = "0",
-    var nextClass: String = "0",
-    var situation: String? = null
-) {
-    override fun toString(): String {
-        return ".$name:$code."
-    }
-}
+data class SagresRequestedService(
+    val service: String = "",
+    val date: String = "",
+    val amount: Int = 0,
+    val situation: String = "",
+    val value: String = "",
+    val observation: String = "",
+    val correct: Boolean = true
+)

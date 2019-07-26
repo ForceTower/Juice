@@ -20,15 +20,15 @@
 
 package com.forcetower.sagres.operation.person
 
-import com.forcetower.sagres.database.model.SPerson
+import com.forcetower.sagres.database.model.SagresPerson
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 
 class PersonCallback internal constructor(status: Status) : BaseCallback<PersonCallback>(status) {
-    var person: SPerson? = null
+    var person: SagresPerson? = null
         private set
 
-    fun person(person: SPerson?): PersonCallback {
+    fun person(person: SagresPerson?): PersonCallback {
         this.person = person
         return this
     }

@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
 
 package com.forcetower.sagres.operation.person
 
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.database.model.SPerson
+import com.forcetower.sagres.database.model.SagresPerson
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.request.SagresCalls
@@ -29,8 +28,7 @@ import java.util.concurrent.Executor
 
 class PersonOperation(
     private val userId: Long?,
-    executor: Executor?,
-    private val cached: Boolean = true
+    executor: Executor?
 ) : Operation<PersonCallback>(executor) {
     init {
         this.perform()
@@ -38,20 +36,12 @@ class PersonOperation(
 
     override fun execute() {
         publishProgress(PersonCallback(Status.STARTED))
-        if (cached) {
-            val person = SagresNavigator.instance.database.personDao().getPersonDirect(userId.toString())
-            if (person != null) {
-                successMeasures(person)
-                return
-            }
-        }
-
         val call = if (userId == null) SagresCalls.me else SagresCalls.getPerson(userId)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val user = gson.fromJson(body, SPerson::class.java)
+                val user = gson.fromJson(body, SagresPerson::class.java)
                 successMeasures(user)
             } else {
                 publishProgress(PersonCallback(Status.RESPONSE_FAILED).code(response.code).message(response.message))
@@ -62,8 +52,7 @@ class PersonOperation(
         }
     }
 
-    private fun successMeasures(user: SPerson) {
-        SagresNavigator.instance.database.personDao().insert(user)
+    private fun successMeasures(user: SagresPerson) {
         publishProgress(PersonCallback(Status.SUCCESS).person(user))
     }
 }

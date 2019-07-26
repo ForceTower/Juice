@@ -20,15 +20,15 @@
 
 package com.forcetower.sagres.operation.messages
 
-import com.forcetower.sagres.database.model.SMessage
+import com.forcetower.sagres.database.model.SagresMessage
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 
 class MessagesCallback(status: Status) : BaseCallback<MessagesCallback>(status) {
-    var messages: List<SMessage>? = null
+    var messages: List<SagresMessage>? = null
         private set
 
-    fun messages(items: List<SMessage>): MessagesCallback {
+    fun messages(items: List<SagresMessage>): MessagesCallback {
         this.messages = items
         return this
     }

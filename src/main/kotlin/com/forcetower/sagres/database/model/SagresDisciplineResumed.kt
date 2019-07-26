@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,14 @@
 
 package com.forcetower.sagres.database.model
 
-data class SDisciplineClassItem(
-    var number: Int = 0,
-    var situation: String? = null,
-    var subject: String? = null,
-    var date: String? = null,
-    val numberOfMaterials: Int,
-    val materialLink: String,
-    var materials: List<SMaterialLink> = listOf()
-)
+class SagresDisciplineResumed(
+    var id: Long,
+    var code: String?,
+    var name: String?,
+    var resumedName: String?,
+    var objective: String?,
+    var departmentLink: String?,
+    var link: String?
+) {
+    var department: SagresLinker? = null
+}

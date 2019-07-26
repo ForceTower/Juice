@@ -22,6 +22,7 @@ package com.forcetower.sagres.executor
 
 import androidx.annotation.RestrictTo
 import io.reactivex.annotations.NonNull
+import java.util.concurrent.Executor
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class SagresTaskExecutor private constructor() : TaskExecutor() {
@@ -61,8 +62,8 @@ class SagresTaskExecutor private constructor() : TaskExecutor() {
         @Volatile
         private lateinit var sInstance: SagresTaskExecutor
 
-        val ioThreadExecutor = { command: Runnable -> instance.executeOnDiskIO(command) }
-        val networkThreadExecutor = { command: Runnable -> instance.executeOnNetworkIO(command) }
+        val ioThreadExecutor: Executor = Executor { command: Runnable -> instance.executeOnDiskIO(command) }
+        val networkThreadExecutor: Executor = Executor { command: Runnable -> instance.executeOnNetworkIO(command) }
 
         /**
          * Returns an instance of the task executor.

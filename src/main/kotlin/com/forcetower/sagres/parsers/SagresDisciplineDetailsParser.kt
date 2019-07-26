@@ -20,8 +20,8 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SDisciplineClassItem
-import com.forcetower.sagres.database.model.SDisciplineClassLocation
+import com.forcetower.sagres.database.model.SagresDisciplineClassItem
+import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
 import com.forcetower.sagres.utils.ValueUtils.toInteger
 import com.forcetower.sagres.utils.WordUtils
@@ -64,7 +64,7 @@ object SagresDisciplineDetailsParser {
         var missLimits = ""
         var classPeriod: String? = null
         var department: String? = null
-        val locations = mutableListOf<SDisciplineClassLocation>()
+        val locations = mutableListOf<SagresDisciplineClassLocation>()
 
         for (element in document.select("div[class=\"cabecalho-dado\"]")) {
             val b = element.child(0)
@@ -86,7 +86,7 @@ object SagresDisciplineDetailsParser {
                     val day = classTime.child(0).text()
                     val start = classTime.child(1).text()
                     val end = classTime.child(3).text()
-                    locations.add(SDisciplineClassLocation(start, end, day, null, null, null, name, code, group, true))
+                    locations.add(SagresDisciplineClassLocation(start, end, day, null, null, null, name, code, group, true))
                 }
             }
         }
@@ -111,8 +111,8 @@ object SagresDisciplineDetailsParser {
     }
 
     @JvmStatic
-    fun extractClassItems(document: Document): List<SDisciplineClassItem> {
-        val items = ArrayList<SDisciplineClassItem>()
+    fun extractClassItems(document: Document): List<SagresDisciplineClassItem> {
+        val items = ArrayList<SagresDisciplineClassItem>()
 
         val trs = document.select("tr[class]")
         for (tr in trs) {
@@ -129,7 +129,7 @@ object SagresDisciplineDetailsParser {
     }
 
     @JvmStatic
-    private fun getFromTDs(tds: Elements): SDisciplineClassItem? {
+    private fun getFromTDs(tds: Elements): SagresDisciplineClassItem? {
         try {
             val strNumber = tds[0].text().trim()
             val situation = tds[1].text()
@@ -153,7 +153,7 @@ object SagresDisciplineDetailsParser {
             var href = element.attr("HREF")
             if (href.isEmpty()) href = element.attr("href")
             val link = if (href.startsWith("link?")) href.substring(5) else href
-            return SDisciplineClassItem(number, situation, description, date, materials, link)
+            return SagresDisciplineClassItem(number, situation, description, date, materials, link)
         } catch (ignored: Exception) { ignored.printStackTrace() }
         return null
     }

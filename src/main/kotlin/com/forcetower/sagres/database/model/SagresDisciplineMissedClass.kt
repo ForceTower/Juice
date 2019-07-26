@@ -20,10 +20,11 @@
 
 package com.forcetower.sagres.database.model
 
-class SMessageScope(
-    var uid: Long,
-    var sagresId: String?,
-    var clazzLink: String?
+data class SagresDisciplineMissedClass(
+    val date: String,
+    val description: String,
+    val disciplineCode: String,
+    val semester: Long
 ) {
-    var clazzLinker: SLinker? = null
+    override fun toString(): String = "${disciplineCode}_$date -> $description"
 }

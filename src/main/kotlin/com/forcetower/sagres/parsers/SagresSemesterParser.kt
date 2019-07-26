@@ -20,10 +20,8 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SSemester
+import com.forcetower.sagres.database.model.SagresSemester
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import timber.log.Timber
 import timber.log.debug
 
@@ -31,8 +29,8 @@ import java.util.ArrayList
 
 object SagresSemesterParser {
 
-    fun getSemesters(document: Document): List<SSemester> {
-        val semesters = ArrayList<SSemester>()
+    fun getSemesters(document: Document): List<SagresSemester> {
+        val semesters = ArrayList<SagresSemester>()
         val classes = document.select("section[class=\"webpart-aluno-item\"]")
 
         val strings = ArrayList<String>()
@@ -43,7 +41,7 @@ object SagresSemesterParser {
         }
         Timber.debug { "Semesters: $strings" }
         for (i in strings.indices) {
-            semesters.add(SSemester((strings.size - i).toLong(), strings[i], strings[i], "", "", "", ""))
+            semesters.add(SagresSemester((strings.size - i).toLong(), strings[i], strings[i], "", "", "", ""))
         }
 
         return semesters

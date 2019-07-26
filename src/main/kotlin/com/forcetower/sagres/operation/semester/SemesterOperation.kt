@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.operation.semester
 
-import com.forcetower.sagres.database.model.SSemester
+import com.forcetower.sagres.database.model.SagresSemester
 import com.forcetower.sagres.operation.Dumb
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
@@ -51,28 +51,23 @@ class SemesterOperation(executor: Executor?, private val userId: Long) : Operati
     }
 
     private fun successMeasures(body: String) {
-        val type = object : TypeToken<Dumb<MutableList<SSemester>>>() {}.type
+        val type = object : TypeToken<Dumb<MutableList<SagresSemester>>>() {}.type
         try {
-            val dSemesters = gson.fromJson<Dumb<MutableList<SSemester>>>(body, type)
+            val dSemesters = gson.fromJson<Dumb<MutableList<SagresSemester>>>(body, type)
             val semesters = dSemesters.items
             semesters.forEach {
-                it.name = it.name.trim()
-                it.codename = it.codename.trim()
-                it.endClasses = it.endClasses.trim()
-                it.end = it.end.trim()
-                it.startClasses = it.startClasses.trim()
-                it.start = it.start.trim()
+                it.name = it.name?.trim()
+                it.codename = it.codename?.trim()
+                it.endClasses = it.endClasses?.trim()
+                it.end = it.end?.trim()
+                it.startClasses = it.startClasses?.trim()
+                it.start = it.start?.trim()
             }
 
             val callback = SemesterCallback(Status.SUCCESS).semesters(semesters)
-            this.finished = callback
-            this.success = true
-
             publishProgress(callback)
         } catch (t: Throwable) {
             val callback = SemesterCallback(Status.UNKNOWN_FAILURE).message(t.message)
-            this.finished = callback
-            this.success = false
             publishProgress(callback)
         }
     }

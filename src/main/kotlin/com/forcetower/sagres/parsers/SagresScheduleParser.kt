@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SDisciplineClassLocation
+import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import timber.log.Timber
@@ -40,7 +40,7 @@ object SagresScheduleParser {
     private lateinit var codePerLessons: HashMap<String, SagresClass>
 
     @Synchronized
-    fun getSchedule(document: Document): List<SDisciplineClassLocation>? {
+    fun getSchedule(document: Document): List<SagresDisciplineClassLocation>? {
         val schedule = document.selectFirst("table[class=\"meus-horarios\"]")
         val subtitle = document.selectFirst("table[class=\"meus-horarios-legenda\"]")
 
@@ -59,13 +59,13 @@ object SagresScheduleParser {
     }
 
     @Synchronized
-    private fun convertToNewType(hashMap: HashMap<String, List<SagresClassDay>>): List<SDisciplineClassLocation> {
-        val disciplineClassLocations = ArrayList<SDisciplineClassLocation>()
+    private fun convertToNewType(hashMap: HashMap<String, List<SagresClassDay>>): List<SagresDisciplineClassLocation> {
+        val disciplineClassLocations = ArrayList<SagresDisciplineClassLocation>()
         for (key in hashMap.keys) {
             val classDays = hashMap[key] ?: continue
 
             for (classDay in classDays) {
-                val location = SDisciplineClassLocation(
+                val location = SagresDisciplineClassLocation(
                     classDay.starts_at,
                     classDay.ends_at,
                     classDay.day,

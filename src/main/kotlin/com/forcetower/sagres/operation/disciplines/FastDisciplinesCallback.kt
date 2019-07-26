@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.operation.disciplines
 
-import com.forcetower.sagres.database.model.SDiscipline
+import com.forcetower.sagres.database.model.SagresDiscipline
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
@@ -40,14 +40,14 @@ class FastDisciplinesCallback(status: Status) : BaseCallback<FastDisciplinesCall
     fun getFailureCount() = failureCount
     fun getSemesters() = semesters
 
-    fun getDisciplines(): List<SDiscipline> {
+    fun getDisciplines(): List<SagresDiscipline> {
         return groups.groupBy { it.code }.map { entry ->
             val value = entry.value
             val code = entry.key
 
             val creditsSum = value.groupBy { it.semester }.map { it.value.distinctBy { clazz -> clazz.group }.sumBy { group -> group.credits } }.max() ?: 0
             val first = value.first()
-            SDiscipline(first.semester, first.name, code).apply {
+            SagresDiscipline(first.semester, first.name, code).apply {
                 credits = creditsSum
             }
         }

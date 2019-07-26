@@ -20,19 +20,18 @@
 
 package com.forcetower.sagres.operation.servicerequest
 
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.Utils.createDocument
+import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
+import com.forcetower.sagres.parsers.SagresRequestedServicesParser
 import com.forcetower.sagres.request.SagresCalls
 import org.jsoup.nodes.Document
 import timber.log.Timber
-import java.lang.Exception
+import timber.log.debug
 import java.util.concurrent.Executor
 
 class RequestedServicesOperation(
-    executor: Executor?,
-    private val login: Boolean = false
+    executor: Executor?
 ) : Operation<RequestedServicesCallback>(executor) {
     init {
         this.perform()
@@ -40,22 +39,7 @@ class RequestedServicesOperation(
 
     override fun execute() {
         publishProgress(RequestedServicesCallback(Status.STARTED))
-
-        if (!login) afterLogin()
-        else {
-            val access = SagresNavigator.instance.database.accessDao().accessDirect
-            if (access == null) {
-                publishProgress(RequestedServicesCallback(Status.INVALID_LOGIN))
-            } else {
-                val result = SagresNavigator.instance.login(access.username, access.password)
-                if (result.status == Status.SUCCESS)
-                    afterLogin()
-                else {
-                    Timber.d("Invalid login status: ${result.status}")
-                    publishProgress(RequestedServicesCallback(result.status))
-                }
-            }
-        }
+        afterLogin()
     }
 
     private fun afterLogin() {
@@ -64,7 +48,7 @@ class RequestedServicesOperation(
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val document = createDocument(body)
+                val document = body.asDocument()
                 successMeasures(document)
             } else {
                 publishProgress(RequestedServicesCallback(Status.RESPONSE_FAILED))
@@ -76,7 +60,7 @@ class RequestedServicesOperation(
 
     private fun successMeasures(document: Document) {
         val services = SagresRequestedServicesParser.extractRequestedServices(document)
-        Timber.d("Services requested: ${services.size}")
+        Timber.debug { "Services requested: ${services.size}" }
         publishProgress(RequestedServicesCallback(Status.SUCCESS).services(services))
     }
 }

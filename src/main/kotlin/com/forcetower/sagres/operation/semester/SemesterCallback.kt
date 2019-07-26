@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
 
 package com.forcetower.sagres.operation.semester
 
-import com.forcetower.sagres.database.model.SSemester
+import com.forcetower.sagres.database.model.SagresSemester
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 
 class SemesterCallback(status: Status) : BaseCallback<SemesterCallback>(status) {
-    private var semesters: List<SSemester> = ArrayList()
+    private var semesters: List<SagresSemester> = ArrayList()
 
-    fun semesters(semesters: List<SSemester>): SemesterCallback {
+    fun semesters(semesters: List<SagresSemester>): SemesterCallback {
         this.semesters = semesters
         return this
     }
 
-    fun getSemesters(): List<SSemester> = semesters
+    fun getSemesters(): List<SagresSemester> = semesters
 }

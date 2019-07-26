@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,18 @@
 
 package com.forcetower.sagres.operation.demand
 
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.Utils.createDocument
-import com.forcetower.sagres.database.model.SDemandOffer
+import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.request.SagresCalls
 import org.jsoup.nodes.Document
 import timber.log.Timber
+import timber.log.debug
 import java.util.concurrent.Executor
 
 class CreateDemandOperation(
-    private val revised: List<SDemandOffer>,
+    private val revised: List<SagresDemandOffer>,
     executor: Executor?
 ) : Operation<DemandCreatorCallback>(executor) {
     init {
@@ -58,22 +58,22 @@ class CreateDemandOperation(
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                Timber.d("Request completed")
+                Timber.debug { "Request completed" }
                 val body = response.body!!.string()
-                val complete = createDocument(body)
+                val complete = body.asDocument()
                 finalSteps(complete)
             } else {
-                Timber.d("Response failed")
+                Timber.debug { "Response failed" }
                 publishProgress(DemandCreatorCallback(Status.RESPONSE_FAILED).code(response.code))
             }
         } catch (t: Throwable) {
-            Timber.d("Network error")
+            Timber.debug { "Network error" }
             publishProgress(DemandCreatorCallback(Status.NETWORK_ERROR).throwable(t))
         }
     }
 
     private fun loadOffers(): DemandOffersCallback? {
-        val callback = SagresNavigator.instance.loadDemandOffers()
+        val callback = LoadDemandOffersOperation(null).finishedResult
         val offers = callback.getOffers()
         val document = callback.document
         return when {

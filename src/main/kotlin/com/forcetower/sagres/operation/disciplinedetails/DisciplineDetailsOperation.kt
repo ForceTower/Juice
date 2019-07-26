@@ -20,23 +20,26 @@
 
 package com.forcetower.sagres.operation.disciplinedetails
 
-import android.util.Base64
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.Utils.createDocument
-import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
+import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.impl.SagresNavigatorImpl
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.DOWNLOADING
 import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.INITIAL
-import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.LOGIN
 import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.PROCESSING
+import com.forcetower.sagres.operation.initial.StartPageOperation
+import com.forcetower.sagres.parsers.SagresDisciplineDetailsFetcherParser
+import com.forcetower.sagres.parsers.SagresDisciplineDetailsParser
+import com.forcetower.sagres.parsers.SagresMaterialsParser
 import com.forcetower.sagres.request.SagresCalls
 import okhttp3.FormBody
+import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
 import timber.log.Timber
+import timber.log.debug
 import java.io.IOException
 import java.util.concurrent.Executor
 
@@ -53,18 +56,10 @@ class DisciplineDetailsOperation(
     }
 
     override fun execute() {
-        val access = SagresNavigator.instance.database.accessDao().accessDirect
-        if (access == null) {
-            publishProgress(DisciplineDetailsCallback(Status.INVALID_LOGIN).message("Invalid Access"))
-            return
-        }
-
-        executeSteps(access)
+        executeSteps()
     }
 
-    private fun executeSteps(access: SagresCredential) {
-        publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(LOGIN))
-        login(access) ?: return
+    private fun executeSteps() {
         publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(INITIAL))
         val initial = initialPage() ?: return
         publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(PROCESSING))
@@ -87,34 +82,24 @@ class DisciplineDetailsOperation(
                         groups.add(group)
                     } else {
                         failureCount++
-                        Timber.d("Processed group was null")
+                        Timber.debug { "Processed group was null" }
                     }
                 } else {
                     failureCount++
-                    Timber.d("Discipline from params was null")
+                    Timber.debug { "Discipline from params was null" }
                 }
             } else {
                 failureCount++
-                Timber.d("Document from initial was null")
+                Timber.debug { "Document from initial was null" }
             }
         }
-        Timber.d("Completed ${forms.size} -- $semester $code $group")
+        Timber.debug { "Completed ${forms.size} -- $semester $code $group" }
         publishProgress(DisciplineDetailsCallback(Status.COMPLETED).groups(groups).failureCount(failureCount))
     }
 
-    private fun login(access: SagresCredential): BaseCallback<*>? {
-        Timber.d("Login")
-        val login = SagresNavigator.instance.login(access.username, access.password)
-        if (login.status != Status.SUCCESS) {
-            publishProgress(DisciplineDetailsCallback.copyFrom(login))
-            return null
-        }
-        return login
-    }
-
     private fun initialPage(): BaseCallback<*>? {
-        Timber.d("Initial")
-        val initial = SagresNavigator.instance.startPage()
+        Timber.debug { "Initial" }
+        val initial = StartPageOperation(null).finishedResult
         if (initial.status != Status.SUCCESS) {
             publishProgress(DisciplineDetailsCallback.copyFrom(initial))
             return null
@@ -123,13 +108,13 @@ class DisciplineDetailsOperation(
     }
 
     private fun initialFormConnect(form: FormBody.Builder): Document? {
-        Timber.d("Going to Discipline Page")
+        Timber.debug { "Going to Discipline Page" }
         val call = SagresCalls.getDisciplinePageFromInitial(form)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                return createDocument(body)
+                return body.asDocument()
             } else {
                 publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response").code(response.code))
             }
@@ -140,13 +125,13 @@ class DisciplineDetailsOperation(
     }
 
     private fun disciplinePageParams(params: FormBody.Builder): Document? {
-        Timber.d("Discipline with Params")
+        Timber.debug { "Discipline with Params" }
         val call = SagresCalls.getDisciplinePageWithParams(params)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                return createDocument(body)
+                return body.asDocument()
             } else {
                 publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at params").code(response.code))
             }
@@ -157,20 +142,20 @@ class DisciplineDetailsOperation(
     }
 
     private fun processGroup(document: Document): SagresDisciplineGroup? {
-        Timber.d("Processing group")
+        Timber.debug { "Processing group" }
         return SagresDisciplineDetailsParser.extractDisciplineGroup(document)
     }
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
-        Timber.d("Initializing materials download")
-        for (item in group.classItems) {
-            if (item.numberOfMaterials <= 0) continue
+        Timber.debug { "Initializing materials download" }
+        val items = group.classItems?.filter { it.numberOfMaterials > 0 } ?: return
+        for (item in items) {
             val json = JSONObject()
             json.put("_realType", true)
             json.put("showForm", true)
             json.put("popupLinkColumn", "cpt_material_apoio")
             json.put("retrieveArguments", item.materialLink)
-            val encoded = Base64.encodeToString(json.toString().toByteArray(), Base64.DEFAULT)
+            val encoded = Base64.encodeBase64String(json.toString().toByteArray())
             val materials = executeMaterialCall(document, encoded)
             if (materials != null) {
                 item.materials = SagresMaterialsParser.extractMaterials(materials)
@@ -179,13 +164,13 @@ class DisciplineDetailsOperation(
     }
 
     private fun executeMaterialCall(document: Document, encoded: String): Document? {
-        Timber.d("Executing materials call")
+        Timber.debug { "Executing materials call" }
         val call = SagresCalls.getDisciplineMaterials(encoded, document)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                return createDocument(body)
+                return body.asDocument()
             } else {
                 publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at material download"))
             }

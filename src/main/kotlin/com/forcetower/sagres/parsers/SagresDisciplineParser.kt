@@ -20,19 +20,18 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SDiscipline
+import com.forcetower.sagres.database.model.SagresDiscipline
 import com.forcetower.sagres.utils.ValueUtils
 import com.forcetower.sagres.utils.WordUtils
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 
 import java.util.ArrayList
 
 object SagresDisciplineParser {
     @JvmStatic
-    fun getDisciplines(document: Document): List<SDiscipline> {
-        val disciplines = ArrayList<SDiscipline>()
+    fun getDisciplines(document: Document): List<SagresDiscipline> {
+        val disciplines = ArrayList<SagresDiscipline>()
 
         val elements = document.select("section[class=\"webpart-aluno-item\"]")
         for (dElement in elements) {
@@ -81,7 +80,7 @@ object SagresDisciplineParser {
             val code = title.substring(0, codePos).trim()
             val name = title.substring(codePos + 1).trim()
 
-            val discipline = SDiscipline(period, name, code)
+            val discipline = SagresDiscipline(period, name, code)
             discipline.credits = ValueUtils.toInteger(credits)
             discipline.missedClasses = ValueUtils.toInteger(missedClasses)
             discipline.lastClass = last

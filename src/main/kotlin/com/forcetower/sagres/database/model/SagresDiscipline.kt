@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,17 @@
 
 package com.forcetower.sagres.database.model
 
-import com.google.gson.annotations.SerializedName
-
-class SLinker(
-    @SerializedName(value = "\$link")
-    val link: Link?
+data class SagresDiscipline(
+    var semester: String?,
+    var name: String?,
+    var code: String?,
+    var credits: Int = 0,
+    var missedClasses: Int = 0,
+    var lastClass: String = "0",
+    var nextClass: String = "0",
+    var situation: String? = null
 ) {
-    fun getLink(): String? {
-        return link?.href
+    override fun toString(): String {
+        return ".$name:$code."
     }
-
-    class Link(var href: String?)
 }

@@ -24,5 +24,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Dumb<T>(
     @SerializedName(value = "itens")
-    val items: T?
+    val items: T
 )

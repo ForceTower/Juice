@@ -20,15 +20,18 @@
 
 package com.forcetower.sagres.operation.grades
 
-import com.forcetower.sagres.Utils
-import com.forcetower.sagres.database.model.SCourseVariant
-import com.forcetower.sagres.database.model.SDisciplineMissedClass
-import com.forcetower.sagres.database.model.SGrade
+import com.forcetower.sagres.database.model.SagresCourseVariant
+import com.forcetower.sagres.database.model.SagresDisciplineMissedClass
+import com.forcetower.sagres.database.model.SagresGrade
+import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
+import com.forcetower.sagres.parsers.SagresGradesParser
+import com.forcetower.sagres.parsers.SagresMissedClassesParser
 import com.forcetower.sagres.request.SagresCalls
 import org.jsoup.nodes.Document
 import timber.log.Timber
+import timber.log.debug
 import java.io.IOException
 import java.lang.Exception
 import java.util.concurrent.Executor
@@ -41,7 +44,7 @@ class GradesOperation(private val semester: Long?, private val document: Documen
     override fun execute() {
         val call = SagresCalls.getGrades(semester, document)
         try {
-            result.postValue(GradesCallback(Status.LOADING))
+            publishProgress(GradesCallback(Status.LOADING))
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
@@ -55,7 +58,7 @@ class GradesOperation(private val semester: Long?, private val document: Documen
     }
 
     private fun processResults(body: String) {
-        val document = Utils.createDocument(body)
+        val document = body.asDocument()
         val codes = SagresGradesParser.extractSemesterCodes(document)
         val selected = SagresGradesParser.getSelectedSemester(document)
 
@@ -67,26 +70,26 @@ class GradesOperation(private val semester: Long?, private val document: Documen
             } else {
                 val variants = SagresGradesParser.extractCourseVariants(document)
                 if (variants.isEmpty()) {
-                    Timber.d("This is probably a page error, try again later...")
+                    Timber.debug { "This is probably a page error, try again later..." }
                     publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't extract grades and there's no variant. Page error?"))
                 } else {
                     variantRequester(variants, document, selected.second, codes)
                 }
             }
         } else {
-            Timber.d("Can't find semester on this situation")
+            Timber.debug { "Can't find semester on this situation" }
             publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't find semester on situation. Nothing is selected"))
         }
     }
 
     private fun variantRequester(
-        variants: List<SCourseVariant>,
+        variants: List<SagresCourseVariant>,
         document: Document,
         semester: Long,
         codes: List<Pair<Long, String>>
     ) {
-        val grades = mutableListOf<SGrade>()
-        val frequency = mutableListOf<SDisciplineMissedClass>()
+        val grades = mutableListOf<SagresGrade>()
+        val frequency = mutableListOf<SagresDisciplineMissedClass>()
         var doc = document
         variants.forEach {
             val result = requestVariant(semester, doc, it.uefsId)
@@ -109,7 +112,7 @@ class GradesOperation(private val semester: Long?, private val document: Documen
     }
 
     private fun processVariant(body: String, semester: Long): GradeResult {
-        val document = Utils.createDocument(body)
+        val document = body.asDocument()
         return if (SagresGradesParser.canExtractGrades(document)) {
             val grades = SagresGradesParser.extractGrades(document, semester)
             val frequency = SagresMissedClassesParser.extractMissedClasses(document, semester)
@@ -122,8 +125,8 @@ class GradesOperation(private val semester: Long?, private val document: Documen
     private fun successMeasures(
         document: Document,
         codes: List<Pair<Long, String>>,
-        grades: List<SGrade>,
-        frequency: Pair<Boolean, List<SDisciplineMissedClass>>
+        grades: List<SagresGrade>,
+        frequency: Pair<Boolean, List<SagresDisciplineMissedClass>>
     ) {
         publishProgress(GradesCallback(Status.SUCCESS)
                 .document(document)
@@ -133,8 +136,8 @@ class GradesOperation(private val semester: Long?, private val document: Documen
     }
 
     private data class GradeResult(
-        val grades: List<SGrade> = emptyList(),
-        val frequency: List<SDisciplineMissedClass> = emptyList(),
+        val grades: List<SagresGrade> = emptyList(),
+        val frequency: List<SagresDisciplineMissedClass> = emptyList(),
         val document: Document
     )
 }

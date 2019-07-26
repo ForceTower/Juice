@@ -20,25 +20,25 @@
 
 package com.forcetower.sagres.operation.grades
 
-import com.forcetower.sagres.database.model.SDisciplineMissedClass
-import com.forcetower.sagres.database.model.SGrade
+import com.forcetower.sagres.database.model.SagresDisciplineMissedClass
+import com.forcetower.sagres.database.model.SagresGrade
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 
 class GradesCallback(status: Status) : BaseCallback<GradesCallback>(status) {
-    var frequency: List<SDisciplineMissedClass>? = null
+    var frequency: List<SagresDisciplineMissedClass>? = null
         private set
-    var grades: List<SGrade>? = null
+    var grades: List<SagresGrade>? = null
         private set
     var semesters: List<Pair<Long, String>>? = null
         private set
 
-    fun grades(grades: List<SGrade>?): GradesCallback {
+    fun grades(grades: List<SagresGrade>?): GradesCallback {
         this.grades = grades
         return this
     }
 
-    fun frequency(frequency: List<SDisciplineMissedClass>?): GradesCallback {
+    fun frequency(frequency: List<SagresDisciplineMissedClass>?): GradesCallback {
         this.frequency = frequency
         return this
     }

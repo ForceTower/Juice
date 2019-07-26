@@ -51,6 +51,7 @@ freeline_project_description.json
 # API Keys
 unes_uefs_publisher.json
 google-services.json
+environment.json
 
 app/src/main/play/*
 !app/src/main/play/release-notes/*

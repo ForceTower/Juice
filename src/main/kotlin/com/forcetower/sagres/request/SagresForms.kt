@@ -21,6 +21,7 @@
 package com.forcetower.sagres.request
 
 import com.forcetower.sagres.Constants
+import com.forcetower.sagres.database.model.SagresDemandOffer
 //import com.forcetower.sagres.database.model.SDemandOffer
 import okhttp3.FormBody
 import okhttp3.RequestBody
@@ -104,36 +105,36 @@ object SagresForms {
         return builderIn
     }
 
-//    fun makeFormBodyForDemand(list: List<SDemandOffer>, document: Document): RequestBody {
-//        val form = FormBody.Builder()
-//
-//        for (offer in list) {
-//            form.add(offer.getId(), java.lang.Boolean.toString(offer.getSelected()))
-//        }
-//
-//        val elements = document.select("input[value][type=\"hidden\"]")
-//        for (element in elements) {
-//            val key = element.attr("id")
-//            var value = element.attr("value")
-//
-//            if (value.trim { it <= ' ' }.isEmpty() && !key.equals(
-//                    "__EVENTTARGET",
-//                    ignoreCase = true
-//                ) && !key.equals("__EVENTARGUMENT", ignoreCase = true) && !key.equals("__VIEWSTATE", ignoreCase = true)
-//            ) {
-//                value = "eyJfcmVhbFR5cGUiOnRydWV9"
-//            }
-//
-//            if (!key.endsWith("hfChecked")) {
-//                form.add(key, value)
-//            }
-//        }
-//
-//        form.add("ctl00\$smpManager", "ctl00\$MasterPlaceHolder\$UpdatePanel1|ctl00\$MasterPlaceHolder\$btnSalvar")
-//        form.add("__ASYNCPOST", "false")
-//        form.add("ctl00\$MasterPlaceHolder\$btnSalvar", "Salvar")
-//        return form.build()
-//    }
+    fun makeFormBodyForDemand(list: List<SagresDemandOffer>, document: Document): RequestBody {
+        val form = FormBody.Builder()
+
+        for (offer in list) {
+            form.add(offer.id, "${offer.selected}")
+        }
+
+        val elements = document.select("input[value][type=\"hidden\"]")
+        for (element in elements) {
+            val key = element.attr("id")
+            var value = element.attr("value")
+
+            if (value.trim { it <= ' ' }.isEmpty() && !key.equals(
+                    "__EVENTTARGET",
+                    ignoreCase = true
+                ) && !key.equals("__EVENTARGUMENT", ignoreCase = true) && !key.equals("__VIEWSTATE", ignoreCase = true)
+            ) {
+                value = "eyJfcmVhbFR5cGUiOnRydWV9"
+            }
+
+            if (!key.endsWith("hfChecked")) {
+                form.add(key, value)
+            }
+        }
+
+        form.add("ctl00\$smpManager", "ctl00\$MasterPlaceHolder\$UpdatePanel1|ctl00\$MasterPlaceHolder\$btnSalvar")
+        form.add("__ASYNCPOST", "false")
+        form.add("ctl00\$MasterPlaceHolder\$btnSalvar", "Salvar")
+        return form.build()
+    }
 
     fun makeFormBodyForAllDisciplines(document: Document): RequestBody {
         val formBody = FormBody.Builder()

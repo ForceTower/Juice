@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SRequestedService
+import com.forcetower.sagres.database.model.SagresRequestedService
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 object SagresRequestedServicesParser {
 
-    fun extractRequestedServices(document: Document): List<SRequestedService> {
+    fun extractRequestedServices(document: Document): List<SagresRequestedService> {
         val root = document.selectFirst("table")
         val table = root?.selectFirst("tbody")
         val elements = table?.children()
@@ -35,7 +35,7 @@ object SagresRequestedServicesParser {
         return elements.map { parseService(it) }.filter { it.correct }
     }
 
-    private fun parseService(element: Element): SRequestedService {
+    private fun parseService(element: Element): SagresRequestedService {
         val children = element.children()
         return if (children.size >= 6) {
             val service = children[0].text().trim()
@@ -44,9 +44,9 @@ object SagresRequestedServicesParser {
             val situation = children[3].text().trim()
             val value = children[4].text().trim()
             val obs = children[5].text().trim()
-            SRequestedService(service, date, amount, situation, value, obs)
+            SagresRequestedService(service, date, amount, situation, value, obs)
         } else {
-            SRequestedService(correct = false)
+            SagresRequestedService(correct = false)
         }
     }
 }

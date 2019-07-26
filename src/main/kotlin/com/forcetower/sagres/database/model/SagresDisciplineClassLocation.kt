@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.database.model
 
-data class SDisciplineClassLocation(
+data class SagresDisciplineClassLocation(
     var startTime: String,
     var endTime: String,
     var day: String,
@@ -31,9 +31,9 @@ data class SDisciplineClassLocation(
     var classCode: String,
     var classGroup: String,
     var fromDisciplineParser: Boolean
-) : Comparable<SDisciplineClassLocation> {
+) : Comparable<SagresDisciplineClassLocation> {
 
-    override fun compareTo(other: SDisciplineClassLocation): Int {
+    override fun compareTo(other: SagresDisciplineClassLocation): Int {
         return startTime.compareTo(other.startTime)
     }
 
@@ -41,7 +41,7 @@ data class SDisciplineClassLocation(
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val that = other as SDisciplineClassLocation?
+        val that = other as SagresDisciplineClassLocation?
         if (startTime != that!!.startTime)
             return false
         if (endTime != that.endTime) return false

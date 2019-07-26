@@ -27,15 +27,15 @@ import com.forcetower.sagres.operation.Status
 class StartPageCallback(status: Status) : BaseCallback<StartPageCallback>(status) {
     var calendar: List<SagresCalendar>? = null
         private set
-    var semesters: List<SSemester>? = null
+    var semesters: List<SagresSemester>? = null
         private set
-    var disciplines: List<SDiscipline>? = null
+    var disciplines: List<SagresDiscipline>? = null
         private set
     var groups: List<SagresDisciplineGroup>? = null
         private set
-    var messages: List<SMessage>? = null
+    var messages: List<SagresMessage>? = null
         private set
-    var locations: List<SDisciplineClassLocation>? = null
+    var locations: List<SagresDisciplineClassLocation>? = null
         private set
     var isDemandOpen = false
         private set
@@ -45,12 +45,12 @@ class StartPageCallback(status: Status) : BaseCallback<StartPageCallback>(status
         return this
     }
 
-    fun semesters(semesters: List<SSemester>): StartPageCallback {
+    fun semesters(semesters: List<SagresSemester>): StartPageCallback {
         this.semesters = semesters
         return this
     }
 
-    fun disciplines(disciplines: List<SDiscipline>): StartPageCallback {
+    fun disciplines(disciplines: List<SagresDiscipline>): StartPageCallback {
         this.disciplines = disciplines
         return this
     }
@@ -60,7 +60,7 @@ class StartPageCallback(status: Status) : BaseCallback<StartPageCallback>(status
         return this
     }
 
-    fun locations(locations: List<SDisciplineClassLocation>?): StartPageCallback {
+    fun locations(locations: List<SagresDisciplineClassLocation>?): StartPageCallback {
         this.locations = locations
         return this
     }
@@ -70,7 +70,7 @@ class StartPageCallback(status: Status) : BaseCallback<StartPageCallback>(status
         return this
     }
 
-    fun messages(messages: List<SMessage>): StartPageCallback {
+    fun messages(messages: List<SagresMessage>): StartPageCallback {
         this.messages = messages
         return this
     }

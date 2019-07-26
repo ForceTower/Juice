@@ -23,6 +23,7 @@ package com.forcetower.sagres.operation.login
 import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
+import com.forcetower.sagres.parsers.SagresBasicParser
 import com.forcetower.sagres.request.SagresCalls
 import com.forcetower.sagres.utils.ConnectedStates
 import okhttp3.Response

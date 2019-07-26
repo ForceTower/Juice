@@ -22,17 +22,17 @@ package com.forcetower.sagres.database.model
 
 import com.forcetower.sagres.database.Timestamped
 
-class SMessage(
+class SagresMessage(
     var sagresId: Long,
     var timestamp: String?,
-    var sender: SLinker?,
+    var sender: SagresLinker?,
     var message: String?,
     var senderProfile: Int,
     var senderName: String?,
-    var scopes: SLinker?,
+    var scopes: SagresLinker?,
     var attachmentName: String?,
     var attachmentLink: String?
-) : Comparable<SMessage>, Timestamped {
+) : Comparable<SagresMessage>, Timestamped {
     var discipline: String? = null
 
     var disciplineCode: String? = null
@@ -58,7 +58,7 @@ class SMessage(
         this.processingTime = System.currentTimeMillis()
     }
 
-    override fun compareTo(other: SMessage): Int {
+    override fun compareTo(other: SagresMessage): Int {
         return timeStampInMillis.compareTo(other.timeStampInMillis)
     }
 

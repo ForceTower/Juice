@@ -20,15 +20,15 @@
 
 package com.forcetower.sagres.parsers
 
-import com.forcetower.sagres.database.model.SDemandOffer
+import com.forcetower.sagres.database.model.SagresDemandOffer
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
 
 object SagresDemandParser {
     @JvmStatic
-    fun getOffers(document: Document): List<SDemandOffer>? {
-        val list = mutableListOf<SDemandOffer>()
+    fun getOffers(document: Document): List<SagresDemandOffer>? {
+        val list = mutableListOf<SagresDemandOffer>()
 
         // Each element represents a column full of disciplines for the semester
         val elements = document.select("div[class=\"demanda-coluna\"]")
@@ -79,7 +79,7 @@ object SagresDemandParser {
                 }
 
                 // Adds it to the offers
-                val offer = SDemandOffer(0, id, code, name, bSelected, title, iHours, co, av, cu, se, un)
+                val offer = SagresDemandOffer(0, id, code, name, bSelected, title, iHours, co, av, cu, se, un)
                 list.add(offer)
             }
         }

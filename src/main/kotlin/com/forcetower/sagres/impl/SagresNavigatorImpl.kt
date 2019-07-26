@@ -20,22 +20,49 @@
 
 package com.forcetower.sagres.impl
 
+import androidx.annotation.RestrictTo
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
+import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.operation.calendar.CalendarCallback
+import com.forcetower.sagres.operation.calendar.CalendarOperation
+import com.forcetower.sagres.operation.demand.CreateDemandOperation
+import com.forcetower.sagres.operation.demand.DemandCreatorCallback
+import com.forcetower.sagres.operation.demand.DemandOffersCallback
+import com.forcetower.sagres.operation.demand.LoadDemandOffersOperation
+import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback
+import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsOperation
+import com.forcetower.sagres.operation.disciplines.FastDisciplinesCallback
+import com.forcetower.sagres.operation.disciplines.FastDisciplinesOperation
 import com.forcetower.sagres.operation.document.DocumentCallback
 import com.forcetower.sagres.operation.document.DocumentOperation
+import com.forcetower.sagres.operation.grades.GradesCallback
+import com.forcetower.sagres.operation.grades.GradesOperation
+import com.forcetower.sagres.operation.initial.StartPageCallback
+import com.forcetower.sagres.operation.initial.StartPageOperation
 import com.forcetower.sagres.operation.login.LoginCallback
 import com.forcetower.sagres.operation.login.LoginOperation
+import com.forcetower.sagres.operation.messages.MessagesCallback
+import com.forcetower.sagres.operation.messages.MessagesOperation
+import com.forcetower.sagres.operation.messages.OldMessagesOperation
+import com.forcetower.sagres.operation.person.PersonCallback
+import com.forcetower.sagres.operation.person.PersonOperation
+import com.forcetower.sagres.operation.semester.SemesterCallback
+import com.forcetower.sagres.operation.semester.SemesterOperation
+import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
+import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
+import okhttp3.Call
 import okhttp3.CookieJar
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import org.jsoup.nodes.Document
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 class SagresNavigatorImpl private constructor(
-    persist: CookiePersistor
+    persist: CookiePersistor?
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
@@ -53,12 +80,15 @@ class SagresNavigatorImpl private constructor(
     }
 
     private fun createInterceptor(): Interceptor {
-        return Interceptor {
-            it.proceed(it.request())
+        return Interceptor { chain ->
+            val nRequest = chain.request().newBuilder()
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
+                .build()
+            chain.proceed(nRequest)
         }
     }
 
-    private fun createCookieJar(cookies: SetCookieCache, persist: CookiePersistor): CookieJar {
+    private fun createCookieJar(cookies: SetCookieCache, persist: CookiePersistor?): PersistentCookieJar {
         return PersistentCookieJar(cookies, persist)
     }
 
@@ -66,13 +96,105 @@ class SagresNavigatorImpl private constructor(
         return LoginOperation(username, password, null).finishedResult
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun me(): PersonCallback {
+        return PersonOperation(null, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun messages(userId: Long, fetchAll: Boolean): MessagesCallback {
+        return MessagesOperation(null, userId, fetchAll).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun messagesHtml(): MessagesCallback {
+        return OldMessagesOperation(null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun calendar(): CalendarCallback {
+        return CalendarOperation(null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun semesters(userId: Long): SemesterCallback {
+        return SemesterOperation(null, userId).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun startPage(): StartPageCallback {
+        return StartPageOperation(null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun getCurrentGrades(): GradesCallback {
+        return GradesOperation(null, null, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun getGradesFromSemester(semesterSagresId: Long, document: Document): GradesCallback {
+        return GradesOperation(semesterSagresId, document, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun downloadEnrollment(file: File): DocumentCallback {
+        return DocumentOperation(file, "SAGRES_ENROLL_CERT", null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun downloadFlowchart(file: File): DocumentCallback {
+        return DocumentOperation(file, "SAGRES_FLOWCHART", null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     override suspend fun downloadHistory(file: File): DocumentCallback {
         return DocumentOperation(file, "SAGRES_HISTORY", null).finishedResult
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun loadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean): DisciplineDetailsCallback {
+        return DisciplineDetailsOperation(semester, code, group, partialLoad, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun loadDemandOffers(): DemandOffersCallback {
+        return LoadDemandOffersOperation(null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun createDemandOffer(offers: List<SagresDemandOffer>): DemandCreatorCallback {
+        return CreateDemandOperation(offers, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun getRequestedServices(): RequestedServicesCallback {
+        return RequestedServicesOperation(null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override suspend fun disciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): FastDisciplinesCallback {
+        return FastDisciplinesOperation(semester, code, group, partialLoad, discover, null).finishedResult
+    }
+
     override fun getSelectedInstitution() = "UEFS"
     override fun setSelectedInstitution(institution: String) = Unit
-    override fun clearSession() { cookies.clear() }
+    override fun clearSession() { cookieJar.clear() }
+    override fun logout() {
+        stopTags(null)
+        cookieJar.clear()
+    }
+
+    override fun stopTags(tags: String?) {
+        val callList = ArrayList<Call>()
+        callList.addAll(client.dispatcher.runningCalls())
+        callList.addAll(client.dispatcher.queuedCalls())
+        for (call in callList) {
+            val local = call.request().tag()
+            if ((local != null && local == tags) || tags == null) {
+                call.cancel()
+            }
+        }
+    }
 
     companion object {
         private lateinit var sDefaultInstance: SagresNavigatorImpl
@@ -86,7 +208,7 @@ class SagresNavigatorImpl private constructor(
                     throw IllegalStateException("Sagres navigator was not initialized")
             }
 
-        fun initialize(persist: CookiePersistor) {
+        fun initialize(persist: CookiePersistor?) {
             synchronized(sLock) {
                 if (!::sDefaultInstance.isInitialized) {
                     sDefaultInstance = SagresNavigatorImpl(persist)

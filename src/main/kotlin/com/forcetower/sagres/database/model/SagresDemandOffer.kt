@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,21 @@
 
 package com.forcetower.sagres.database.model
 
-data class SGrade(
-    val semesterId: Long,
-    val discipline: String,
-    var partialMean: String = "",
-    var finalScore: String = ""
+data class SagresDemandOffer(
+    val uid: Long = 0,
+    val id: String,
+    val code: String,
+    val name: String,
+    var selected: Boolean,
+    val category: String,
+    val hours: Int,
+    val completed: Boolean,
+    val available: Boolean,
+    val current: Boolean,
+    val selectable: Boolean,
+    val unavailable: Boolean
 ) {
-    val values: MutableList<SGradeInfo> = ArrayList()
-
-    fun addInfo(info: SGradeInfo) {
-        values.add(info)
+    override fun toString(): String {
+        return name
     }
-
-    override fun toString(): String = "$discipline has $values"
 }
