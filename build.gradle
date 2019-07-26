@@ -23,10 +23,11 @@ plugins {
 }
 
 group 'com.forcetower'
-version '2.0-SNAPSHOT'
+version '2.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -34,6 +35,8 @@ dependencies {
     implementation "org.jsoup:jsoup:1.11.2"
     implementation "com.squareup.okhttp3:okhttp:4.0.1"
     implementation "com.google.code.gson:gson:2.8.5"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0-RC3"
+    implementation "com.jakewharton.timber:timber-jdk:5.0.0-SNAPSHOT"
 }
 
 compileKotlin {

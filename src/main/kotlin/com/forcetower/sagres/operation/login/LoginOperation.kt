@@ -20,7 +20,7 @@
 
 package com.forcetower.sagres.operation.login
 
-import com.forcetower.sagres.asDocument
+import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
