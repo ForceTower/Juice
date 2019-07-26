@@ -18,12 +18,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.database.model
 
-import org.jsoup.nodes.Document
-
-object SagresLinkFinder {
-
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+data class SDisciplineMissedClass(
+    val date: String,
+    val description: String,
+    val disciplineCode: String,
+    val semester: Long
+) {
+    override fun toString(): String = "${disciplineCode}_$date -> $description"
 }

@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.executor
 
-import org.jsoup.nodes.Document
+abstract class TaskExecutor {
+    /**
+     * Executes the given task in the disk IO thread pool.
+     *
+     * @param runnable The runnable to run in the disk IO thread pool.
+     */
+    abstract fun executeOnDiskIO(runnable: Runnable)
 
-object SagresLinkFinder {
-
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    /**
+     * Executes the given task in the network IO thread pool.
+     *
+     * @param runnable The runnable to run in the network IO thread pool.
+     */
+    abstract fun executeOnNetworkIO(runnable: Runnable)
 }

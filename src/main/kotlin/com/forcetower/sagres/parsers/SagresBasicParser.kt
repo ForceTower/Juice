@@ -31,7 +31,7 @@ object SagresBasicParser {
 
     @JvmStatic
     fun needApproval(document: Document): Boolean {
-        var approval: Element? = document.selectFirst("div[class=\"acesso-externo-pagina-aLogin\"]")
+        var approval = document.selectFirst("div[class=\"acesso-externo-pagina-aLogin\"]")
         if (approval != null) return true
 
         approval = document.selectFirst("input[value=\"Acessar o SAGRES Portal\"]")

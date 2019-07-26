@@ -18,12 +18,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.database.model
 
-import org.jsoup.nodes.Document
+data class SGrade(
+    val semesterId: Long,
+    val discipline: String,
+    var partialMean: String = "",
+    var finalScore: String = ""
+) {
+    val values: MutableList<SGradeInfo> = ArrayList()
 
-object SagresLinkFinder {
+    fun addInfo(info: SGradeInfo) {
+        values.add(info)
+    }
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    override fun toString(): String = "$discipline has $values"
 }

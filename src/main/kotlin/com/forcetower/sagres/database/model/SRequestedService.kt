@@ -18,12 +18,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.database.model
 
-import org.jsoup.nodes.Document
-
-object SagresLinkFinder {
-
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
-}
+data class SRequestedService(
+    val service: String = "",
+    val date: String = "",
+    val amount: Int = 0,
+    val situation: String = "",
+    val value: String = "",
+    val observation: String = "",
+    val correct: Boolean = true
+)

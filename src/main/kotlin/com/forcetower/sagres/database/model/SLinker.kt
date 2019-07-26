@@ -18,12 +18,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.database.model
 
-import org.jsoup.nodes.Document
+import com.google.gson.annotations.SerializedName
 
-object SagresLinkFinder {
+class SLinker(
+    @SerializedName(value = "\$link")
+    val link: Link?
+) {
+    fun getLink(): String? {
+        return link?.href
+    }
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    class Link(var href: String?)
 }

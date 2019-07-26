@@ -18,12 +18,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.operation.semester
 
-import org.jsoup.nodes.Document
+import com.forcetower.sagres.database.model.SSemester
+import com.forcetower.sagres.operation.BaseCallback
+import com.forcetower.sagres.operation.Status
 
-object SagresLinkFinder {
+class SemesterCallback(status: Status) : BaseCallback<SemesterCallback>(status) {
+    private var semesters: List<SSemester> = ArrayList()
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    fun semesters(semesters: List<SSemester>): SemesterCallback {
+        this.semesters = semesters
+        return this
+    }
+
+    fun getSemesters(): List<SSemester> = semesters
 }

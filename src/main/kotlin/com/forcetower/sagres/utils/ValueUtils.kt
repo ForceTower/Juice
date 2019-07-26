@@ -33,6 +33,7 @@ package com.forcetower.sagres.utils
 
 object ValueUtils {
     @JvmOverloads
+    @JvmStatic
     fun toInteger(string: String, def: Int = -1): Int {
         return try {
             Integer.parseInt(string)
@@ -42,12 +43,14 @@ object ValueUtils {
 
     }
 
+    @JvmStatic
     fun toDoubleMod(param: String): Double {
         val string = param.replace(",", ".")
         return toDouble(string, -1.0)
     }
 
     @JvmOverloads
+    @JvmStatic
     fun toDouble(string: String, def: Double = -1.0): Double {
         return try {
             java.lang.Double.parseDouble(string)

@@ -2,7 +2,7 @@
  * This file is part of the UNES Open Source Project.
  * UNES is licensed under the GNU GPLv3.
  *
- * Copyright (c) 2019.  João Paulo Sena <joaopaulo761@gmail.com>
+ * Copyright (c) 2019. João Paulo Sena <joaopaulo761@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.operation.person
 
-import org.jsoup.nodes.Document
+import com.forcetower.sagres.database.model.SPerson
+import com.forcetower.sagres.operation.BaseCallback
+import com.forcetower.sagres.operation.Status
 
-object SagresLinkFinder {
+class PersonCallback internal constructor(status: Status) : BaseCallback<PersonCallback>(status) {
+    var person: SPerson? = null
+        private set
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    fun person(person: SPerson?): PersonCallback {
+        this.person = person
+        return this
+    }
 }

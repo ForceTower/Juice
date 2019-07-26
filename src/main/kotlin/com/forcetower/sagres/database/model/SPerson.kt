@@ -18,32 +18,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.41'
-}
+package com.forcetower.sagres.database.model
 
-group 'com.forcetower'
-version '2.0.0-SNAPSHOT'
+class SPerson(
+    var id: Long,
+    name: String,
+    var exhibitionName: String?,
+    private var cpf: String?,
+    var email: String?
+) {
+    var name: String? = null
+        get() {
+            this.name = field!!.trim { it <= ' ' }
+            return field
+        }
+    var sagresId: String? = null
+    var isMocked: Boolean = false
 
-repositories {
-    mavenCentral()
-    google()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-}
+    val unique: String
+        get() = cpf!!.toLowerCase() + ".." + id
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jsoup:jsoup:1.11.2"
-    implementation "com.squareup.okhttp3:okhttp:4.0.1"
-    implementation "com.google.code.gson:gson:2.8.5"
-    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0-RC3"
-    implementation "com.jakewharton.timber:timber-jdk:5.0.0-SNAPSHOT"
-    implementation "androidx.annotation:annotation:1.1.0"
-}
+    init {
+        this.name = name
+        this.isMocked = false
+    }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    fun getCpf(): String? {
+        if (cpf == null) return null
+
+        cpf = cpf!!.trim { it <= ' ' }
+        return cpf
+    }
+
+    fun setCpf(cpf: String) {
+        this.cpf = cpf
+    }
+
+    override fun toString(): String {
+        return "ID: $id - Name: $name"
+    }
 }

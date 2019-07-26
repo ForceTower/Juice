@@ -18,12 +18,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.database.model
 
-import org.jsoup.nodes.Document
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-object SagresLinkFinder {
-
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+@Entity
+data class SDemandOffer(
+    @PrimaryKey(autoGenerate = true)
+    val uid: Long = 0,
+    val id: String,
+    val code: String,
+    val name: String,
+    var selected: Boolean,
+    val category: String,
+    val hours: Int,
+    val completed: Boolean,
+    val available: Boolean,
+    val current: Boolean,
+    val selectable: Boolean,
+    val unavailable: Boolean
+) {
+    override fun toString(): String {
+        return name
+    }
 }

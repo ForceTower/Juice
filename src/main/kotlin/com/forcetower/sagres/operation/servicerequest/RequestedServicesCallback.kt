@@ -18,12 +18,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.operation.servicerequest
 
-import org.jsoup.nodes.Document
+import com.forcetower.sagres.database.model.SRequestedService
+import com.forcetower.sagres.operation.BaseCallback
+import com.forcetower.sagres.operation.Status
 
-object SagresLinkFinder {
+class RequestedServicesCallback(status: Status) : BaseCallback<RequestedServicesCallback>(status) {
+    var services: List<SRequestedService> = emptyList()
+        private set
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    fun services(services: List<SRequestedService>): RequestedServicesCallback {
+        this.services = services
+        return this
+    }
 }

@@ -18,12 +18,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.forcetower.sagres.parsers
+package com.forcetower.sagres.operation.demand
 
-import org.jsoup.nodes.Document
+import com.forcetower.sagres.database.model.SDemandOffer
+import com.forcetower.sagres.operation.BaseCallback
+import com.forcetower.sagres.operation.Status
 
-object SagresLinkFinder {
+class DemandOffersCallback(status: Status) : BaseCallback<DemandOffersCallback>(status) {
+    private var offers: List<SDemandOffer>? = null
 
-    @JvmStatic
-    fun findLink(document: Document) = document.selectFirst("iframe")?.attr("src")
+    fun getOffers() = offers
+
+    fun offers(offers: List<SDemandOffer>?): DemandOffersCallback {
+        this.offers = offers
+        return this
+    }
+
+    companion object {
+        fun copyFrom(callback: BaseCallback<*>): DemandOffersCallback {
+            return DemandOffersCallback(callback.status).message(callback.message).code(callback.code).throwable(
+                callback.throwable).document(callback.document)
+        }
+    }
 }
