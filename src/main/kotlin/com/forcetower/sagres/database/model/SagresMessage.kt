@@ -45,11 +45,10 @@ class SagresMessage(
     val timeStampInMillis: Long
         get() {
             try {
-                return getInMillis(timestamp!!)
+                return getInMillis(timestamp)!!
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
             return -1
         }
 

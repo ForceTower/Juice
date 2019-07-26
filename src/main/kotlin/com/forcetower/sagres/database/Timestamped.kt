@@ -30,7 +30,8 @@ import java.util.Locale
 interface Timestamped {
 
     @Throws(ParseException::class)
-    fun getInMillis(string: String): Long {
+    fun getInMillis(string: String?): Long? {
+        string ?: return null
         try {
             val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mmX", Locale.getDefault())
             return formatter.parse(string.trim { it <= ' ' }).time
@@ -50,7 +51,8 @@ interface Timestamped {
         }
     }
 
-    fun getInMillis(string: String, def: Long): Long {
+    fun getInMillis(string: String?, def: Long): Long {
+        string ?: return def
         try {
             val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mmX", Locale.getDefault())
             return formatter.parse(string.trim { it <= ' ' }).time

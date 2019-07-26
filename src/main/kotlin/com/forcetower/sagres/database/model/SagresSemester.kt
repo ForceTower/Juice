@@ -24,32 +24,32 @@ import com.forcetower.sagres.database.Timestamped
 
 data class SagresSemester(
     var uefsId: Long,
-    var name: String?,
-    var codename: String?,
+    var name: String,
+    var codename: String,
     var start: String?,
     var end: String?,
     var startClasses: String?,
     var endClasses: String?
 ) : Comparable<SagresSemester>, Timestamped {
 
-    val startInMillis: Long
-        get() = getInMillis(start!!, -1)
+    val startInMillis: Long?
+        get() = getInMillis(start, -1)
 
-    val endInMillis: Long
-        get() = getInMillis(end!!, -1)
+    val endInMillis: Long?
+        get() = getInMillis(end, -1)
 
-    val startClassesInMillis: Long
-        get() = getInMillis(startClasses!!, -1)
+    val startClassesInMillis: Long?
+        get() = getInMillis(startClasses, -1)
 
-    val endClassesInMillis: Long
-        get() = getInMillis(endClasses!!, -1)
+    val endClassesInMillis: Long?
+        get() = getInMillis(endClasses, -1)
 
     override fun compareTo(other: SagresSemester): Int {
         return try {
             val o1 = name
             val o2 = other.name
-            val str1 = Integer.parseInt(o1!!.substring(0, 5))
-            val str2 = Integer.parseInt(o2!!.substring(0, 5))
+            val str1 = Integer.parseInt(o1.substring(0, 5))
+            val str2 = Integer.parseInt(o2.substring(0, 5))
 
             if (str1 == str2) {
                 if (o1.length > 5) -1 else 1

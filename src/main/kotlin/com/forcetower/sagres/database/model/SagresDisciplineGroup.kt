@@ -35,9 +35,8 @@ class SagresDisciplineGroup(
     var ignored = 0
     var semester: String? = null
         private set
-    var code: String? = null
-        private set
-    var name: String? = null
+    lateinit var code: String
+    lateinit var name: String
     var classItems: List<SagresDisciplineClassItem>? = null
 
     fun setDisciplineCodeAndSemester(code: String, semester: String?) {
