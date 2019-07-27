@@ -47,7 +47,7 @@ class FastDisciplinesCallback(status: Status) : BaseCallback<FastDisciplinesCall
 
             val creditsSum = value.groupBy { it.semester }.map { it.value.distinctBy { clazz -> clazz.group }.sumBy { group -> group.credits } }.max() ?: 0
             val first = value.first()
-            SagresDiscipline(first.semester, first.name, code).apply {
+            SagresDiscipline(first.semester, first.name!!, code).apply {
                 credits = creditsSum
             }
         }
