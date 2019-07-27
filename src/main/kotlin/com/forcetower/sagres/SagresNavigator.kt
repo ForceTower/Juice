@@ -80,7 +80,7 @@ abstract class SagresNavigator {
         val instance: SagresNavigator
             get() = SagresNavigatorImpl.instance
 
-        fun initialize(persist: CookiePersistor?) {
+        fun initialize(persist: CookiePersistor? = null) {
             SagresNavigatorImpl.initialize(persist)
         }
 
