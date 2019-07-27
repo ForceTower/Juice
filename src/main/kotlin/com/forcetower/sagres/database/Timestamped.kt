@@ -20,12 +20,11 @@
 
 package com.forcetower.sagres.database
 
-import timber.log.Timber
-import timber.log.error
-
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import timber.log.Timber
+import timber.log.error
 
 interface Timestamped {
 

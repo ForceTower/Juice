@@ -22,12 +22,10 @@ package com.forcetower.sagres.request
 
 import com.forcetower.sagres.Constants
 import com.forcetower.sagres.database.model.SagresDemandOffer
-//import com.forcetower.sagres.database.model.SDemandOffer
+import java.util.HashMap
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
-
-import java.util.HashMap
 
 object SagresForms {
 

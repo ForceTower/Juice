@@ -25,8 +25,6 @@ import okhttp3.FormBody
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 
 object SagresRequests {
     private const val BASE_URL = "http://academico2.uefs.br/Api/SagresApi"

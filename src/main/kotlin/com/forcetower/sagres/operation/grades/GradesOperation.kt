@@ -29,12 +29,12 @@ import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresGradesParser
 import com.forcetower.sagres.parsers.SagresMissedClassesParser
 import com.forcetower.sagres.request.SagresCalls
-import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 import java.io.IOException
 import java.lang.Exception
 import java.util.concurrent.Executor
+import org.jsoup.nodes.Document
+import timber.log.Timber
+import timber.log.debug
 
 class GradesOperation(private val semester: Long?, private val document: Document?, executor: Executor?) : Operation<GradesCallback>(executor) {
     init {

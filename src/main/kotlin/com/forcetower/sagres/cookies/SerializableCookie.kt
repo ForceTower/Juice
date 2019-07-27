@@ -20,10 +20,14 @@
 
 package com.forcetower.sagres.cookies
 
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 import okhttp3.Cookie
 import okhttp3.internal.and
-
-import java.io.*
 
 class SerializableCookie : Serializable {
     @Transient
@@ -46,7 +50,6 @@ class SerializableCookie : Serializable {
                     objectOutputStream.close()
                 } catch (ignored: IOException) {
                 }
-
             }
         }
 
@@ -159,5 +162,4 @@ class SerializableCookie : Serializable {
 
         private val NON_VALID_EXPIRES_AT = -1L
     }
-
 }

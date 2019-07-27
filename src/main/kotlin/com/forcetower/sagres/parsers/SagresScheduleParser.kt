@@ -21,14 +21,12 @@
 package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
+import com.forcetower.sagres.utils.DateUtils.getDayOfWeek
+import java.util.ArrayList
+import java.util.HashMap
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import timber.log.Timber
-
-import java.util.ArrayList
-import java.util.HashMap
-
-import com.forcetower.sagres.utils.DateUtils.getDayOfWeek
 import timber.log.debug
 
 /**
@@ -91,7 +89,7 @@ object SagresScheduleParser {
         for (i in trs.indices) {
             val tr = trs[i]
             if (i == 0) {
-                //Header -> days of class
+                // Header -> days of class
                 val ths = tr.select("th")
                 for (j in ths.indices) {
                     val th = ths[j]

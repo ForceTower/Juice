@@ -55,13 +55,13 @@ import com.forcetower.sagres.operation.semester.SemesterOperation
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
 import io.reactivex.subjects.Subject
+import java.io.File
+import java.util.concurrent.TimeUnit
 import okhttp3.Call
 import okhttp3.CookieJar
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?
@@ -243,7 +243,7 @@ class SagresNavigatorImpl private constructor(
     override fun aDisciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): Subject<FastDisciplinesCallback> {
         return FastDisciplinesOperation(semester, code, group, partialLoad, discover, SagresTaskExecutor.networkThreadExecutor).result
     }
-    
+
     override fun getSelectedInstitution() = selectedInstitution
     override fun setSelectedInstitution(institution: String) {
         selectedInstitution = institution

@@ -1,9 +1,8 @@
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresCredential
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import org.junit.BeforeClass
 import java.io.File
+import org.junit.BeforeClass
 
 /*
  * This file is part of the UNES Open Source Project.

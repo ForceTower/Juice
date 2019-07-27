@@ -22,7 +22,6 @@ package com.forcetower.sagres.operation.disciplinedetails
 
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
 import com.forcetower.sagres.extension.asDocument
-import com.forcetower.sagres.impl.SagresNavigatorImpl
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
@@ -34,14 +33,14 @@ import com.forcetower.sagres.parsers.SagresDisciplineDetailsFetcherParser
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsParser
 import com.forcetower.sagres.parsers.SagresMaterialsParser
 import com.forcetower.sagres.request.SagresCalls
+import java.io.IOException
+import java.util.concurrent.Executor
 import okhttp3.FormBody
 import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.io.IOException
-import java.util.concurrent.Executor
 
 class DisciplineDetailsOperation(
     private val semester: String?,

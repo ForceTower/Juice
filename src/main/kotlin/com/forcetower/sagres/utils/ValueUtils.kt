@@ -40,7 +40,6 @@ object ValueUtils {
         } catch (e: Exception) {
             def
         }
-
     }
 
     @JvmStatic
@@ -57,6 +56,5 @@ object ValueUtils {
         } catch (e: Exception) {
             def
         }
-
     }
 }

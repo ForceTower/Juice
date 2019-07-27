@@ -22,7 +22,6 @@ package com.forcetower.sagres.operation.calendar
 
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
-
 import java.util.concurrent.Executor
 
 class CalendarOperation(executor: Executor?) : Operation<CalendarCallback>(executor) {

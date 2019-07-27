@@ -23,9 +23,9 @@ package com.forcetower.sagres.operation
 import com.google.gson.Gson
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import java.util.concurrent.Executor
 import timber.log.Timber
 import timber.log.debug
-import java.util.concurrent.Executor
 
 abstract class Operation<Result : BaseCallback<*>> constructor(private val executor: Executor?) {
     private val _result: PublishSubject<Result> = PublishSubject.create()
