@@ -81,8 +81,9 @@ abstract class SagresNavigator {
         val instance: SagresNavigator
             get() = SagresNavigatorImpl.instance
 
-        fun initialize(persist: CookiePersistor? = null) {
+        fun initialize(persist: CookiePersistor? = null, institution: String = "UEFS") {
             SagresNavigatorImpl.initialize(persist)
+            SagresNavigator.instance.setSelectedInstitution(institution)
         }
 
         fun getSupportedInstitutions() = Constants.SUPPORTED_INSTITUTIONS
