@@ -27,7 +27,7 @@ data class SagresDisciplineClassLocation(
     var room: String?,
     var campus: String?,
     var modulo: String?,
-    var className: String?,
+    var className: String,
     var classCode: String,
     var classGroup: String,
     var fromDisciplineParser: Boolean

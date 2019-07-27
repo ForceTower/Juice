@@ -33,13 +33,13 @@ class SagresDisciplineGroup(
 ) {
     var isDraft = true
     var ignored = 0
-    var semester: String? = null
+    lateinit var semester: String
         private set
     lateinit var code: String
     lateinit var name: String
-    var classItems: List<SagresDisciplineClassItem>? = null
+    lateinit var classItems: List<SagresDisciplineClassItem>
 
-    fun setDisciplineCodeAndSemester(code: String, semester: String?) {
+    fun setDisciplineCodeAndSemester(code: String, semester: String) {
         this.code = code
         this.semester = semester
     }

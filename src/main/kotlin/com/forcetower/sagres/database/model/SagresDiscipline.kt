@@ -21,7 +21,7 @@
 package com.forcetower.sagres.database.model
 
 data class SagresDiscipline(
-    var semester: String?,
+    var semester: String,
     var name: String,
     var code: String,
     var credits: Int = 0,

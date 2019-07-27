@@ -59,7 +59,7 @@ object SagresDisciplineDetailsParser {
             if (elementTeacher != null) teacher = WordUtils.toTitleCase(elementTeacher.text()) ?: ""
         }
 
-        var semesterByName: String? = null
+        var semesterByName = ""
         var classCredits = ""
         var missLimits = ""
         var classPeriod: String? = null
