@@ -24,9 +24,6 @@ import java.util.ArrayList
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
-import timber.log.error
 
 object SagresDisciplineDetailsFetcherParser {
 
@@ -166,12 +163,10 @@ object SagresDisciplineDetailsFetcherParser {
                         null
                     }
                 } catch (t: Throwable) {
-                    Timber.error(t) { "" }
                     null
                 }
             }
         } catch (t: Throwable) {
-            Timber.error(t) { "" }
         }
 
         return null
@@ -217,9 +212,7 @@ object SagresDisciplineDetailsFetcherParser {
                     val semesterId = value.toLong()
                     val pair = Pair(semesterId, semester)
                     list.add(pair)
-                } catch (e: Exception) {
-                    Timber.debug { "Can't parse long: $value" }
-                }
+                } catch (e: Exception) { }
             }
         }
         return list

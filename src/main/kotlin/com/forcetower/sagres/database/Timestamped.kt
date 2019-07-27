@@ -23,8 +23,6 @@ package com.forcetower.sagres.database
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
-import timber.log.Timber
-import timber.log.error
 
 interface Timestamped {
 
@@ -68,7 +66,7 @@ interface Timestamped {
                         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
                         formatter.parse(string.trim { it <= ' ' }).time
                     } catch (e3: Exception) {
-                        Timber.error { "Error while parsing data! Exception is ${e.message}" }
+
                         def
                     }
                 }

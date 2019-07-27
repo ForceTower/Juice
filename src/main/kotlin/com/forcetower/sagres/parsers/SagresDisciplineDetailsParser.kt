@@ -29,18 +29,12 @@ import java.util.ArrayList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import timber.log.Timber
-import timber.log.debug
 
 object SagresDisciplineDetailsParser {
 
     @JvmStatic
     fun extractDisciplineGroup(document: Document): SagresDisciplineGroup? {
-        val elementName = document.selectFirst("h2[class=\"cabecalho-titulo\"]")
-        if (elementName == null) {
-            Timber.debug { "Element name is null" }
-            return null
-        }
+        val elementName = document.selectFirst("h2[class=\"cabecalho-titulo\"]") ?: return null
 
         val classNameFull = elementName.text()
 
@@ -51,7 +45,7 @@ object SagresDisciplineDetailsParser {
         val refGroupPos = group.lastIndexOf("-")
         val refGroup = group.substring(refGroupPos + 1, group.length - 1).trim { it <= ' ' }
         val name = classNameFull.substring(codePos + 1, groupPos).trim { it <= ' ' }
-        Timber.debug { "Name $name" }
+
         var teacher = ""
         var elementTeacher: Element? = document.selectFirst("div[class=\"cabecalho-dado nome-capitalizars\"]")
         if (elementTeacher != null) {
@@ -99,7 +93,7 @@ object SagresDisciplineDetailsParser {
             credits = Integer.parseInt(classCredits)
             maxMiss = Integer.parseInt(missLimits)
         } catch (e: Exception) {
-            Timber.debug { "Exception in parse int for numbers" }
+
         }
 
         val created = SagresDisciplineGroup(teacher, refGroup, credits, maxMiss, classPeriod, department, locations)
@@ -144,7 +138,7 @@ object SagresDisciplineDetailsParser {
             }
 
             if (materials > 0) {
-                Timber.debug { "Has $materials materials at $description" }
+
             }
 
             // Download Material section

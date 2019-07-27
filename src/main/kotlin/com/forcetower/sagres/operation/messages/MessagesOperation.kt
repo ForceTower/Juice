@@ -35,9 +35,6 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.util.ArrayList
 import java.util.concurrent.Executor
-import timber.log.Timber
-import timber.log.debug
-import timber.log.error
 
 class MessagesOperation(
     executor: Executor?,
@@ -91,12 +88,10 @@ class MessagesOperation(
                     nextLink = value.older
                     link = nextLink?.getLink()
                 } else {
-                    Timber.debug { "Invalid response, aborting with code ${response.code}" }
                     link = null
                 }
             }
         } catch (t: Throwable) {
-            Timber.debug { "Fetch got interrupted because of exception" }
         }
         return result
     }
@@ -148,7 +143,6 @@ class MessagesOperation(
                 if (clazz != null) {
                     val discipline = getDiscipline(clazz)
                     if (discipline != null) {
-                        Timber.debug { "Setting up the discipline name: ${discipline.name}" }
                         message.discipline = discipline.name
                         message.disciplineCode = discipline.code
                         message.objective = discipline.objective
@@ -170,7 +164,6 @@ class MessagesOperation(
                 return gson.fromJson(body, SagresPerson::class.java)
             }
         } catch (e: Exception) {
-            Timber.error(e) { "Failed..." }
         }
 
         return null
@@ -184,7 +177,6 @@ class MessagesOperation(
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                Timber.debug { "Scope body: $body" }
                 val token = object : TypeToken<Dumb<ArrayList<SagresMessageScope>>>() {}.type
                 val scoping = gson.fromJson<Dumb<ArrayList<SagresMessageScope>>>(body, token)
                 val items = scoping.items
@@ -195,13 +187,11 @@ class MessagesOperation(
                         scoped.clazzLink = linker.getLink()
                         scoped.sagresId = link
                     } else {
-                        Timber.debug { "Scope linker was null" }
                     }
                     return scoped
                 }
             }
         } catch (e: Exception) {
-            Timber.error(e) { "Failed..." }
         }
 
         return null
@@ -221,12 +211,10 @@ class MessagesOperation(
                     clazzed.disciplineLink = discipline.getLink()
                     clazzed.link = link
                 } else {
-                    Timber.debug { "Clazz linker was null" }
                 }
                 return clazzed
             }
         } catch (e: Exception) {
-            Timber.error(e) { "Failed..." }
         }
 
         return null
@@ -250,7 +238,6 @@ class MessagesOperation(
                 return disciplined
             }
         } catch (e: Exception) {
-            Timber.error(e) { "Failed..." }
         }
 
         return null

@@ -27,8 +27,6 @@ import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.request.SagresCalls
 import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class CreateDemandOperation(
     private val revised: List<SagresDemandOffer>,
@@ -58,16 +56,13 @@ class CreateDemandOperation(
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                Timber.debug { "Request completed" }
                 val body = response.body!!.string()
                 val complete = body.asDocument()
                 finalSteps(complete)
             } else {
-                Timber.debug { "Response failed" }
                 publishProgress(DemandCreatorCallback(Status.RESPONSE_FAILED).code(response.code))
             }
         } catch (t: Throwable) {
-            Timber.debug { "Network error" }
             publishProgress(DemandCreatorCallback(Status.NETWORK_ERROR).throwable(t))
         }
     }

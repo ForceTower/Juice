@@ -32,12 +32,11 @@ import okhttp3.Cookie
 internal class IdentifiableCookie private constructor(val cookie: Cookie) {
     override fun equals(other: Any?): Boolean {
         if (other !is IdentifiableCookie) return false
-        val that = other as IdentifiableCookie?
-        return (that!!.cookie.name == this.cookie.name &&
-                that.cookie.domain == this.cookie.domain &&
-                that.cookie.path == this.cookie.path &&
-                that.cookie.secure == this.cookie.secure &&
-                that.cookie.hostOnly == this.cookie.hostOnly)
+        return (other.cookie.name == this.cookie.name &&
+                other.cookie.domain == this.cookie.domain &&
+                other.cookie.path == this.cookie.path &&
+                other.cookie.secure == this.cookie.secure &&
+                other.cookie.hostOnly == this.cookie.hostOnly)
     }
 
     override fun hashCode(): Int {

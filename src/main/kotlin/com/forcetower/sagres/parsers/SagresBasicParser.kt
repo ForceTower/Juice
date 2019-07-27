@@ -23,8 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.utils.ConnectedStates
 import com.forcetower.sagres.utils.ValueUtils.toDouble
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 object SagresBasicParser {
 
@@ -53,12 +51,11 @@ object SagresBasicParser {
     @JvmStatic
     fun getScore(document: Document?): Double {
         if (document == null) {
-            Timber.debug { "Document is null. Score will not be parsed" }
+
             return -1.0
         }
 
         val elements = document.select("div[class=\"situacao-escore\"]")
-        if (elements.isEmpty()) Timber.debug { "<score_404> :: No elements" }
         for (element in elements) {
             if (element != null) {
                 val score = element.selectFirst("span[class=\"destaque\"]")
@@ -67,15 +64,15 @@ object SagresBasicParser {
                         var text = score.text()
                         text = text.replace("[^\\d,]".toRegex(), "")
                         text = text.replace(",", ".")
-                        Timber.debug { "Text at score parsing: $text" }
+
                         val d = toDouble(text, -1.0)
                         if (d != -1.0) return d
                     } catch (ignored: Exception) { }
                 } else {
-                    Timber.debug { "Score element is null" }
+
                 }
             } else {
-                Timber.debug { "Main Score element is null" }
+
             }
         }
         return -1.0

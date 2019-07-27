@@ -23,8 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresCalendar
 import java.util.ArrayList
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 /**
  * Created by João Paulo on 06/03/2018.
@@ -34,14 +32,9 @@ object SagresCalendarParser {
 
     @JvmStatic
     fun getCalendar(document: Document): List<SagresCalendar>? {
-        val element = document.selectFirst("div[class=\"webpart-calendario\"]")
-        if (element == null) {
-            Timber.debug { "Calendar not found" }
-            return null
-        }
+        val element = document.selectFirst("div[class=\"webpart-calendario\"]") ?: return null
 
         if (element.childNodeSize() < 2) {
-            Timber.debug { "Calendar found, but not able to parse" }
             return null
         }
 

@@ -24,8 +24,6 @@ import com.google.gson.Gson
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.concurrent.Executor
-import timber.log.Timber
-import timber.log.debug
 
 abstract class Operation<Result : BaseCallback<*>> constructor(private val executor: Executor?) {
     private val _result: PublishSubject<Result> = PublishSubject.create()
@@ -40,10 +38,8 @@ abstract class Operation<Result : BaseCallback<*>> constructor(private val execu
 
     protected fun perform() {
         if (executor != null) {
-            Timber.debug { "Executing on Executor" }
             executor.execute { this.execute() }
         } else {
-            Timber.debug { "Executing on Current Thread" }
             this.execute()
         }
     }

@@ -30,8 +30,6 @@ import java.io.IOException
 import java.util.concurrent.Executor
 import okhttp3.Response
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class LoginOperation constructor(
     private val username: String,
@@ -58,7 +56,6 @@ class LoginOperation constructor(
                 publishProgress(LoginCallback.Builder(Status.RESPONSE_FAILED).document(doc).code(response.code).build())
             }
         } catch (e: IOException) {
-            Timber.debug { "Message: ${e.message}" }
             e.printStackTrace()
             publishProgress(LoginCallback.Builder(Status.NETWORK_ERROR).throwable(e).build())
         }

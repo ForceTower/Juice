@@ -23,8 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresMessage
 import java.util.Locale
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 /**
  * Created by João Paulo on 06/03/2018.
@@ -58,7 +56,6 @@ object SagresMessageParser {
                         name to link
                     } ?: null to null
 
-            if (attachmentLink != null) Timber.debug { "Weow! An attachment $attachmentName $attachmentLink" }
             val info = article.selectFirst("i[class=\"recado-remetente\"]")?.text()
                     ?.trim()
                     ?.removePrefix("De")
