@@ -152,7 +152,7 @@ class FastDisciplinesOperation(
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
         Timber.debug { "Initializing materials download" }
-        val items = group.classItems?.filter { it.numberOfMaterials > 0 } ?: return
+        val items = group.classItems.filter { it.numberOfMaterials > 0 } ?: return
         for (item in items) {
             if (item.numberOfMaterials <= 0) continue
             val json = JSONObject()
