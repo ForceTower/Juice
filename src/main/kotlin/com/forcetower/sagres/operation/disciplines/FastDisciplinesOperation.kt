@@ -87,7 +87,7 @@ class FastDisciplinesOperation(
                 val discipline = if (partialLoad) document else disciplinePageParams(params) ?: document
                 val group = processGroup(discipline)
                 if (group != null) {
-                    Timber.debug { "Classes: ${group.classItems?.size}" }
+                    Timber.debug { "Classes: ${group.classItems.size}" }
                     if (!partialLoad) downloadMaterials(discipline, group)
                     groups.add(group)
                 } else {
@@ -152,7 +152,7 @@ class FastDisciplinesOperation(
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
         Timber.debug { "Initializing materials download" }
-        val items = group.classItems.filter { it.numberOfMaterials > 0 } ?: return
+        val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             if (item.numberOfMaterials <= 0) continue
             val json = JSONObject()
