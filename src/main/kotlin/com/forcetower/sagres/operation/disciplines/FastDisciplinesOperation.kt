@@ -38,8 +38,6 @@ import okhttp3.RequestBody
 import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class FastDisciplinesOperation(
     private val semester: String?,
@@ -87,19 +85,15 @@ class FastDisciplinesOperation(
                 val discipline = if (partialLoad) document else disciplinePageParams(params) ?: document
                 val group = processGroup(discipline)
                 if (group != null) {
-                    Timber.debug { "Classes: ${group.classItems.size}" }
                     if (!partialLoad) downloadMaterials(discipline, group)
                     groups.add(group)
                 } else {
                     failureCount++
-                    Timber.debug { "Processed group was null" }
                 }
             } else {
                 failureCount++
-                Timber.debug { "Document from initial was null" }
             }
         }
-        Timber.debug { "Completed ${bodies.filterNotNull().size} -- $semester $code $group" }
         publishProgress(
                 FastDisciplinesCallback(Status.COMPLETED)
                         .groups(groups)
@@ -110,14 +104,12 @@ class FastDisciplinesOperation(
 
     private fun initialFormConnect(body: RequestBody?): Document? {
         body ?: return null
-        Timber.debug { "Going to Discipline Page" }
         val call = SagresCalls.goToDisciplineAlternate(body)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val value = response.body!!.string()
                 val document = value.asDocument()
-                Timber.debug { "Title: ${document.title()}" }
                 return document
             } else {
                 publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).message("Unsuccessful response").code(response.code))
@@ -129,7 +121,6 @@ class FastDisciplinesOperation(
     }
 
     private fun disciplinePageParams(params: FormBody.Builder): Document? {
-        Timber.debug { "Discipline with Params" }
         val call = SagresCalls.getDisciplinePageWithParams(params)
         try {
             val response = call.execute()
@@ -146,12 +137,10 @@ class FastDisciplinesOperation(
     }
 
     private fun processGroup(document: Document): SagresDisciplineGroup? {
-        Timber.debug { "Processing group" }
         return SagresDisciplineDetailsParser.extractDisciplineGroup(document)
     }
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
-        Timber.debug { "Initializing materials download" }
         val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             if (item.numberOfMaterials <= 0) continue
@@ -169,7 +158,6 @@ class FastDisciplinesOperation(
     }
 
     private fun executeMaterialCall(document: Document, encoded: String): Document? {
-        Timber.debug { "Executing materials call" }
         val call = SagresCalls.getDisciplineMaterials(encoded, document)
         try {
             val response = call.execute()

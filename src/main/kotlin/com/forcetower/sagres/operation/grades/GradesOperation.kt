@@ -33,8 +33,6 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class GradesOperation(private val semester: Long?, private val document: Document?, executor: Executor?) : Operation<GradesCallback>(executor) {
     init {
@@ -70,14 +68,12 @@ class GradesOperation(private val semester: Long?, private val document: Documen
             } else {
                 val variants = SagresGradesParser.extractCourseVariants(document)
                 if (variants.isEmpty()) {
-                    Timber.debug { "This is probably a page error, try again later..." }
                     publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't extract grades and there's no variant. Page error?"))
                 } else {
                     variantRequester(variants, document, selected.second, codes)
                 }
             }
         } else {
-            Timber.debug { "Can't find semester on this situation" }
             publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't find semester on situation. Nothing is selected"))
         }
     }

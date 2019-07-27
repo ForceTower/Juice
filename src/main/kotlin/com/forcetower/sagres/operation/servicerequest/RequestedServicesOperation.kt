@@ -27,8 +27,6 @@ import com.forcetower.sagres.parsers.SagresRequestedServicesParser
 import com.forcetower.sagres.request.SagresCalls
 import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class RequestedServicesOperation(
     executor: Executor?
@@ -60,7 +58,7 @@ class RequestedServicesOperation(
 
     private fun successMeasures(document: Document) {
         val services = SagresRequestedServicesParser.extractRequestedServices(document)
-        Timber.debug { "Services requested: ${services.size}" }
+
         publishProgress(RequestedServicesCallback(Status.SUCCESS).services(services))
     }
 }

@@ -39,8 +39,6 @@ import okhttp3.FormBody
 import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class DisciplineDetailsOperation(
     private val semester: String?,
@@ -81,23 +79,18 @@ class DisciplineDetailsOperation(
                         groups.add(group)
                     } else {
                         failureCount++
-                        Timber.debug { "Processed group was null" }
                     }
                 } else {
                     failureCount++
-                    Timber.debug { "Discipline from params was null" }
                 }
             } else {
                 failureCount++
-                Timber.debug { "Document from initial was null" }
             }
         }
-        Timber.debug { "Completed ${forms.size} -- $semester $code $group" }
         publishProgress(DisciplineDetailsCallback(Status.COMPLETED).groups(groups).failureCount(failureCount))
     }
 
     private fun initialPage(): BaseCallback<*>? {
-        Timber.debug { "Initial" }
         val initial = StartPageOperation(null).finishedResult
         if (initial.status != Status.SUCCESS) {
             publishProgress(DisciplineDetailsCallback.copyFrom(initial))
@@ -107,7 +100,6 @@ class DisciplineDetailsOperation(
     }
 
     private fun initialFormConnect(form: FormBody.Builder): Document? {
-        Timber.debug { "Going to Discipline Page" }
         val call = SagresCalls.getDisciplinePageFromInitial(form)
         try {
             val response = call.execute()
@@ -124,7 +116,6 @@ class DisciplineDetailsOperation(
     }
 
     private fun disciplinePageParams(params: FormBody.Builder): Document? {
-        Timber.debug { "Discipline with Params" }
         val call = SagresCalls.getDisciplinePageWithParams(params)
         try {
             val response = call.execute()
@@ -141,12 +132,10 @@ class DisciplineDetailsOperation(
     }
 
     private fun processGroup(document: Document): SagresDisciplineGroup? {
-        Timber.debug { "Processing group" }
         return SagresDisciplineDetailsParser.extractDisciplineGroup(document)
     }
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
-        Timber.debug { "Initializing materials download" }
         val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             val json = JSONObject()
@@ -163,7 +152,6 @@ class DisciplineDetailsOperation(
     }
 
     private fun executeMaterialCall(document: Document, encoded: String): Document? {
-        Timber.debug { "Executing materials call" }
         val call = SagresCalls.getDisciplineMaterials(encoded, document)
         try {
             val response = call.execute()

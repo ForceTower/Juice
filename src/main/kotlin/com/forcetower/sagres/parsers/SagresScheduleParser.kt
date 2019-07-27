@@ -26,8 +26,6 @@ import java.util.ArrayList
 import java.util.HashMap
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import timber.log.Timber
-import timber.log.debug
 
 /**
  * Created by João Paulo on 07/03/2018.
@@ -43,7 +41,7 @@ object SagresScheduleParser {
         val subtitle = document.selectFirst("table[class=\"meus-horarios-legenda\"]")
 
         if (schedule == null || subtitle == null) {
-            Timber.debug { "Schedule not found! Prob is \"Schedule Undefined\"" }
+
             return null
         }
 
@@ -151,7 +149,7 @@ object SagresScheduleParser {
                         if (lesson != null)
                             lesson.addAtToAllClasses(parts[0].trim(), parts[1].trim())
                         else {
-                            Timber.debug { "Something wrong is happening here..." }
+
                         }
                     }
                 } else if (parts.size == 3) {
@@ -163,11 +161,11 @@ object SagresScheduleParser {
                                 parts[1].trim { it <= ' ' },
                                 parts[0].trim { it <= ' ' })
                         else {
-                            Timber.debug { "Something wrong is happening here..." }
+
                         }
                     }
                 } else {
-                    Timber.debug { "Something smells fishy" }
+
                 }
             } else {
                 val splitPos = value.indexOf("-")
@@ -180,7 +178,7 @@ object SagresScheduleParser {
                     lesson.name = name
                     codePerLessons[code] = lesson
                 } else {
-                    Timber.debug { "Something was ignored due to a bug. Since this might be changed leave as is" }
+
                 }
             }
         }

@@ -23,8 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresDisciplineMissedClass
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import timber.log.Timber
-import timber.log.debug
 
 object SagresMissedClassesParser {
 
@@ -46,15 +44,15 @@ object SagresMissedClassesParser {
 
                 val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
                 val spectrum = frequency.selectFirst("table")
-                if (spectrum == null) Timber.debug { "<table_not_found> :: There's no missed classes for $code" }
+                if (spectrum == null) { }
                 else {
                     val body = spectrum.selectFirst("tbody")
-                    if (body == null) Timber.debug { "<body_not_found> :: There's no missed classes for $code" }
+                    if (body == null) { }
                     else values.addAll(fourier(body, code, semesterId))
                 }
             }
         } catch (t: Throwable) {
-            Timber.debug { "Throwable T: ${t.message}" }
+
             error = true
         }
 

@@ -23,8 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresMaterialLink
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import timber.log.Timber
-import timber.log.debug
 
 object SagresMaterialsParser {
     @JvmStatic
@@ -58,7 +56,7 @@ object SagresMaterialsParser {
 
         val link = if (a.attr("href").isEmpty()) a.attr("href") else a.attr("HREF")
         val name = element.parent()?.parent()?.parent()?.parent()?.parent()?.parent()?.selectFirst("td")?.text() ?: "Arquivo"
-        Timber.debug { "Defined new material $name at $link" }
+
 
         materials.add(SagresMaterialLink(name, link))
     }

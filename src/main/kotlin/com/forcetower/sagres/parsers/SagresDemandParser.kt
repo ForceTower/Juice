@@ -22,8 +22,6 @@ package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 object SagresDemandParser {
     @JvmStatic
@@ -84,7 +82,6 @@ object SagresDemandParser {
             }
         }
 
-        Timber.debug { "Total list size: ${list.size}" }
         return list
     }
 }

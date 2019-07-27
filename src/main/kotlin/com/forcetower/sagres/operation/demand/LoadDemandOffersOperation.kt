@@ -27,8 +27,6 @@ import com.forcetower.sagres.parsers.SagresDemandParser
 import com.forcetower.sagres.request.SagresCalls
 import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 class LoadDemandOffersOperation(executor: Executor?) : Operation<DemandOffersCallback>(executor) {
     init {
@@ -55,15 +53,12 @@ class LoadDemandOffersOperation(executor: Executor?) : Operation<DemandOffersCal
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                Timber.debug { "Completed request!" }
                 val body = response.body!!.string()
                 return body.asDocument()
             } else {
-                Timber.debug { "Failed loading" }
                 publishProgress(DemandOffersCallback(Status.RESPONSE_FAILED).code(response.code).message("Failed loading"))
             }
         } catch (t: Throwable) {
-            Timber.debug { "Error loading page. Throwable message ${t.message}" }
             publishProgress(DemandOffersCallback(Status.NETWORK_ERROR).throwable(t))
         }
         return null

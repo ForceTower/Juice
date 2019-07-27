@@ -24,8 +24,6 @@ import com.forcetower.sagres.database.model.SagresCourseVariant
 import com.forcetower.sagres.database.model.SagresGrade
 import com.forcetower.sagres.database.model.SagresGradeInfo
 import org.jsoup.nodes.Document
-import timber.log.Timber
-import timber.log.debug
 
 object SagresGradesParser {
     @JvmStatic
@@ -42,7 +40,7 @@ object SagresGradesParser {
                     val pair = Pair(semesterId, semester)
                     list.add(pair)
                 } catch (e: Exception) {
-                    Timber.debug { "Can't parse long: $value" }
+
                 }
             }
             return list
@@ -60,7 +58,7 @@ object SagresGradesParser {
                 val id = value.toLong()
                 Pair(true, id)
             } catch (e: Exception) {
-                Timber.debug { "Can't parse long: $value" }
+
                 null
             }
         } else {
@@ -71,10 +69,10 @@ object SagresGradesParser {
                     val value = selected.attr("value").trim()
                     try {
                         val id = value.toLong()
-                        Timber.debug { "Successfully found current semester using the alternate way" }
+
                         Pair(false, id)
                     } catch (e: Exception) {
-                        Timber.debug { "Can't parse long: $value" }
+
                         null
                     }
                 } else {
@@ -97,7 +95,7 @@ object SagresGradesParser {
                     val uefsId = element.attr("value").toLong()
                     val name = element.text().trim()
                     courses.add(SagresCourseVariant(uefsId, name))
-                    Timber.debug { "Added variant id: $uefsId with name: $name" }
+
                 } catch (e: Exception) {}
             }
         }
@@ -154,7 +152,7 @@ object SagresGradesParser {
                     }
                     grades.add(grade)
                 } else {
-                    Timber.debug { "<body_is_null> :: Can't parse grades" }
+
                 }
 
                 val foot = table.selectFirst("tfoot")
@@ -164,7 +162,7 @@ object SagresGradesParser {
                         grade.finalScore = if (tr.children()[2].text().trim() == "-") "0.0" else tr.children()[2].text().trim()
                 }
             } catch (t: Throwable) {
-                Timber.debug { "Exception happened" }
+
                 t.printStackTrace()
             }
         }
