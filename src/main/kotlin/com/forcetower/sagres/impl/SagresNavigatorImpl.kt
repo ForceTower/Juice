@@ -26,6 +26,7 @@ import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
 import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.executor.SagresTaskExecutor
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.calendar.CalendarOperation
 import com.forcetower.sagres.operation.demand.CreateDemandOperation
@@ -53,6 +54,7 @@ import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.semester.SemesterOperation
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
+import io.reactivex.subjects.Subject
 import okhttp3.Call
 import okhttp3.CookieJar
 import okhttp3.Interceptor
@@ -67,6 +69,7 @@ class SagresNavigatorImpl private constructor(
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
     val client: OkHttpClient = createClient(cookieJar)
+    private var selectedInstitution = "UEFS"
 
     private fun createClient(cookies: CookieJar): OkHttpClient {
         return OkHttpClient.Builder()
@@ -176,8 +179,71 @@ class SagresNavigatorImpl private constructor(
         return FastDisciplinesOperation(semester, code, group, partialLoad, discover, null).finishedResult
     }
 
-    override fun getSelectedInstitution() = "UEFS"
-    override fun setSelectedInstitution(institution: String) = Unit
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLogin(username: String, password: String): Subject<LoginCallback> {
+        return LoginOperation(username, password, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMe(): Subject<PersonCallback> {
+        return PersonOperation(null, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMessages(userId: Long, fetchAll: Boolean): Subject<MessagesCallback> {
+        return MessagesOperation(SagresTaskExecutor.networkThreadExecutor, userId, fetchAll).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMessagesHtml(needsAuth: Boolean): Subject<MessagesCallback> {
+        return OldMessagesOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aCalendar(): Subject<CalendarCallback> {
+        return CalendarOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aSemesters(userId: Long): Subject<SemesterCallback> {
+        return SemesterOperation(SagresTaskExecutor.networkThreadExecutor, userId).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aStartPage(): Subject<StartPageCallback> {
+        return StartPageOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aGetCurrentGrades(): Subject<GradesCallback> {
+        return GradesOperation(null, null, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLoadDisciplineDetails(
+        semester: String?,
+        code: String?,
+        group: String?,
+        partialLoad: Boolean
+    ): Subject<DisciplineDetailsCallback> {
+        return DisciplineDetailsOperation(semester, code, group, partialLoad, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLoadDemandOffers(): Subject<DemandOffersCallback> {
+        return LoadDemandOffersOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aGetRequestedServices(login: Boolean): Subject<RequestedServicesCallback> {
+        return RequestedServicesOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    override fun getSelectedInstitution() = selectedInstitution
+    override fun setSelectedInstitution(institution: String) {
+        selectedInstitution = institution
+    }
+
     override fun clearSession() { cookieJar.clear() }
     override fun logout() {
         stopTags(null)
