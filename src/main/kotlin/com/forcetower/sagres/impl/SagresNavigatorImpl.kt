@@ -26,6 +26,7 @@ import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
 import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.executor.SagresTaskExecutor
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.calendar.CalendarOperation
 import com.forcetower.sagres.operation.demand.CreateDemandOperation
@@ -53,6 +54,7 @@ import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.semester.SemesterOperation
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
+import io.reactivex.subjects.Subject
 import okhttp3.Call
 import okhttp3.CookieJar
 import okhttp3.Interceptor
@@ -92,88 +94,148 @@ class SagresNavigatorImpl private constructor(
         return PersistentCookieJar(cookies, persist)
     }
 
-    override suspend fun login(username: String, password: String): LoginCallback {
+    override fun login(username: String, password: String): LoginCallback {
         return LoginOperation(username, password, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun me(): PersonCallback {
+    override fun me(): PersonCallback {
         return PersonOperation(null, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun messages(userId: Long, fetchAll: Boolean): MessagesCallback {
+    override fun messages(userId: Long, fetchAll: Boolean): MessagesCallback {
         return MessagesOperation(null, userId, fetchAll).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun messagesHtml(): MessagesCallback {
+    override fun messagesHtml(): MessagesCallback {
         return OldMessagesOperation(null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun calendar(): CalendarCallback {
+    override fun calendar(): CalendarCallback {
         return CalendarOperation(null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun semesters(userId: Long): SemesterCallback {
+    override fun semesters(userId: Long): SemesterCallback {
         return SemesterOperation(null, userId).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun startPage(): StartPageCallback {
+    override fun startPage(): StartPageCallback {
         return StartPageOperation(null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun getCurrentGrades(): GradesCallback {
+    override fun getCurrentGrades(): GradesCallback {
         return GradesOperation(null, null, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun getGradesFromSemester(semesterSagresId: Long, document: Document): GradesCallback {
+    override fun getGradesFromSemester(semesterSagresId: Long, document: Document): GradesCallback {
         return GradesOperation(semesterSagresId, document, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun downloadEnrollment(file: File): DocumentCallback {
+    override fun downloadEnrollment(file: File): DocumentCallback {
         return DocumentOperation(file, "SAGRES_ENROLL_CERT", null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun downloadFlowchart(file: File): DocumentCallback {
+    override fun downloadFlowchart(file: File): DocumentCallback {
         return DocumentOperation(file, "SAGRES_FLOWCHART", null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun downloadHistory(file: File): DocumentCallback {
+    override fun downloadHistory(file: File): DocumentCallback {
         return DocumentOperation(file, "SAGRES_HISTORY", null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun loadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean): DisciplineDetailsCallback {
+    override fun loadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean): DisciplineDetailsCallback {
         return DisciplineDetailsOperation(semester, code, group, partialLoad, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun loadDemandOffers(): DemandOffersCallback {
+    override fun loadDemandOffers(): DemandOffersCallback {
         return LoadDemandOffersOperation(null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun createDemandOffer(offers: List<SagresDemandOffer>): DemandCreatorCallback {
+    override fun createDemandOffer(offers: List<SagresDemandOffer>): DemandCreatorCallback {
         return CreateDemandOperation(offers, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun getRequestedServices(): RequestedServicesCallback {
+    override fun getRequestedServices(): RequestedServicesCallback {
         return RequestedServicesOperation(null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override suspend fun disciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): FastDisciplinesCallback {
+    override fun disciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): FastDisciplinesCallback {
         return FastDisciplinesOperation(semester, code, group, partialLoad, discover, null).finishedResult
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLogin(username: String, password: String): Subject<LoginCallback> {
+        return LoginOperation(username, password, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMe(): Subject<PersonCallback> {
+        return PersonOperation(null, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMessages(userId: Long, fetchAll: Boolean): Subject<MessagesCallback> {
+        return MessagesOperation(SagresTaskExecutor.networkThreadExecutor, userId, fetchAll).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aMessagesHtml(needsAuth: Boolean): Subject<MessagesCallback> {
+        return OldMessagesOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aCalendar(): Subject<CalendarCallback> {
+        return CalendarOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aSemesters(userId: Long): Subject<SemesterCallback> {
+        return SemesterOperation(SagresTaskExecutor.networkThreadExecutor, userId).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aStartPage(): Subject<StartPageCallback> {
+        return StartPageOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aGetCurrentGrades(): Subject<GradesCallback> {
+        return GradesOperation(null, null, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLoadDisciplineDetails(
+        semester: String?,
+        code: String?,
+        group: String?,
+        partialLoad: Boolean
+    ): Subject<DisciplineDetailsCallback> {
+        return DisciplineDetailsOperation(semester, code, group, partialLoad, SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aLoadDemandOffers(): Subject<DemandOffersCallback> {
+        return LoadDemandOffersOperation(SagresTaskExecutor.networkThreadExecutor).result
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aGetRequestedServices(login: Boolean): Subject<RequestedServicesCallback> {
+        return RequestedServicesOperation(SagresTaskExecutor.networkThreadExecutor).result
     }
 
     override fun getSelectedInstitution() = "UEFS"
