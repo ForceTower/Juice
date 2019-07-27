@@ -29,7 +29,8 @@ class SagresDisciplineGroup(
     var missLimit: Int,
     var classPeriod: String?,
     var department: String?,
-    val locations: List<SagresDisciplineClassLocation>?
+    val locations: List<SagresDisciplineClassLocation>?,
+    var classItems: List<SagresDisciplineClassItem> = emptyList()
 ) {
     var isDraft = true
     var ignored = 0
@@ -37,7 +38,6 @@ class SagresDisciplineGroup(
         private set
     lateinit var code: String
     lateinit var name: String
-    lateinit var classItems: List<SagresDisciplineClassItem>
 
     fun setDisciplineCodeAndSemester(code: String, semester: String) {
         this.code = code
