@@ -25,8 +25,8 @@ import com.forcetower.sagres.impl.SagresNavigatorImpl
 import okhttp3.Call
 import okhttp3.FormBody
 import okhttp3.Request
-import okhttp3.Response
 import okhttp3.RequestBody
+import okhttp3.Response
 import org.jsoup.nodes.Document
 
 object SagresCalls {
@@ -44,7 +44,7 @@ object SagresCalls {
             val request = SagresRequests.startPage()
             return getCall(request)
         }
-    
+
     private fun getCall(request: Request): Call {
         val client = SagresNavigatorImpl.instance.client
         return client.newCall(request)

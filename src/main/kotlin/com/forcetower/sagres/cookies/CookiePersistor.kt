@@ -43,5 +43,4 @@ interface CookiePersistor {
      * Clear all cookies from persistence.
      */
     fun clear()
-
 }

@@ -20,9 +20,9 @@
 
 package com.forcetower.sagres.extension
 
+import java.nio.charset.Charset
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.nio.charset.Charset
 
 fun String.asDocument(): Document {
     val document = Jsoup.parse(this)

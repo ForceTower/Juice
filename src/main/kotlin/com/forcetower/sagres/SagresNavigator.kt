@@ -37,8 +37,8 @@ import com.forcetower.sagres.operation.person.PersonCallback
 import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import io.reactivex.subjects.Subject
-import org.jsoup.nodes.Document
 import java.io.File
+import org.jsoup.nodes.Document
 
 abstract class SagresNavigator {
     abstract fun login(username: String, password: String): LoginCallback
@@ -71,7 +71,7 @@ abstract class SagresNavigator {
     abstract fun aLoadDemandOffers(): Subject<DemandOffersCallback>
     abstract fun aGetRequestedServices(login: Boolean = false): Subject<RequestedServicesCallback>
     abstract fun aDisciplinesExperimental(semester: String? = null, code: String? = null, group: String? = null, partialLoad: Boolean = false, discover: Boolean = true): Subject<FastDisciplinesCallback>
-    
+
     abstract fun getSelectedInstitution(): String
     abstract fun setSelectedInstitution(institution: String)
     abstract fun clearSession()

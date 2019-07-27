@@ -20,7 +20,12 @@
 
 package com.forcetower.sagres.operation.initial
 
-import com.forcetower.sagres.database.model.*
+import com.forcetower.sagres.database.model.SagresCalendar
+import com.forcetower.sagres.database.model.SagresDiscipline
+import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
+import com.forcetower.sagres.database.model.SagresDisciplineGroup
+import com.forcetower.sagres.database.model.SagresMessage
+import com.forcetower.sagres.database.model.SagresSemester
 import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Status
 

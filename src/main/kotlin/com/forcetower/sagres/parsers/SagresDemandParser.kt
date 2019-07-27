@@ -84,7 +84,7 @@ object SagresDemandParser {
             }
         }
 
-        Timber.debug {"Total list size: ${list.size}" }
+        Timber.debug { "Total list size: ${list.size}" }
         return list
     }
 }

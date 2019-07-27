@@ -23,10 +23,9 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresDiscipline
 import com.forcetower.sagres.utils.ValueUtils
 import com.forcetower.sagres.utils.WordUtils
+import java.util.ArrayList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-
-import java.util.ArrayList
 
 object SagresDisciplineParser {
     @JvmStatic

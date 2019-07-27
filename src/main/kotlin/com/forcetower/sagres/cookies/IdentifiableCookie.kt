@@ -20,9 +20,8 @@
 
 package com.forcetower.sagres.cookies
 
-import okhttp3.Cookie
-
 import java.util.ArrayList
+import okhttp3.Cookie
 
 /**
  * This class decorates a Cookie to re-implements equals() and hashcode() methods in order to identify
@@ -34,11 +33,11 @@ internal class IdentifiableCookie private constructor(val cookie: Cookie) {
     override fun equals(other: Any?): Boolean {
         if (other !is IdentifiableCookie) return false
         val that = other as IdentifiableCookie?
-        return (that!!.cookie.name == this.cookie.name
-                && that.cookie.domain == this.cookie.domain
-                && that.cookie.path == this.cookie.path
-                && that.cookie.secure == this.cookie.secure
-                && that.cookie.hostOnly == this.cookie.hostOnly)
+        return (that!!.cookie.name == this.cookie.name &&
+                that.cookie.domain == this.cookie.domain &&
+                that.cookie.path == this.cookie.path &&
+                that.cookie.secure == this.cookie.secure &&
+                that.cookie.hostOnly == this.cookie.hostOnly)
     }
 
     override fun hashCode(): Int {

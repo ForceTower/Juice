@@ -21,10 +21,10 @@
 package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresMessage
+import java.util.Locale
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.util.Locale
 
 /**
  * Created by João Paulo on 06/03/2018.

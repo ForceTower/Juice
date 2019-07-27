@@ -26,12 +26,12 @@ import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresLinkFinder
 import com.forcetower.sagres.request.SagresCalls
-import okio.buffer
-import okio.sink
-import org.jsoup.nodes.Document
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.Executor
+import okio.buffer
+import okio.sink
+import org.jsoup.nodes.Document
 
 class DocumentOperation(
     private val file: File,

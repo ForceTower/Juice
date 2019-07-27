@@ -25,10 +25,10 @@ import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresRequestedServicesParser
 import com.forcetower.sagres.request.SagresCalls
+import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.util.concurrent.Executor
 
 class RequestedServicesOperation(
     executor: Executor?

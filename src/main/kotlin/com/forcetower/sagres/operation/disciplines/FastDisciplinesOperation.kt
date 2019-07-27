@@ -31,6 +31,8 @@ import com.forcetower.sagres.parsers.SagresDisciplineDetailsFetcherParser
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsParser
 import com.forcetower.sagres.parsers.SagresMaterialsParser
 import com.forcetower.sagres.request.SagresCalls
+import java.io.IOException
+import java.util.concurrent.Executor
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.apache.commons.codec.binary.Base64
@@ -38,8 +40,6 @@ import org.json.JSONObject
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.io.IOException
-import java.util.concurrent.Executor
 
 class FastDisciplinesOperation(
     private val semester: String?,

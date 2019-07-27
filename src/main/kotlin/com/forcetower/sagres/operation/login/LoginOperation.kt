@@ -26,12 +26,12 @@ import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
 import com.forcetower.sagres.request.SagresCalls
 import com.forcetower.sagres.utils.ConnectedStates
+import java.io.IOException
+import java.util.concurrent.Executor
 import okhttp3.Response
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.io.IOException
-import java.util.concurrent.Executor
 
 class LoginOperation constructor(
     private val username: String,

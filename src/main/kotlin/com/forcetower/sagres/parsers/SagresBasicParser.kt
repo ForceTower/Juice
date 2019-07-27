@@ -23,7 +23,6 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.utils.ConnectedStates
 import com.forcetower.sagres.utils.ValueUtils.toDouble
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import timber.log.Timber
 import timber.log.debug
 

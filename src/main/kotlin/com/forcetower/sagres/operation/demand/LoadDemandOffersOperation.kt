@@ -20,18 +20,15 @@
 
 package com.forcetower.sagres.operation.demand
 
-import com.forcetower.sagres.SagresNavigator
-import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.extension.asDocument
-import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresDemandParser
 import com.forcetower.sagres.request.SagresCalls
+import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
 import timber.log.Timber
 import timber.log.debug
-import java.util.concurrent.Executor
 
 class LoadDemandOffersOperation(executor: Executor?) : Operation<DemandOffersCallback>(executor) {
     init {

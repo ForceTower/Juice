@@ -33,11 +33,11 @@ import com.forcetower.sagres.request.SagresCalls
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
+import java.util.ArrayList
+import java.util.concurrent.Executor
 import timber.log.Timber
 import timber.log.debug
 import timber.log.error
-import java.util.ArrayList
-import java.util.concurrent.Executor
 
 class MessagesOperation(
     executor: Executor?,

@@ -42,7 +42,6 @@ object SagresDcpGroupsParser {
             var credits = discipline.select("span[class=\"webpart-aluno-codigo\"]").text()
             credits = credits.replace("[^\\d]".toRegex(), "")
 
-
             val ul = discipline.selectFirst("ul")
 
             if (ul != null) {

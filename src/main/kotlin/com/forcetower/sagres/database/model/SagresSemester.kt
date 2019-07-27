@@ -59,7 +59,6 @@ data class SagresSemester(
         } catch (e: Exception) {
             0
         }
-
     }
 
     companion object {

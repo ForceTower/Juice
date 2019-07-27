@@ -20,10 +20,10 @@
 
 package com.forcetower.sagres.parsers
 
+import java.util.ArrayList
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
-import java.util.ArrayList
 import timber.log.Timber
 import timber.log.debug
 import timber.log.error

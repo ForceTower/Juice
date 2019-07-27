@@ -19,15 +19,21 @@
  */
 
 package com.forcetower.sagres.operation.initial
+
 import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
-import com.forcetower.sagres.parsers.*
+import com.forcetower.sagres.parsers.SagresBasicParser
+import com.forcetower.sagres.parsers.SagresCalendarParser
+import com.forcetower.sagres.parsers.SagresDcpGroupsParser
+import com.forcetower.sagres.parsers.SagresDisciplineParser
+import com.forcetower.sagres.parsers.SagresMessageParser
+import com.forcetower.sagres.parsers.SagresScheduleParser
+import com.forcetower.sagres.parsers.SagresSemesterParser
 import com.forcetower.sagres.request.SagresCalls
-import org.jsoup.nodes.Document
-
 import java.io.IOException
 import java.util.concurrent.Executor
+import org.jsoup.nodes.Document
 
 class StartPageOperation(executor: Executor?) : Operation<StartPageCallback>(executor) {
     init {
@@ -50,7 +56,6 @@ class StartPageOperation(executor: Executor?) : Operation<StartPageCallback>(exe
             e.printStackTrace()
             publishProgress(StartPageCallback(Status.NETWORK_ERROR).throwable(e))
         }
-
     }
 
     private fun successMeasures(document: Document) {
