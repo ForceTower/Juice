@@ -36,6 +36,7 @@ import com.forcetower.sagres.operation.messages.MessagesCallback
 import com.forcetower.sagres.operation.person.PersonCallback
 import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
+import io.reactivex.subjects.Subject
 import org.jsoup.nodes.Document
 import java.io.File
 
@@ -58,17 +59,17 @@ abstract class SagresNavigator {
     abstract suspend fun getRequestedServices(): RequestedServicesCallback
     abstract suspend fun disciplinesExperimental(semester: String? = null, code: String? = null, group: String? = null, partialLoad: Boolean = false, discover: Boolean = true): FastDisciplinesCallback
 
-//    abstract fun aLogin(username: String, password: String): Subject<LoginCallback>
-//    abstract fun aMe(): Subject<PersonCallback>
-//    abstract fun aMessages(userId: Long, fetchAll: Boolean = false): Subject<MessagesCallback>
-//    abstract fun aMessagesHtml(needsAuth: Boolean = false): Subject<MessagesCallback>
-//    abstract fun aCalendar(): Subject<CalendarCallback>
-//    abstract fun aSemesters(userId: Long): Subject<SemesterCallback>
-//    abstract fun aStartPage(): Subject<StartPageCallback>
-//    abstract fun aGetCurrentGrades(): Subject<GradesCallback>
-//    abstract fun aLoadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean = false): Subject<DisciplineDetailsCallback>
-//    abstract fun aLoadDemandOffers(): Subject<DemandOffersCallback>
-//    abstract fun aGetRequestedServices(login: Boolean = false): Subject<RequestedServicesCallback>
+    abstract fun aLogin(username: String, password: String): Subject<LoginCallback>
+    abstract fun aMe(): Subject<PersonCallback>
+    abstract fun aMessages(userId: Long, fetchAll: Boolean = false): Subject<MessagesCallback>
+    abstract fun aMessagesHtml(needsAuth: Boolean = false): Subject<MessagesCallback>
+    abstract fun aCalendar(): Subject<CalendarCallback>
+    abstract fun aSemesters(userId: Long): Subject<SemesterCallback>
+    abstract fun aStartPage(): Subject<StartPageCallback>
+    abstract fun aGetCurrentGrades(): Subject<GradesCallback>
+    abstract fun aLoadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean = false): Subject<DisciplineDetailsCallback>
+    abstract fun aLoadDemandOffers(): Subject<DemandOffersCallback>
+    abstract fun aGetRequestedServices(login: Boolean = false): Subject<RequestedServicesCallback>
     
     abstract fun getSelectedInstitution(): String
     abstract fun setSelectedInstitution(institution: String)
