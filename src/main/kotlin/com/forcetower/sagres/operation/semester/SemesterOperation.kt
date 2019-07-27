@@ -56,8 +56,8 @@ class SemesterOperation(executor: Executor?, private val userId: Long) : Operati
             val dSemesters = gson.fromJson<Dumb<MutableList<SagresSemester>>>(body, type)
             val semesters = dSemesters.items
             semesters.forEach {
-                it.name = it.name?.trim()
-                it.codename = it.codename?.trim()
+                it.name = it.name.trim()
+                it.codename = it.codename.trim()
                 it.endClasses = it.endClasses?.trim()
                 it.end = it.end?.trim()
                 it.startClasses = it.startClasses?.trim()

@@ -147,7 +147,7 @@ class DisciplineDetailsOperation(
 
     private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
         Timber.debug { "Initializing materials download" }
-        val items = group.classItems?.filter { it.numberOfMaterials > 0 } ?: return
+        val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             val json = JSONObject()
             json.put("_realType", true)
