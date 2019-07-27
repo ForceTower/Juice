@@ -78,14 +78,18 @@ abstract class SagresNavigator {
     abstract fun stopTags(tags: String?)
 
     companion object {
+        @JvmStatic
         val instance: SagresNavigator
             get() = SagresNavigatorImpl.instance
 
+        @JvmOverloads
+        @JvmStatic
         fun initialize(persist: CookiePersistor? = null, institution: String = "UEFS") {
             SagresNavigatorImpl.initialize(persist)
             SagresNavigator.instance.setSelectedInstitution(institution)
         }
 
+        @JvmStatic
         fun getSupportedInstitutions() = Constants.SUPPORTED_INSTITUTIONS
     }
 }
