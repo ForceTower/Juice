@@ -69,6 +69,7 @@ class SagresNavigatorImpl private constructor(
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
     val client: OkHttpClient = createClient(cookieJar)
+    private var selectedInstitution = "UEFS"
 
     private fun createClient(cookies: CookieJar): OkHttpClient {
         return OkHttpClient.Builder()
@@ -237,9 +238,12 @@ class SagresNavigatorImpl private constructor(
     override fun aGetRequestedServices(login: Boolean): Subject<RequestedServicesCallback> {
         return RequestedServicesOperation(SagresTaskExecutor.networkThreadExecutor).result
     }
+    
+    override fun getSelectedInstitution() = selectedInstitution
+    override fun setSelectedInstitution(institution: String) {
+        selectedInstitution = institution
+    }
 
-    override fun getSelectedInstitution() = "UEFS"
-    override fun setSelectedInstitution(institution: String) = Unit
     override fun clearSession() { cookieJar.clear() }
     override fun logout() {
         stopTags(null)
