@@ -36,7 +36,7 @@ class Callback private constructor(
         private var throwable: Throwable? = null
         private var document: Document? = null
 
-        fun message(message: String): Builder {
+        fun message(message: String?): Builder {
             this.message = message
             return this
         }
@@ -46,12 +46,12 @@ class Callback private constructor(
             return this
         }
 
-        fun throwable(throwable: Throwable): Builder {
+        fun throwable(throwable: Throwable?): Builder {
             this.throwable = throwable
             return this
         }
 
-        fun document(document: Document): Builder {
+        fun document(document: Document?): Builder {
             this.document = document
             return this
         }
