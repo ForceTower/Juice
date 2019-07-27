@@ -70,6 +70,7 @@ abstract class SagresNavigator {
     abstract fun aLoadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean = false): Subject<DisciplineDetailsCallback>
     abstract fun aLoadDemandOffers(): Subject<DemandOffersCallback>
     abstract fun aGetRequestedServices(login: Boolean = false): Subject<RequestedServicesCallback>
+    abstract fun aDisciplinesExperimental(semester: String? = null, code: String? = null, group: String? = null, partialLoad: Boolean = false, discover: Boolean = true): Subject<FastDisciplinesCallback>
     
     abstract fun getSelectedInstitution(): String
     abstract fun setSelectedInstitution(institution: String)

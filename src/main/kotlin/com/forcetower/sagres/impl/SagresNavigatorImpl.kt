@@ -238,6 +238,11 @@ class SagresNavigatorImpl private constructor(
     override fun aGetRequestedServices(login: Boolean): Subject<RequestedServicesCallback> {
         return RequestedServicesOperation(SagresTaskExecutor.networkThreadExecutor).result
     }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    override fun aDisciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): Subject<FastDisciplinesCallback> {
+        return FastDisciplinesOperation(semester, code, group, partialLoad, discover, SagresTaskExecutor.networkThreadExecutor).result
+    }
     
     override fun getSelectedInstitution() = selectedInstitution
     override fun setSelectedInstitution(institution: String) {
