@@ -37,7 +37,7 @@ class SagresDisciplineGroup(
     lateinit var semester: String
         private set
     lateinit var code: String
-    lateinit var name: String
+    var name: String? = null
 
     fun setDisciplineCodeAndSemester(code: String, semester: String) {
         this.code = code
