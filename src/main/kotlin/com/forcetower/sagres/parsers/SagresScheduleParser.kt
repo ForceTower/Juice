@@ -225,6 +225,7 @@ object SagresScheduleParser {
                     classDay.setClassName(name)
                 }
             }
+            get() = field ?: ""
         private val classes: MutableList<String>
         private val days: MutableList<SagresClassDay>
 
@@ -338,7 +339,7 @@ object SagresScheduleParser {
 
     private class SagresClassDay internal constructor(
         val class_code: String,
-        var class_name: String?,
+        var class_name: String,
         val starts_at: String,
         val ends_at: String,
         val classType: String,
@@ -369,7 +370,7 @@ object SagresScheduleParser {
             day: String,
             classType: String,
             sagresClass: SagresClass
-        ) : this(sagresClass.code, sagresClass.name, start, finish, classType, day, null, null, null) {
+        ) : this(sagresClass.code, sagresClass.name!!, start, finish, classType, day, null, null, null) {
         }
     }
 }
