@@ -25,6 +25,7 @@ package com.forcetower.sagres.utils
  */
 
 object WordUtils {
+    @JvmStatic
     fun toTitleCase(str: String?): String? {
         str ?: return null
 
@@ -63,6 +64,7 @@ object WordUtils {
         return sb.toString().trim()
     }
 
+    @JvmStatic
     private fun isGreekOneToTen(str: String): Boolean {
         return str.equals("i", ignoreCase = true) ||
                 str.equals("ii", ignoreCase = true) ||
@@ -76,6 +78,7 @@ object WordUtils {
                 str.equals("x", ignoreCase = true)
     }
 
+    @JvmStatic
     fun capitalize(str: String?): String? {
         str ?: return null
 
