@@ -1,7 +1,7 @@
 # Juice, a Sagres Scrapper Library
 [![Release](https://jitpack.io/v/ForceTower/Juice.svg)](https://jitpack.io/#ForceTower/Juice)
 
-Desde o início do UNES, sempre foi necessário criar um pacote que envolvesse as requisições ao portal e que exposse os itens encontrados lá de forma de uma API, ou seja, com funções, retornos e tipos bem definidos.
+Desde o início do UNES, sempre foi necessário criar um pacote que envolvesse as requisições ao portal e que expusesse os itens encontrados lá em forma de uma API, ou seja, com funções, retornos e tipos bem definidos.
 
 Este repositório contem o que é utilizado pelo UNES para extrair as informações do portal. Se o erro é de "backend" muito provavelmente este é o lugar que está errado, e não o [Melon](https://github.com/ForceTower/Melon).
 
