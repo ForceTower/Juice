@@ -1,7 +1,7 @@
 # Juice, a Sagres Scrapper Library
 [![Release](https://jitpack.io/v/ForceTower/Juice.svg)](https://jitpack.io/#ForceTower/Juice)
 
-Desde o inicio do UNES, sempre foi necessário criar um pacote que envolvesse as requisições ao portal e que exposse os itens encontrados lá de forma de uma API, ou seja, com funções, retornos e tipos bem definidos.
+Desde o início do UNES, sempre foi necessário criar um pacote que envolvesse as requisições ao portal e que exposse os itens encontrados lá de forma de uma API, ou seja, com funções, retornos e tipos bem definidos.
 
 Este repositório contem o que é utilizado pelo UNES para extrair as informações do portal. Se o erro é de "backend" muito provavelmente este é o lugar que está errado, e não o [Melon](https://github.com/ForceTower/Melon).
 
@@ -9,7 +9,7 @@ Este repositório está disponível como uma dependência no jitpack para fácil
 
 ## Metas
 * Suporte a suspend functions to kotlin, já que é uma feature bem interessante da linguagem :)
-* Codigo completamente revisado para kotlin
+* Código completamente revisado para kotlin
 * Código livre da Framework Android
 * Testes automáticos, codigo testável é legal
 * Suporte descente para o Mestrado
