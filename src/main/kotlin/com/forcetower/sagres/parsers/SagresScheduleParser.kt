@@ -149,7 +149,6 @@ object SagresScheduleParser {
                         if (lesson != null)
                             lesson.addAtToAllClasses(parts[0].trim(), parts[1].trim())
                         else {
-
                         }
                     }
                 } else if (parts.size == 3) {
@@ -161,11 +160,9 @@ object SagresScheduleParser {
                                 parts[1].trim { it <= ' ' },
                                 parts[0].trim { it <= ' ' })
                         else {
-
                         }
                     }
                 } else {
-
                 }
             } else {
                 val splitPos = value.indexOf("-")
@@ -178,7 +175,6 @@ object SagresScheduleParser {
                     lesson.name = name
                     codePerLessons[code] = lesson
                 } else {
-
                 }
             }
         }

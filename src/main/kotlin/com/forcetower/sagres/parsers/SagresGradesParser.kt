@@ -40,7 +40,6 @@ object SagresGradesParser {
                     val pair = Pair(semesterId, semester)
                     list.add(pair)
                 } catch (e: Exception) {
-
                 }
             }
             return list
@@ -95,7 +94,6 @@ object SagresGradesParser {
                     val uefsId = element.attr("value").toLong()
                     val name = element.text().trim()
                     courses.add(SagresCourseVariant(uefsId, name))
-
                 } catch (e: Exception) {}
             }
         }
@@ -152,7 +150,6 @@ object SagresGradesParser {
                     }
                     grades.add(grade)
                 } else {
-
                 }
 
                 val foot = table.selectFirst("tfoot")

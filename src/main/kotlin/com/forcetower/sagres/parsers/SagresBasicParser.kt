@@ -69,10 +69,8 @@ object SagresBasicParser {
                         if (d != -1.0) return d
                     } catch (ignored: Exception) { }
                 } else {
-
                 }
             } else {
-
             }
         }
         return -1.0

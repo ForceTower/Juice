@@ -44,11 +44,9 @@ object SagresMissedClassesParser {
 
                 val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
                 val spectrum = frequency.selectFirst("table")
-                if (spectrum == null) { }
-                else {
+                if (spectrum == null) { } else {
                     val body = spectrum.selectFirst("tbody")
-                    if (body == null) { }
-                    else values.addAll(fourier(body, code, semesterId))
+                    if (body == null) { } else values.addAll(fourier(body, code, semesterId))
                 }
             }
         } catch (t: Throwable) {

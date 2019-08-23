@@ -26,6 +26,7 @@ import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
 import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.executor.SagresTaskExecutor
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.calendar.CalendarOperation
@@ -64,7 +65,8 @@ import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
 
 class SagresNavigatorImpl private constructor(
-    persist: CookiePersistor?
+    persist: CookiePersistor?,
+    private val base64Encoder: Base64Encoder
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
@@ -267,6 +269,8 @@ class SagresNavigatorImpl private constructor(
         }
     }
 
+    override fun getBase64Encoder() = base64Encoder
+
     companion object {
         private lateinit var sDefaultInstance: SagresNavigatorImpl
         private val sLock = Any()
@@ -279,10 +283,10 @@ class SagresNavigatorImpl private constructor(
                     throw IllegalStateException("Sagres navigator was not initialized")
             }
 
-        fun initialize(persist: CookiePersistor?) {
+        fun initialize(persist: CookiePersistor?, encoder: Base64Encoder) {
             synchronized(sLock) {
                 if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist)
+                    sDefaultInstance = SagresNavigatorImpl(persist, encoder)
                 }
             }
         }

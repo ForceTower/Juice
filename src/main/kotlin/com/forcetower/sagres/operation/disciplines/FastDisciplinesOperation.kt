@@ -20,6 +20,7 @@
 
 package com.forcetower.sagres.operation.disciplines
 
+import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
 import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.operation.Operation
@@ -35,7 +36,6 @@ import java.io.IOException
 import java.util.concurrent.Executor
 import okhttp3.FormBody
 import okhttp3.RequestBody
-import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
 
@@ -149,7 +149,8 @@ class FastDisciplinesOperation(
             json.put("showForm", true)
             json.put("popupLinkColumn", "cpt_material_apoio")
             json.put("retrieveArguments", item.materialLink)
-            val encoded = Base64.encodeBase64String(json.toString().toByteArray())
+            val encoder = SagresNavigator.instance.getBase64Encoder()
+            val encoded = encoder.encodeString(json.toString())
             val materials = executeMaterialCall(document, encoded)
             if (materials != null) {
                 item.materials = SagresMaterialsParser.extractMaterials(materials)

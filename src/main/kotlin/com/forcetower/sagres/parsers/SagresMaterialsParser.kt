@@ -57,7 +57,6 @@ object SagresMaterialsParser {
         val link = if (a.attr("href").isEmpty()) a.attr("href") else a.attr("HREF")
         val name = element.parent()?.parent()?.parent()?.parent()?.parent()?.parent()?.selectFirst("td")?.text() ?: "Arquivo"
 
-
         materials.add(SagresMaterialLink(name, link))
     }
 }

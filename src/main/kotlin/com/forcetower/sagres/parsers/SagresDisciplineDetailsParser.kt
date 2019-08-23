@@ -93,7 +93,6 @@ object SagresDisciplineDetailsParser {
             credits = Integer.parseInt(classCredits)
             maxMiss = Integer.parseInt(missLimits)
         } catch (e: Exception) {
-
         }
 
         val created = SagresDisciplineGroup(teacher, refGroup, credits, maxMiss, classPeriod, department, locations)
@@ -138,7 +137,6 @@ object SagresDisciplineDetailsParser {
             }
 
             if (materials > 0) {
-
             }
 
             // Download Material section

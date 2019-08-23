@@ -22,6 +22,8 @@ package com.forcetower.sagres
 
 import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.database.model.SagresDemandOffer
+import com.forcetower.sagres.decoders.Base64Encoder
+import com.forcetower.sagres.impl.ApacheBase64Encoder
 import com.forcetower.sagres.impl.SagresNavigatorImpl
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.demand.DemandCreatorCallback
@@ -78,6 +80,8 @@ abstract class SagresNavigator {
     abstract fun logout()
     abstract fun stopTags(tags: String?)
 
+    abstract fun getBase64Encoder(): Base64Encoder
+
     companion object {
         @JvmStatic
         val instance: SagresNavigator
@@ -85,8 +89,14 @@ abstract class SagresNavigator {
 
         @JvmOverloads
         @JvmStatic
-        fun initialize(persist: CookiePersistor? = null, institution: String = "UEFS") {
-            SagresNavigatorImpl.initialize(persist)
+        fun initialize(
+            persist: CookiePersistor? = null,
+            institution: String = "UEFS",
+            // Android implementation of this is different, so we need to adapt
+            // The baseline is to use Apache things
+            base64Encoder: Base64Encoder = ApacheBase64Encoder()
+        ) {
+            SagresNavigatorImpl.initialize(persist, base64Encoder)
             SagresNavigator.instance.setSelectedInstitution(institution)
         }
 
