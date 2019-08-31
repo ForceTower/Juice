@@ -24,7 +24,8 @@ data class SagresGradeInfo(
     val name: String,
     val grade: String,
     val date: String,
-    val weight: Double
+    val weight: Double,
+    val grouping: Int
 ) {
     override fun toString(): String {
         return "$name: $grade"

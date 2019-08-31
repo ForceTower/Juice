@@ -1,0 +1,180 @@
+[
+  {
+    "semesterId": 1000000861,
+    "discipline": "CIS425 - PRINCÍPIO DE CONTAB. GERAL (TP02)",
+    "partialMean": "",
+    "finalScore": "Não divulgada",
+    "values": [
+      {
+        "name": "AV1 - I Avaliação",
+        "grade": "9,8",
+        "date": "17/07/2019",
+        "weight": 10.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - II Avaliação",
+        "grade": "9,8",
+        "date": "21/08/2019",
+        "weight": 10.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV3 - III Avaliação",
+        "grade": "Não divulgada",
+        "date": "11/09/2019",
+        "weight": 10.0,
+        "grouping": 1
+      }
+    ]
+  },
+  {
+    "semesterId": 1000000861,
+    "discipline": "FIS110 - FÍSICA I (T06P01)",
+    "partialMean": "",
+    "finalScore": "Não divulgada",
+    "values": [
+      {
+        "name": "Pr1 - Avaliação Prática 1",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Te1 - Avaliação Teórica 1",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Pr1 - Avaliação Prática 1",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Pr1 - Avaliação Prática 1",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Pr1 - Avaliação Prática 1",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Pr2 - Avaliação Prática 2",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      },
+      {
+        "name": "Pr2 - Avaliação Prática 2",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      },
+      {
+        "name": "Pr2 - Avaliação Prática 2",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      },
+      {
+        "name": "Pr2 - Avaliação Prática 2",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      },
+      {
+        "name": "Te2 - Avaliação Teórica 2",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      },
+      {
+        "name": "Pr3 - Avaliação Prática 3",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 3
+      },
+      {
+        "name": "Pr3 - Avaliação Prática 3",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 3
+      },
+      {
+        "name": "Te3 - Avaliação Teórica 3",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 3
+      },
+      {
+        "name": "Pr3 - Avaliação Prática 3",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 3
+      },
+      {
+        "name": "Pr3 - Avaliação Prática 3",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 3
+      }
+    ]
+  },
+  {
+    "semesterId": 1000000861,
+    "discipline": "TEC463 - MULTIMÍDIA E INTERNET (TP01)",
+    "partialMean": "",
+    "finalScore": "8,8",
+    "values": [
+      {
+        "name": "AV1 - Avaliação I",
+        "grade": "8,0",
+        "date": "27/06/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação II",
+        "grade": "8,5",
+        "date": "16/07/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV3 - Avaliação III",
+        "grade": "10,0",
+        "date": "30/07/2019",
+        "weight": 1.0,
+        "grouping": 1
+      }
+    ]
+  },
+  {
+    "semesterId": 1000000861,
+    "discipline": "TEC518 - TRABALHO DE CONCLUSÃO DE CURSO I (TP01)",
+    "partialMean": "",
+    "finalScore": "Não divulgada",
+    "values": []
+  }
+]

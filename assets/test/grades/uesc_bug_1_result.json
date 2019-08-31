@@ -1,0 +1,190 @@
+[
+  {
+    "semesterId": 2000000276,
+    "discipline": "CEC025 - ECONOMIA APLICADA À ENGENHARIA (T03)",
+    "partialMean": "",
+    "finalScore": "9,0",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "8,0",
+        "date": "21/03/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "10,0",
+        "date": "01/08/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV3 - Avaliação 3",
+        "grade": "9,0",
+        "date": "15/08/2019",
+        "weight": 1.0,
+        "grouping": 1
+      }
+    ]
+  },
+  {
+    "semesterId": 2000000276,
+    "discipline": "CET846 - FENÔMENOS DE TRANSPORTES I (T06P06)",
+    "partialMean": "",
+    "finalScore": "Não divulgada",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "6,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "10,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "10,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      }
+    ]
+  },
+  {
+    "semesterId": 2000000276,
+    "discipline": "CET987 - QUÍMICA ANALÍTICA QUANTITATIVA (T03P09)",
+    "partialMean": "",
+    "finalScore": "8,5",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "5,8",
+        "date": "04/04/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "9,8",
+        "date": "22/08/2019",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "10,0",
+        "date": "21/08/2019",
+        "weight": 1.0,
+        "grouping": 2
+      }
+    ]
+  },
+  {
+    "semesterId": 2000000276,
+    "discipline": "CET988 - QUÍMICA ORGÂNICA II (T03P10)",
+    "partialMean": "",
+    "finalScore": "Não divulgada",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "6,8",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "10,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "9,6",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      }
+    ]
+  },
+  {
+    "semesterId": 2000000276,
+    "discipline": "CET989 - TERMODINÂMICA QUÍMICA I (T03)",
+    "partialMean": "6,2",
+    "finalScore": "Não divulgada",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "6,8",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "1,2",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV3 - Avaliação 3",
+        "grade": "8,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV4 - Avaliação 4",
+        "grade": "8,8",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "Prova Final",
+        "grade": "Não divulgada",
+        "date": "Não informada",
+        "weight": 4.0,
+        "grouping": 1
+      }
+    ]
+  },
+  {
+    "semesterId": 2000000276,
+    "discipline": "CET991 - SELEÇÃO E CARACTERIZAÇÃO DE MATERIAIS (T03P08)",
+    "partialMean": "",
+    "finalScore": "7,3",
+    "values": [
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "8,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV2 - Avaliação 2",
+        "grade": "5,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 1
+      },
+      {
+        "name": "AV1 - Avaliação 1",
+        "grade": "9,0",
+        "date": "Não informada",
+        "weight": 1.0,
+        "grouping": 2
+      }
+    ]
+  }
+]

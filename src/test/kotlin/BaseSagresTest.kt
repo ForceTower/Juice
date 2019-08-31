@@ -1,8 +1,17 @@
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresCredential
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
+import com.google.gson.LongSerializationPolicy
+import com.google.gson.reflect.TypeToken
 import java.io.File
 import org.junit.BeforeClass
+import java.lang.reflect.Type
+import java.math.BigDecimal
 
 /*
  * This file is part of the UNES Open Source Project.
@@ -28,15 +37,22 @@ abstract class BaseSagresTest {
     companion object {
         lateinit var instance: SagresNavigator
         lateinit var credential: SagresCredential
+        lateinit var gson: Gson
 
         @BeforeClass
         @JvmStatic
         fun init() {
-            val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
+            gson = GsonBuilder()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create()
+
             val environment = File("environment.json").readText()
             credential = gson.fromJson(environment, SagresCredential::class.java)
             SagresNavigator.initialize(null)
             instance = SagresNavigator.instance
         }
+
+        fun toJson(source: Any) = gson.toJson(source)
     }
 }

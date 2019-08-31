@@ -24,13 +24,12 @@ data class SagresGrade(
     val semesterId: Long,
     val discipline: String,
     var partialMean: String = "",
-    var finalScore: String = ""
-) {
+    var finalScore: String = "",
     val values: MutableList<SagresGradeInfo> = ArrayList()
-
+) {
     fun addInfo(info: SagresGradeInfo) {
         values.add(info)
     }
 
-    override fun toString(): String = "$discipline has $values"
+     override fun toString(): String = "$discipline has $values"
 }

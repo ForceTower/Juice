@@ -129,7 +129,8 @@ object SagresGradesParser {
                 val table = gradeInfo.selectFirst("table")
                 val body = table.selectFirst("tbody")
 
-                if (body != null) {
+                body?.run {
+                    var grouping = 1
                     val trs = body.select("tr")
                     for (tr in trs) {
                         val children = tr.children()
@@ -144,12 +145,15 @@ object SagresGradesParser {
                                 val score = children[2].text().trim()
                                 var weight = children[3].text().trim().toDoubleOrNull()
                                 if (weight == null) weight = 1.0
-                                grade.addInfo(SagresGradeInfo(evaluation, score, date, weight))
+                                grade.addInfo(SagresGradeInfo(evaluation, score, date, weight, grouping))
+                            }
+                        } else {
+                            if (tr.hasClass("boletim-linha-destaque") && children.size == 3) {
+                                grouping++
                             }
                         }
                     }
                     grades.add(grade)
-                } else {
                 }
 
                 val foot = table.selectFirst("tfoot")
