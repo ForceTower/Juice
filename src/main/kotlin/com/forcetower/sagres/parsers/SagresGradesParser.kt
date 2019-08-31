@@ -131,6 +131,7 @@ object SagresGradesParser {
 
                 body?.run {
                     var grouping = 1
+                    var groupingName = "Notas"
                     val trs = body.select("tr")
                     for (tr in trs) {
                         val children = tr.children()
@@ -145,11 +146,19 @@ object SagresGradesParser {
                                 val score = children[2].text().trim()
                                 var weight = children[3].text().trim().toDoubleOrNull()
                                 if (weight == null) weight = 1.0
-                                grade.addInfo(SagresGradeInfo(evaluation, score, date, weight, grouping))
+                                grade.addInfo(SagresGradeInfo(evaluation, score, date, weight, grouping, groupingName))
                             }
                         } else {
                             if (tr.hasClass("boletim-linha-destaque") && children.size == 3) {
                                 grouping++
+                            } else if (children.size == 2) {
+                                val element = children[1]
+                                if (element.`is`("th") && element.children().size == 1) {
+                                    val child = element.child(0)
+                                    if (child.`is`("span")) {
+                                        groupingName = child.text()
+                                    }
+                                }
                             }
                         }
                     }

@@ -10,21 +10,24 @@
         "grade": "9,8",
         "date": "17/07/2019",
         "weight": 10.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       },
       {
         "name": "AV2 - II Avaliação",
         "grade": "9,8",
         "date": "21/08/2019",
         "weight": 10.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       },
       {
         "name": "AV3 - III Avaliação",
         "grade": "Não divulgada",
         "date": "11/09/2019",
         "weight": 10.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       }
     ]
   },
@@ -39,105 +42,120 @@
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Nota 1"
       },
       {
         "name": "Te1 - Avaliação Teórica 1",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Nota 1"
       },
       {
         "name": "Pr1 - Avaliação Prática 1",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Nota 1"
       },
       {
         "name": "Pr1 - Avaliação Prática 1",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Nota 1"
       },
       {
         "name": "Pr1 - Avaliação Prática 1",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Nota 1"
       },
       {
         "name": "Pr2 - Avaliação Prática 2",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 2
+        "grouping": 2,
+        "groupingName": "Nota 2"
       },
       {
         "name": "Pr2 - Avaliação Prática 2",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 2
+        "grouping": 2,
+        "groupingName": "Nota 2"
       },
       {
         "name": "Pr2 - Avaliação Prática 2",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 2
+        "grouping": 2,
+        "groupingName": "Nota 2"
       },
       {
         "name": "Pr2 - Avaliação Prática 2",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 2
+        "grouping": 2,
+        "groupingName": "Nota 2"
       },
       {
         "name": "Te2 - Avaliação Teórica 2",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 2
+        "grouping": 2,
+        "groupingName": "Nota 2"
       },
       {
         "name": "Pr3 - Avaliação Prática 3",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 3
+        "grouping": 3,
+        "groupingName": "Nota 3"
       },
       {
         "name": "Pr3 - Avaliação Prática 3",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 3
+        "grouping": 3,
+        "groupingName": "Nota 3"
       },
       {
         "name": "Te3 - Avaliação Teórica 3",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 3
+        "grouping": 3,
+        "groupingName": "Nota 3"
       },
       {
         "name": "Pr3 - Avaliação Prática 3",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 3
+        "grouping": 3,
+        "groupingName": "Nota 3"
       },
       {
         "name": "Pr3 - Avaliação Prática 3",
         "grade": "Não divulgada",
         "date": "Não informada",
         "weight": 1.0,
-        "grouping": 3
+        "grouping": 3,
+        "groupingName": "Nota 3"
       }
     ]
   },
@@ -152,21 +170,24 @@
         "grade": "8,0",
         "date": "27/06/2019",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       },
       {
         "name": "AV2 - Avaliação II",
         "grade": "8,5",
         "date": "16/07/2019",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       },
       {
         "name": "AV3 - Avaliação III",
         "grade": "10,0",
         "date": "30/07/2019",
         "weight": 1.0,
-        "grouping": 1
+        "grouping": 1,
+        "groupingName": "Teórica-Prática"
       }
     ]
   },
