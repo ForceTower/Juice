@@ -60,8 +60,8 @@ artifacts {
 }
 
 signing {
-    def signingKey = findProperty("SIGN_KEY") as String
-    def signingPassword = findProperty("SIGN_PASSWORD") as String
+    def signingKey = System.getenv("SIGN_KEY")
+    def signingPassword = System.getenv("SIGN_PASSWORD")
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign configurations.archives
 }
@@ -139,8 +139,8 @@ publishing {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             name "maven"
             credentials {
-                username findProperty("OSS_USERNAME")
-                password findProperty("OSS_PASSWORD")
+                username System.getenv("OSS_USERNAME")
+                password System.getenv("OSS_PASSWORD")
             }}
     }
 }
