@@ -31,5 +31,5 @@ data class SagresGrade(
         values.add(info)
     }
 
-     override fun toString(): String = "$discipline has $values"
+    override fun toString(): String = "$discipline has $values"
 }
