@@ -17,18 +17,144 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.41'
     id "org.jmailen.kotlinter" version "2.1.0"
+    id "maven-publish"
+    id "signing"
 }
-
-group 'com.forcetower'
-version '2.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
     google()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+archivesBaseName = 'juice'
+group = "com.github.forcetower"
+version = version
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+signing {
+    def signingKey = findProperty("SIGN_KEY") as String
+    def signingPassword = findProperty("SIGN_PASSWORD") as String
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        primary (MavenPublication) {
+            groupId = 'com.github.forcetower'
+            artifactId = 'juice'
+            version = version
+
+            pom {
+                name = "Juice"
+                description = "A SAGRES Scrapper Library"
+                url = "http://github.com/ForceTower/Juice"
+                from components.java
+
+                licenses {
+                    license {
+                        name = "General Public License v3.0"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'forcetower'
+                        name = 'João Paulo Sena'
+                        email = 'joaopaulo761@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/juice.git'
+                    developerConnection = 'scm:git:ssh://github.com/juice.git'
+                    url = 'http://www.forcetower.dev/juice'
+                }
+            }
+
+            artifact(sourcesJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }
+
+            // create the signed artifacts
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "$buildDir/repos/releases"
+            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            def snapshots = "https://oss.sonatype.org/content/repositories/snapshots"
+            def staging = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            name "maven"
+            credentials {
+                username findProperty("OSS_USERNAME")
+                password findProperty("OSS_PASSWORD")
+            }}
+    }
+}
+
+model {
+    tasks.generatePomFileForPrimaryPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishPrimaryPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishPrimaryPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
+    }
 }
 
 dependencies {
