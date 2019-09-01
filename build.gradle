@@ -65,6 +65,7 @@ signing {
         def sign = Base64.decoder.decode(bytes).encodeHex().toString()
         def signingPassword = System.getenv("SIGN_PASSWORD") as String
         useInMemoryPgpKeys(sign, signingPassword)
+        println('completed')
     } catch (ignored) {
         println(ignored)
     }
