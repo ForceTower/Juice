@@ -31,7 +31,7 @@ jobs:
 
       - run:
           name: Download dependencies
-          command: gradle dependencies
+          command: ./gradlew dependencies
 
       - save_cache:
           paths:
@@ -40,12 +40,12 @@ jobs:
 
       - run:
           name: Check code (styling and stuff)
-          command: gradle check
+          command: ./gradlew check
 
       - run:
           name: Run tests
-          command: gradle test
+          command: ./gradlew test
 
       - run:
           name: Publish to Maven
-          command: gradle publish
+          command: ./gradlew publish
