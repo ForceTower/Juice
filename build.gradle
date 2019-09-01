@@ -60,8 +60,8 @@ artifacts {
 }
 
 signing {
-    def signingKey = System.getenv("SIGN_KEY")
-    def signingPassword = System.getenv("SIGN_PASSWORD")
+    def signingKey = System.getenv("SIGN_KEY") as String
+    def signingPassword = System.getenv("SIGN_PASSWORD") as String
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign configurations.archives
 }
