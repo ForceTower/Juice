@@ -61,11 +61,12 @@ artifacts {
 
 signing {
     try {
-        def sign = Base64.decoder.decode(System.getenv("SIGN_KEY")).encodeHex().toString()
+        def bytes = System.getenv("SIGN_KEY").getBytes()
+        def sign = Base64.decoder.decode(bytes).encodeHex().toString()
         def signingPassword = System.getenv("SIGN_PASSWORD") as String
         useInMemoryPgpKeys(sign, signingPassword)
-    } catch (error) {
-
+    } catch (ignored) {
+        println(ignored)
     }
     sign configurations.archives
 }
