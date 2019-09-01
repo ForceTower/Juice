@@ -24,19 +24,9 @@ jobs:
           command: |
             echo $ENV_CONFIG | base64 --decode > ~/juice/environment.json
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-
       - run:
           name: Download dependencies
           command: ./gradlew dependencies
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Check code (styling and stuff)
