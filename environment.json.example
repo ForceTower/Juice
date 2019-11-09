@@ -1,4 +1,5 @@
 {
     "username": "a_username",
-    "password": "a_pasword"
+    "password": "a_pasword",
+    "institution": "A supported institution"
 }

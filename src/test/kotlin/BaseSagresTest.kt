@@ -1,4 +1,5 @@
 import com.forcetower.sagres.SagresNavigator
+import com.forcetower.sagres.SagresNavigator.Companion
 import com.forcetower.sagres.database.model.SagresCredential
 import com.google.gson.GsonBuilder
 import java.io.File
@@ -35,8 +36,8 @@ abstract class BaseSagresTest {
             val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
             val environment = File("environment.json").readText()
             credential = gson.fromJson(environment, SagresCredential::class.java)
-            SagresNavigator.initialize(null)
-            instance = SagresNavigator.instance
+            SagresNavigator.configure(null)
+            instance = SagresNavigator.get(credential.institution)
         }
     }
 }

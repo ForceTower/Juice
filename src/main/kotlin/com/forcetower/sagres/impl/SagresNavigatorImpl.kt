@@ -245,6 +245,7 @@ class SagresNavigatorImpl private constructor(
     }
 
     override fun getSelectedInstitution() = selectedInstitution
+
     override fun setSelectedInstitution(institution: String) {
         selectedInstitution = institution
     }
@@ -271,6 +272,7 @@ class SagresNavigatorImpl private constructor(
         private lateinit var sDefaultInstance: SagresNavigatorImpl
         private val sLock = Any()
 
+        @Deprecated("Usage of single instance is deprecated and will be removed in the future")
         val instance: SagresNavigatorImpl
             get() = synchronized(sLock) {
                 if (::sDefaultInstance.isInitialized)
@@ -279,10 +281,14 @@ class SagresNavigatorImpl private constructor(
                     throw IllegalStateException("Sagres navigator was not initialized")
             }
 
-        fun initialize(persist: CookiePersistor?) {
+        fun initialize(persist: CookiePersistor?): SagresNavigatorImpl {
             synchronized(sLock) {
-                if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist)
+                return if (!::sDefaultInstance.isInitialized) {
+                    val instance = SagresNavigatorImpl(persist)
+                    sDefaultInstance = instance
+                    instance
+                } else {
+                    sDefaultInstance
                 }
             }
         }

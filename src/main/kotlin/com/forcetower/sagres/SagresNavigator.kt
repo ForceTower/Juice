@@ -80,11 +80,46 @@ abstract class SagresNavigator {
 
     companion object {
         @JvmStatic
+        private val instances = mutableMapOf<String, SagresNavigator>()
+        @JvmStatic
+        private var persistor: CookiePersistor? = null
+
+        @JvmStatic
+        fun get(institution: String): SagresNavigator {
+            return if (instances.containsKey(institution)) {
+                instances.getValue(institution)
+            } else {
+                instantiateNavigator(institution)
+            }
+        }
+
+        @JvmStatic
+        private fun instantiateNavigator(institution: String): SagresNavigator {
+            synchronized(instances) {
+                val element = instances[institution]
+                if (element != null) {
+                    return element
+                }
+                synchronized(instances) {
+                    val instance = SagresNavigatorImpl.initialize(persistor)
+                    instances[institution] = instance
+                    return instance
+                }
+            }
+        }
+
+        fun configure(persist: CookiePersistor? = null) {
+            persistor = persist
+        }
+
+        @JvmStatic
+        @Deprecated("Single usage of instance is not supported anymore", replaceWith = ReplaceWith("SagresNavigator.get(institution)"))
         val instance: SagresNavigator
             get() = SagresNavigatorImpl.instance
 
         @JvmOverloads
         @JvmStatic
+        @Deprecated("Single usage of initialize is deprecated and will be removed in the future", replaceWith = ReplaceWith("SagresNavigator.configure(persist)"))
         fun initialize(persist: CookiePersistor? = null, institution: String = "UEFS") {
             SagresNavigatorImpl.initialize(persist)
             SagresNavigator.instance.setSelectedInstitution(institution)

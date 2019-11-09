@@ -22,5 +22,6 @@ package com.forcetower.sagres.database.model
 
 data class SagresCredential(
     val username: String,
-    val password: String
+    val password: String,
+    val institution: String
 )
