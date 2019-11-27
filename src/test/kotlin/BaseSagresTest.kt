@@ -45,6 +45,6 @@ abstract class BaseSagresTest {
             instance = SagresNavigator.instance
         }
 
-        fun toJson(source: Any) = gson.toJson(source)
+        protected fun toJson(source: Any) = gson.toJson(source)
     }
 }

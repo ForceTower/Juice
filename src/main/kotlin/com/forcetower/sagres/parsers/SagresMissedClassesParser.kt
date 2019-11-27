@@ -29,7 +29,7 @@ object SagresMissedClassesParser {
     @JvmStatic
     fun extractMissedClasses(document: Document, semesterId: Long): Pair<Boolean, List<SagresDisciplineMissedClass>> {
         var error = false
-        val values: MutableList<SagresDisciplineMissedClass> = ArrayList()
+        val values = mutableListOf<SagresDisciplineMissedClass>()
 
         try {
             val div = document.selectFirst("div[id=\"divBoletins\"]")
@@ -44,13 +44,15 @@ object SagresMissedClassesParser {
 
                 val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
                 val spectrum = frequency.selectFirst("table")
-                if (spectrum == null) { } else {
-                    val body = spectrum.selectFirst("tbody")
-                    if (body == null) { } else values.addAll(fourier(body, code, semesterId))
+                if (spectrum != null) {
+                    val bodies = spectrum.select("tbody")
+                    bodies.forEach { body ->
+                        values.addAll(fourier(body, code, semesterId))
+                    }
                 }
             }
         } catch (t: Throwable) {
-
+            t.printStackTrace()
             error = true
         }
 
@@ -63,10 +65,12 @@ object SagresMissedClassesParser {
         val indexes = element.select("tr")
 
         for (index in indexes) {
-            val information = index.child(0).child(0).children()
-            val date = information[0].text().trim()
-            val desc = information[1].text().trim()
-            values.add(SagresDisciplineMissedClass(date, desc, code, semesterId))
+            try {
+                val information = index.child(0).child(0).children()
+                val date = information[0].text().trim()
+                val desc = information[1].text().trim()
+                values.add(SagresDisciplineMissedClass(date, desc, code, semesterId))
+            } catch (ignored: Throwable) { }
         }
         return values
     }
