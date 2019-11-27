@@ -21,9 +21,6 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
-    }
 }
 
 plugins {
@@ -60,15 +57,6 @@ artifacts {
 }
 
 signing {
-    try {
-        def bytes = System.getenv("SIGN_KEY").getBytes()
-        def sign = Base64.decoder.decode(bytes).encodeHex().toString()
-        def signingPassword = System.getenv("SIGN_PASSWORD") as String
-        useInMemoryPgpKeys(sign, signingPassword)
-        println('completed')
-    } catch (ignored) {
-        println(ignored)
-    }
     sign configurations.archives
 }
 
@@ -145,8 +133,8 @@ publishing {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             name "maven"
             credentials {
-                username System.getenv("OSS_USERNAME")
-                password System.getenv("OSS_PASSWORD")
+                username sonatypeUsername
+                password sonatypePassword
             }}
     }
 }
