@@ -24,7 +24,8 @@ data class SagresDisciplineMissedClass(
     val date: String,
     val description: String,
     val disciplineCode: String,
-    val semester: Long
+    val semester: Long,
+    val group: String
 ) {
     override fun toString(): String = "${disciplineCode}_$date -> $description"
 }

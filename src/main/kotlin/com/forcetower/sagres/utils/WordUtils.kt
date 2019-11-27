@@ -53,6 +53,12 @@ object WordUtils {
                 continue
             }
 
+            // The word "para" is lower case :)
+            if (anArr.equals("para", ignoreCase = true) && i != 0) {
+                sb.append(anArr.toLowerCase()).append(" ")
+                continue
+            }
+
             if (anArr.length < 3 && !anArr.endsWith(".") || anArr.length == 3 && anArr.endsWith("s")) {
                 sb.append(anArr).append(" ")
                 continue

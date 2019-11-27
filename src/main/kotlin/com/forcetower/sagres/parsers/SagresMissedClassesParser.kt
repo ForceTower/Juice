@@ -45,9 +45,26 @@ object SagresMissedClassesParser {
                 val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
                 val spectrum = frequency.selectFirst("table")
                 if (spectrum != null) {
-                    val bodies = spectrum.select("tbody")
-                    bodies.forEach { body ->
-                        values.addAll(fourier(body, code, semesterId))
+                    val result = mutableListOf<SagresDisciplineMissedClass>()
+                    try {
+                        val points = spectrum.children().drop(1)
+                        // New heuristic
+                        for (i in points.indices step 2) {
+                            val head = points[i]
+                            val body = points[i + 1]
+                            val groupSpan = head.selectFirst("span")
+                            val group = groupSpan.text().split("-")[0].trim()
+                            result.addAll(fourier(body, code, semesterId, group, true))
+                        }
+                    } catch (error: Throwable) {
+                        // fallback to original behaviour
+                        result.clear()
+                        val bodies = spectrum.select("tbody")
+                        bodies.forEach { body ->
+                            result.addAll(fourier(body, code, semesterId, "inv"))
+                        }
+                    } finally {
+                        values.addAll(result)
                     }
                 }
             }
@@ -60,7 +77,7 @@ object SagresMissedClassesParser {
     }
 
     @JvmStatic
-    private fun fourier(element: Element, code: String, semesterId: Long): List<SagresDisciplineMissedClass> {
+    private fun fourier(element: Element, code: String, semesterId: Long, group: String, throwError: Boolean = false): List<SagresDisciplineMissedClass> {
         val values: MutableList<SagresDisciplineMissedClass> = ArrayList()
         val indexes = element.select("tr")
 
@@ -69,8 +86,10 @@ object SagresMissedClassesParser {
                 val information = index.child(0).child(0).children()
                 val date = information[0].text().trim()
                 val desc = information[1].text().trim()
-                values.add(SagresDisciplineMissedClass(date, desc, code, semesterId))
-            } catch (ignored: Throwable) { }
+                values.add(SagresDisciplineMissedClass(date, desc, code, semesterId, group))
+            } catch (error: Throwable) {
+                if (throwError) throw error
+            }
         }
         return values
     }

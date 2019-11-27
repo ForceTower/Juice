@@ -2,6 +2,7 @@ import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.parsers.SagresMissedClassesParser
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.io.File
 
@@ -32,5 +33,10 @@ class AbsencesTest : BaseSagresTest() {
         assertEquals(null, split["TEC451"]?.size)
         assertEquals(null, split["TEC499"]?.size)
         assertEquals(52, split["FIS110"]?.size)
+
+        assertNotNull(split["FIS110"])
+        val grouping = split["FIS110"]?.groupBy { it.group }!!
+        assertEquals(16, grouping["Prática"]?.size)
+        assertEquals(36, grouping["Teórica"]?.size)
     }
 }
