@@ -24,7 +24,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.41'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
     id "org.jmailen.kotlinter" version "2.1.0"
     id "maven-publish"
     id "signing"
@@ -103,7 +103,7 @@ publishing {
             pom.withXml {
                 def pomFile = file("${project.buildDir}/generated-pom.xml")
                 writeTo(pomFile)
-                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                def pomAscFile = signing.sign(pomFile).signatureFiles.getAt(0)
                 artifact(pomAscFile) {
                     classifier = null
                     extension = 'pom.asc'
@@ -152,9 +152,9 @@ model {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.41"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61"
     implementation "org.jsoup:jsoup:1.11.2"
-    implementation "com.squareup.okhttp3:okhttp:4.0.1"
+    implementation "com.squareup.okhttp3:okhttp:4.2.1"
     implementation "com.google.code.gson:gson:2.8.5"
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0-RC3"
     implementation "androidx.annotation:annotation:1.1.0"

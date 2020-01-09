@@ -25,6 +25,7 @@ import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
+import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.executor.SagresTaskExecutor
@@ -60,6 +61,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Call
 import okhttp3.CookieJar
+import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
@@ -72,6 +74,8 @@ class SagresNavigatorImpl private constructor(
     private val cookieJar = createCookieJar(cookies, persist)
     val client: OkHttpClient = createClient(cookieJar)
     private var selectedInstitution = "UEFS"
+
+    private var credential: SagresCredential? = null
 
     private fun createClient(cookies: CookieJar): OkHttpClient {
         return OkHttpClient.Builder()
@@ -89,7 +93,23 @@ class SagresNavigatorImpl private constructor(
             val nRequest = chain.request().newBuilder()
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
                 .build()
-            chain.proceed(nRequest)
+
+            val cred = credential
+            if (cred == null) {
+                chain.proceed(nRequest)
+            } else {
+                val credentials = Credentials.basic(cred.username, cred.password)
+                if (nRequest.header("Authorization") != null) {
+                    chain.proceed(nRequest)
+                } else {
+                    val cRequest = nRequest.newBuilder()
+                        .addHeader("Authorization", credentials)
+                        .addHeader("Accept", "application/json")
+                        .build()
+
+                    chain.proceed(cRequest)
+                }
+            }
         }
     }
 
@@ -270,6 +290,10 @@ class SagresNavigatorImpl private constructor(
     }
 
     override fun getBase64Encoder() = base64Encoder
+
+    override fun putCredentials(cred: SagresCredential?) {
+        credential = cred
+    }
 
     companion object {
         private lateinit var sDefaultInstance: SagresNavigatorImpl

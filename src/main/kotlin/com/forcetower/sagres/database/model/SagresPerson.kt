@@ -20,23 +20,27 @@
 
 package com.forcetower.sagres.database.model
 
+import com.google.gson.annotations.SerializedName
+
 class SagresPerson(
     var id: Long,
     name: String,
+    @SerializedName("nomeExibicao")
     var exhibitionName: String?,
     private var cpf: String?,
     var email: String?
 ) {
+    @SerializedName("nome")
     var name: String? = null
         get() {
-            this.name = field!!.trim { it <= ' ' }
+            this.name = field?.trim()
             return field
         }
     var sagresId: String? = null
     var isMocked: Boolean = false
 
     val unique: String
-        get() = cpf!!.toLowerCase() + ".." + id
+        get() = cpf?.toLowerCase() + ".." + id
 
     init {
         this.name = name
@@ -44,17 +48,11 @@ class SagresPerson(
     }
 
     fun getCpf(): String? {
-        if (cpf == null) return null
-
-        cpf = cpf!!.trim { it <= ' ' }
+        cpf = cpf?.trim()
         return cpf
     }
 
     fun setCpf(cpf: String) {
         this.cpf = cpf
-    }
-
-    override fun toString(): String {
-        return "ID: $id - Name: $name"
     }
 }

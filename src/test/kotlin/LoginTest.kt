@@ -42,6 +42,8 @@ class LoginTest : BaseSagresTest() {
         assertEquals(Status.SUCCESS, callback.status)
         assertNotNull(callback.document)
         assertEquals(ConnectedStates.CONNECTED, SagresBasicParser.isConnected(callback.document))
+        val start = instance.startPage()
+        println("is demand open? ${start.isDemandOpen}")
         assertEquals("joão paulo santos sena", SagresBasicParser.getName(callback.document)?.toLowerCase())
     }
 

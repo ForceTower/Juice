@@ -43,6 +43,7 @@ abstract class BaseSagresTest {
             credential = gson.fromJson(environment, SagresCredential::class.java)
             SagresNavigator.initialize(null)
             instance = SagresNavigator.instance
+            instance.putCredentials(credential)
         }
 
         protected fun toJson(source: Any) = gson.toJson(source)

@@ -1,10 +1,10 @@
 import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.parsers.SagresMissedClassesParser
+import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import java.io.File
 
 class AbsencesTest : BaseSagresTest() {
     @Test

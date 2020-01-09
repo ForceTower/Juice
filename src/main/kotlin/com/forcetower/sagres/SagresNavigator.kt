@@ -21,6 +21,7 @@
 package com.forcetower.sagres
 
 import com.forcetower.sagres.cookies.CookiePersistor
+import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.impl.ApacheBase64Encoder
@@ -81,6 +82,7 @@ abstract class SagresNavigator {
     abstract fun stopTags(tags: String?)
 
     abstract fun getBase64Encoder(): Base64Encoder
+    abstract fun putCredentials(cred: SagresCredential?)
 
     companion object {
         @JvmStatic
