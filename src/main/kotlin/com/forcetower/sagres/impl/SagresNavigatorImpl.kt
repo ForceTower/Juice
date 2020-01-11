@@ -56,6 +56,7 @@ import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.semester.SemesterOperation
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
+import com.forcetower.sagres.persist.CachedPersistence
 import io.reactivex.subjects.Subject
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -68,7 +69,8 @@ import org.jsoup.nodes.Document
 
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?,
-    private val base64Encoder: Base64Encoder
+    private val base64Encoder: Base64Encoder,
+    private val persistence: CachedPersistence
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
@@ -291,6 +293,8 @@ class SagresNavigatorImpl private constructor(
 
     override fun getBase64Encoder() = base64Encoder
 
+    override fun getCachingPersistence() = persistence
+
     override fun putCredentials(cred: SagresCredential?) {
         credential = cred
     }
@@ -307,10 +311,14 @@ class SagresNavigatorImpl private constructor(
                     throw IllegalStateException("Sagres navigator was not initialized")
             }
 
-        fun initialize(persist: CookiePersistor?, encoder: Base64Encoder) {
+        fun initialize(
+            persist: CookiePersistor?,
+            encoder: Base64Encoder,
+            persistence: CachedPersistence
+        ) {
             synchronized(sLock) {
                 if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist, encoder)
+                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, persistence)
                 }
             }
         }

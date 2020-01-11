@@ -38,6 +38,7 @@ class SagresPerson(
         }
     var sagresId: String? = null
     var isMocked: Boolean = false
+    var link: String? = null
 
     val unique: String
         get() = cpf?.toLowerCase() + ".." + id

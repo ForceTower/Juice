@@ -67,7 +67,7 @@ class SemesterOperation(executor: Executor?, private val userId: Long) : Operati
             val callback = SemesterCallback(Status.SUCCESS).semesters(semesters)
             publishProgress(callback)
         } catch (t: Throwable) {
-            val callback = SemesterCallback(Status.UNKNOWN_FAILURE).message(t.message)
+            val callback = SemesterCallback(Status.UNKNOWN_FAILURE).throwable(t).message(t.message)
             publishProgress(callback)
         }
     }

@@ -21,14 +21,22 @@
 package com.forcetower.sagres.database.model
 
 import com.forcetower.sagres.database.Timestamped
+import com.google.gson.annotations.SerializedName
 
 data class SagresSemester(
+    @SerializedName("id")
     var uefsId: Long,
+    @SerializedName("descricao")
     var name: String,
+    @SerializedName("codigo")
     var codename: String,
+    @SerializedName("inicio")
     var start: String?,
+    @SerializedName("fim")
     var end: String?,
+    @SerializedName("inicioAulas")
     var startClasses: String?,
+    @SerializedName("fimAulas")
     var endClasses: String?
 ) : Comparable<SagresSemester>, Timestamped {
 

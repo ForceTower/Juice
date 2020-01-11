@@ -25,6 +25,7 @@ import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.impl.ApacheBase64Encoder
+import com.forcetower.sagres.impl.InMemoryCachePersistence
 import com.forcetower.sagres.impl.SagresNavigatorImpl
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.demand.DemandCreatorCallback
@@ -39,6 +40,7 @@ import com.forcetower.sagres.operation.messages.MessagesCallback
 import com.forcetower.sagres.operation.person.PersonCallback
 import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
+import com.forcetower.sagres.persist.CachedPersistence
 import io.reactivex.subjects.Subject
 import java.io.File
 import org.jsoup.nodes.Document
@@ -82,6 +84,7 @@ abstract class SagresNavigator {
     abstract fun stopTags(tags: String?)
 
     abstract fun getBase64Encoder(): Base64Encoder
+    abstract fun getCachingPersistence(): CachedPersistence
     abstract fun putCredentials(cred: SagresCredential?)
 
     companion object {
@@ -96,9 +99,10 @@ abstract class SagresNavigator {
             institution: String = "UEFS",
             // Android implementation of this is different, so we need to adapt
             // The baseline is to use Apache things
-            base64Encoder: Base64Encoder = ApacheBase64Encoder()
+            base64Encoder: Base64Encoder = ApacheBase64Encoder(),
+            persistence: CachedPersistence = InMemoryCachePersistence()
         ) {
-            SagresNavigatorImpl.initialize(persist, base64Encoder)
+            SagresNavigatorImpl.initialize(persist, base64Encoder, persistence)
             SagresNavigator.instance.setSelectedInstitution(institution)
         }
 

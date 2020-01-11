@@ -20,6 +20,7 @@
 
 package com.forcetower.sagres.operation.messages
 
+import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresClass
 import com.forcetower.sagres.database.model.SagresDisciplineResumed
 import com.forcetower.sagres.database.model.SagresLinker
@@ -155,13 +156,21 @@ class MessagesOperation(
     private fun getPerson(linker: SagresLinker): SagresPerson? {
         val href = linker.getLink() ?: return null
 
+        val persistence = SagresNavigator.instance.getCachingPersistence()
+        val cached = persistence.person().retrieveFromLink(href)
+        if (cached != null) return cached
+
         val call = SagresCalls.getLink(href)
 
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                return gson.fromJson(body, SagresPerson::class.java)
+                return gson.fromJson(body, SagresPerson::class.java).apply {
+                    link = href
+                }.also {
+                    persistence.person().save("${it.id}", it)
+                }
             }
         } catch (e: Exception) {
         }
@@ -171,6 +180,11 @@ class MessagesOperation(
 
     private fun getScope(scopes: SagresLinker): SagresMessageScope? {
         val link = scopes.getLink() ?: return null
+
+        val persistence = SagresNavigator.instance.getCachingPersistence()
+        val cached = persistence.messageScope().retrieve(link)
+        if (cached != null) return cached
+
         val call = SagresCalls.getLink(link)
 
         try {
@@ -186,8 +200,8 @@ class MessagesOperation(
                     if (linker != null) {
                         scoped.clazzLink = linker.getLink()
                         scoped.uid = link
-                    } else {
                     }
+                    persistence.messageScope().save(scoped.uid, scoped)
                     return scoped
                 }
             }
@@ -200,19 +214,23 @@ class MessagesOperation(
     private fun getClazz(scope: SagresMessageScope): SagresClass? {
         val link = scope.clazzLink ?: return null
 
+        val persistence = SagresNavigator.instance.getCachingPersistence()
+        val cached = persistence.clazz().retrieveFromLink(link)
+        if (cached != null) return cached
+
         val call = SagresCalls.getLink(link)
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val clazzed = gson.fromJson(body, SagresClass::class.java)
-                val discipline = clazzed.discipline
+                val clazz = gson.fromJson(body, SagresClass::class.java)
+                val discipline = clazz.discipline
                 if (discipline != null) {
-                    clazzed.disciplineLink = discipline.getLink()
-                    clazzed.link = link
-                } else {
+                    clazz.disciplineLink = discipline.getLink()
+                    clazz.link = link
                 }
-                return clazzed
+                persistence.clazz().save("${clazz.id}", clazz)
+                return clazz
             }
         } catch (e: Exception) {
         }
@@ -222,6 +240,10 @@ class MessagesOperation(
 
     private fun getDiscipline(clazz: SagresClass): SagresDisciplineResumed? {
         val link = clazz.disciplineLink ?: return null
+
+        val persistence = SagresNavigator.instance.getCachingPersistence()
+        val cached = persistence.disciplineResumed().retrieveFromLink(link)
+        if (cached != null) return cached
 
         val call = SagresCalls.getLink(link)
         try {
@@ -240,6 +262,7 @@ class MessagesOperation(
                     disciplined.departmentLink = department.getLink()
                     disciplined.link = link
                 }
+                persistence.disciplineResumed().save("${disciplined.id}", disciplined)
                 return disciplined
             }
         } catch (e: Exception) {
