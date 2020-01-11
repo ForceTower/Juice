@@ -185,7 +185,7 @@ class MessagesOperation(
                     val linker = scoped.clazzLinker
                     if (linker != null) {
                         scoped.clazzLink = linker.getLink()
-                        scoped.sagresId = link
+                        scoped.uid = link
                     } else {
                     }
                     return scoped
@@ -228,7 +228,12 @@ class MessagesOperation(
             val response = call.execute()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                val disciplined = gson.fromJson(body, SagresDisciplineResumed::class.java)
+                val disciplined = gson.fromJson(body, SagresDisciplineResumed::class.java).apply {
+                    code = code?.trim()
+                    name = name?.trim()
+                    resumedName = resumedName?.trim()
+                    objective = objective?.trim()
+                }
 
                 val department = disciplined.department
                 if (department != null) {

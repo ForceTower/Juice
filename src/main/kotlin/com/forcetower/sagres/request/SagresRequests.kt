@@ -109,8 +109,8 @@ object SagresRequests {
         return Request.Builder().url(url).build()
     }
 
-    fun messages(userId: Long): Request {
-        val url = "$BASE_URL/diario/recados?idPessoa=$userId"
+    fun messages(userId: Long, amount: Int = 20): Request {
+        val url = "$BASE_URL/diario/recados?idPessoa=$userId&quantidade=$amount"
         return Request.Builder()
             .url(url)
             .build()

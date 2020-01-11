@@ -20,14 +20,21 @@
 
 package com.forcetower.sagres.database.model
 
+import com.google.gson.annotations.SerializedName
+
 class SagresDisciplineResumed(
     var id: Long,
+    @SerializedName("codigo")
     var code: String?,
+    @SerializedName("nome")
     var name: String?,
+    @SerializedName("nomeResumido")
     var resumedName: String?,
+    @SerializedName("ementa")
     var objective: String?,
     var departmentLink: String?,
     var link: String?
 ) {
+    @SerializedName("departamento")
     var department: SagresLinker? = null
 }

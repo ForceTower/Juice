@@ -20,10 +20,16 @@
 
 package com.forcetower.sagres.database.model
 
+import com.google.gson.annotations.SerializedName
+
 class SagresMessageScope(
-    var uid: Long,
+    var uid: String,
+    @SerializedName("id")
     var sagresId: String?,
+    @SerializedName("tipo")
+    var type: Int,
     var clazzLink: String?
 ) {
+    @SerializedName("classe")
     var clazzLinker: SagresLinker? = null
 }

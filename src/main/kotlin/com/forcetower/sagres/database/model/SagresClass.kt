@@ -20,11 +20,16 @@
 
 package com.forcetower.sagres.database.model
 
+import com.google.gson.annotations.SerializedName
+
 data class SagresClass(
     var id: Long,
+    @SerializedName("descricao")
     var description: String?,
+    @SerializedName("tipo")
     var kind: String?,
     var link: String?,
     var disciplineLink: String?,
+    @SerializedName("atividadeCurricular")
     var discipline: SagresLinker? = null
 )

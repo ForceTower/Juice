@@ -21,14 +21,21 @@
 package com.forcetower.sagres.database.model
 
 import com.forcetower.sagres.database.Timestamped
+import com.google.gson.annotations.SerializedName
 
 class SagresMessage(
+    @SerializedName("id")
     var sagresId: Long,
+    @SerializedName("timeStamp")
     var timestamp: String?,
+    @SerializedName("remetente")
     var sender: SagresLinker?,
+    @SerializedName("descricao")
     var message: String?,
+    @SerializedName("perfilRemetente")
     var senderProfile: Int,
     var senderName: String?,
+    @SerializedName("escopos")
     var scopes: SagresLinker?,
     var attachmentName: String?,
     var attachmentLink: String?
