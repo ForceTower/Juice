@@ -9,7 +9,7 @@ import com.forcetower.sagres.persist.CachedPersistence
 import com.forcetower.sagres.persist.Storage
 
 class InMemoryCachePersistence : CachedPersistence {
-    private val access = object: Storage<SagresCredential>() {
+    private val access = object : Storage<SagresCredential>() {
         private val map = mutableMapOf<String, SagresCredential>()
         override fun save(id: String, value: SagresCredential): Boolean {
             map[id] = value
@@ -19,7 +19,7 @@ class InMemoryCachePersistence : CachedPersistence {
         override fun retrieveFromLink(link: String): SagresCredential? = null
     }
 
-    private val clazz = object: Storage<SagresClass>() {
+    private val clazz = object : Storage<SagresClass>() {
         private val map = mutableMapOf<String, SagresClass>()
         override fun save(id: String, value: SagresClass): Boolean {
             map[id] = value
@@ -33,7 +33,7 @@ class InMemoryCachePersistence : CachedPersistence {
         }
     }
 
-    private val person = object: Storage<SagresPerson>() {
+    private val person = object : Storage<SagresPerson>() {
         private val map = mutableMapOf<String, SagresPerson>()
         override fun save(id: String, value: SagresPerson): Boolean {
             map[id] = value
@@ -47,7 +47,7 @@ class InMemoryCachePersistence : CachedPersistence {
         }
     }
 
-    private val messageScope = object: Storage<SagresMessageScope>() {
+    private val messageScope = object : Storage<SagresMessageScope>() {
         private val map = mutableMapOf<String, SagresMessageScope>()
         override fun save(id: String, value: SagresMessageScope): Boolean {
             map[id] = value
@@ -61,7 +61,7 @@ class InMemoryCachePersistence : CachedPersistence {
         }
     }
 
-    private val disciplineResumed = object: Storage<SagresDisciplineResumed>() {
+    private val disciplineResumed = object : Storage<SagresDisciplineResumed>() {
         private val map = mutableMapOf<String, SagresDisciplineResumed>()
         override fun save(id: String, value: SagresDisciplineResumed): Boolean {
             map[id] = value
