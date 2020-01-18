@@ -86,6 +86,11 @@ publishing {
                         email.set("joaopaulo761@gmail.com")
                     }
                 }
+                scm {
+                    connection.set("scm:git:git://github.com/juice.git")
+                    developerConnection.set("scm:git:ssh://github.com/juice.git")
+                    url.set("http://www.forcetower.dev/juice")
+                }
             }
 
             artifact(sourcesJar) {
