@@ -81,12 +81,12 @@ class DocumentOperation(
                 val sink = file.sink().buffer()
                 sink.writeAll(response.body!!.source())
                 sink.close()
-                publishProgress(DocumentCallback(Status.SUCCESS))
+                publishProgress(DocumentCallback(Status.SUCCESS).code(200))
             } else {
                 publishProgress(DocumentCallback(Status.RESPONSE_FAILED).code(response.code).message("Error..."))
             }
         } catch (e: IOException) {
-            publishProgress(DocumentCallback(Status.NETWORK_ERROR).message(e.message).throwable(e))
+            publishProgress(DocumentCallback(Status.NETWORK_ERROR).code(500).message(e.message).throwable(e))
         }
     }
 }

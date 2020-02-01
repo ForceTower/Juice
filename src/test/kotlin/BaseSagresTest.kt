@@ -43,6 +43,7 @@ abstract class BaseSagresTest {
             credential = gson.fromJson(environment, SagresCredential::class.java)
             SagresNavigator.initialize(null)
             instance = SagresNavigator.instance
+            instance.setSelectedInstitution(credential.institution)
             instance.putCredentials(credential)
         }
 

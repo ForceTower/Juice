@@ -61,11 +61,13 @@ import io.reactivex.subjects.Subject
 import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Call
+import okhttp3.ConnectionSpec
 import okhttp3.CookieJar
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
+import java.util.Arrays
 
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?,
@@ -81,6 +83,7 @@ class SagresNavigatorImpl private constructor(
 
     private fun createClient(cookies: CookieJar): OkHttpClient {
         return OkHttpClient.Builder()
+            .connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))
             .followRedirects(true)
             .cookieJar(cookies)
             .addInterceptor(createInterceptor())
