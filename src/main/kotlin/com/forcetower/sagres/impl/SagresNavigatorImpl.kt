@@ -67,22 +67,22 @@ import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
-import java.util.Arrays
 
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?,
     private val base64Encoder: Base64Encoder,
-    private val persistence: CachedPersistence
+    private val persistence: CachedPersistence,
+    baseClient: OkHttpClient?
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
-    val client: OkHttpClient = createClient(cookieJar)
+    val client: OkHttpClient = createClient(cookieJar, baseClient)
     private var selectedInstitution = "UEFS"
 
     private var credential: SagresCredential? = null
 
-    private fun createClient(cookies: CookieJar): OkHttpClient {
-        return OkHttpClient.Builder()
+    private fun createClient(cookies: CookieJar, baseClient: OkHttpClient?): OkHttpClient {
+        return (baseClient?.newBuilder() ?: OkHttpClient.Builder())
             .connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))
             .followRedirects(true)
             .cookieJar(cookies)
@@ -317,11 +317,12 @@ class SagresNavigatorImpl private constructor(
         fun initialize(
             persist: CookiePersistor?,
             encoder: Base64Encoder,
-            persistence: CachedPersistence
+            persistence: CachedPersistence,
+            baseClient: OkHttpClient?
         ) {
             synchronized(sLock) {
                 if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, persistence)
+                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, persistence, baseClient)
                 }
             }
         }

@@ -42,6 +42,7 @@ import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.persist.CachedPersistence
 import io.reactivex.subjects.Subject
+import okhttp3.OkHttpClient
 import java.io.File
 import org.jsoup.nodes.Document
 
@@ -100,10 +101,11 @@ abstract class SagresNavigator {
             // Android implementation of this is different, so we need to adapt
             // The baseline is to use Apache things
             base64Encoder: Base64Encoder = ApacheBase64Encoder(),
-            persistence: CachedPersistence = InMemoryCachePersistence()
+            persistence: CachedPersistence = InMemoryCachePersistence(),
+            baseClient: OkHttpClient? = null
         ) {
-            SagresNavigatorImpl.initialize(persist, base64Encoder, persistence)
-            SagresNavigator.instance.setSelectedInstitution(institution)
+            SagresNavigatorImpl.initialize(persist, base64Encoder, persistence, baseClient)
+            instance.setSelectedInstitution(institution)
         }
 
         @JvmStatic
