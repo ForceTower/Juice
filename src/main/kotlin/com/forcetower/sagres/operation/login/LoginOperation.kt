@@ -34,6 +34,7 @@ import org.jsoup.nodes.Document
 class LoginOperation constructor(
     private val username: String,
     private val password: String,
+    private val gresp: String?,
     executor: Executor?
 ) : Operation<LoginCallback>(executor) {
     init {
@@ -42,7 +43,7 @@ class LoginOperation constructor(
 
     override fun execute() {
         publishProgress(LoginCallback.started())
-        val call = SagresCalls.login(username, password)
+        val call = SagresCalls.login(username, password, gresp)
 
         try {
             val response = call.execute()

@@ -207,4 +207,11 @@ object SagresRequests {
             .addHeader("cache-control", "no-cache")
             .build()
     }
+
+    fun ohMyZsh(): Request {
+        return Request.Builder()
+            .url(Constants.getUrl("SAGRES_SHITTY_URL"))
+            .tag("shitty_url")
+            .build()
+    }
 }

@@ -1,6 +1,9 @@
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
 import com.forcetower.sagres.utils.ConnectedStates
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -42,9 +45,6 @@ class LoginTest : BaseSagresTest() {
         assertEquals(Status.SUCCESS, callback.status)
         assertNotNull(callback.document)
         assertEquals(ConnectedStates.CONNECTED, SagresBasicParser.isConnected(callback.document))
-        val start = instance.startPage()
-        println("is demand open? ${start.isDemandOpen}")
-        assertEquals("joão paulo santos sena", SagresBasicParser.getName(callback.document)?.toLowerCase())
     }
 
     @Test

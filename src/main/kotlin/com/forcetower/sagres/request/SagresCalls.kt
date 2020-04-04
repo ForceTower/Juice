@@ -51,8 +51,8 @@ object SagresCalls {
     }
 
     @JvmStatic
-    fun login(username: String, password: String): Call {
-        val body = SagresForms.loginBody(username, password)
+    fun login(username: String, password: String, gresp: String? = null): Call {
+        val body = SagresForms.loginBody(username, password, gresp)
         val request = SagresRequests.loginRequest(body)
         return getCall(request)
     }
@@ -149,6 +149,11 @@ object SagresCalls {
 
     fun goToDisciplineAlternate(body: RequestBody): Call {
         val request = SagresRequests.postAllDisciplinesParams(body)
+        return getCall(request)
+    }
+
+    fun onMyZsH(): Call {
+        val request = SagresRequests.ohMyZsh()
         return getCall(request)
     }
 }

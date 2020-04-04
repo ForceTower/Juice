@@ -29,6 +29,7 @@ import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.executor.SagresTaskExecutor
+import com.forcetower.sagres.operation.BaseCallback
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.calendar.CalendarOperation
 import com.forcetower.sagres.operation.demand.CreateDemandOperation
@@ -50,6 +51,8 @@ import com.forcetower.sagres.operation.login.LoginOperation
 import com.forcetower.sagres.operation.messages.MessagesCallback
 import com.forcetower.sagres.operation.messages.MessagesOperation
 import com.forcetower.sagres.operation.messages.OldMessagesOperation
+import com.forcetower.sagres.operation.ohmyzsh.DoneCallback
+import com.forcetower.sagres.operation.ohmyzsh.JustDoIt
 import com.forcetower.sagres.operation.person.PersonCallback
 import com.forcetower.sagres.operation.person.PersonOperation
 import com.forcetower.sagres.operation.semester.SemesterCallback
@@ -62,8 +65,12 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Call
 import okhttp3.ConnectionSpec
+import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.Credentials
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
@@ -122,8 +129,8 @@ class SagresNavigatorImpl private constructor(
         return PersistentCookieJar(cookies, persist)
     }
 
-    override fun login(username: String, password: String): LoginCallback {
-        return LoginOperation(username, password, null).finishedResult
+    override fun login(username: String, password: String, gresp: String?): LoginCallback {
+        return LoginOperation(username, password, gresp, null).finishedResult
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -207,8 +214,8 @@ class SagresNavigatorImpl private constructor(
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aLogin(username: String, password: String): Subject<LoginCallback> {
-        return LoginOperation(username, password, SagresTaskExecutor.networkThreadExecutor).result
+    override fun aLogin(username: String, password: String, gresp: String?): Subject<LoginCallback> {
+        return LoginOperation(username, password, gresp, SagresTaskExecutor.networkThreadExecutor).result
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -300,6 +307,17 @@ class SagresNavigatorImpl private constructor(
 
     override fun putCredentials(cred: SagresCredential?) {
         credential = cred
+    }
+
+    override fun setCookiesOnClient(cookies: String) {
+        val cookiesStr = cookies.split(";")
+        val url = "http://academico2.uefs.br".toHttpUrl()
+        val elements = cookiesStr.mapNotNull { Cookie.parse(url, it) }
+        cookieJar.saveFromResponse(url, elements)
+    }
+
+    override fun ohMyZsh(): DoneCallback {
+        return JustDoIt(null).finishedResult
     }
 
     companion object {

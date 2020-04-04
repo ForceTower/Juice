@@ -37,6 +37,7 @@ import com.forcetower.sagres.operation.grades.GradesCallback
 import com.forcetower.sagres.operation.initial.StartPageCallback
 import com.forcetower.sagres.operation.login.LoginCallback
 import com.forcetower.sagres.operation.messages.MessagesCallback
+import com.forcetower.sagres.operation.ohmyzsh.DoneCallback
 import com.forcetower.sagres.operation.person.PersonCallback
 import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
@@ -47,7 +48,7 @@ import java.io.File
 import org.jsoup.nodes.Document
 
 abstract class SagresNavigator {
-    abstract fun login(username: String, password: String): LoginCallback
+    abstract fun login(username: String, password: String, gresp: String? = null): LoginCallback
     abstract fun me(): PersonCallback
     abstract fun messages(userId: Long, fetchAll: Boolean = false): MessagesCallback
     abstract fun messagesHtml(): MessagesCallback
@@ -65,7 +66,7 @@ abstract class SagresNavigator {
     abstract fun getRequestedServices(): RequestedServicesCallback
     abstract fun disciplinesExperimental(semester: String? = null, code: String? = null, group: String? = null, partialLoad: Boolean = false, discover: Boolean = true): FastDisciplinesCallback
 
-    abstract fun aLogin(username: String, password: String): Subject<LoginCallback>
+    abstract fun aLogin(username: String, password: String, gresp: String? = null): Subject<LoginCallback>
     abstract fun aMe(): Subject<PersonCallback>
     abstract fun aMessages(userId: Long, fetchAll: Boolean = false): Subject<MessagesCallback>
     abstract fun aMessagesHtml(needsAuth: Boolean = false): Subject<MessagesCallback>
@@ -87,6 +88,9 @@ abstract class SagresNavigator {
     abstract fun getBase64Encoder(): Base64Encoder
     abstract fun getCachingPersistence(): CachedPersistence
     abstract fun putCredentials(cred: SagresCredential?)
+
+    abstract fun setCookiesOnClient(cookies: String)
+    abstract fun ohMyZsh(): DoneCallback
 
     companion object {
         @JvmStatic

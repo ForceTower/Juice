@@ -38,7 +38,7 @@ object SagresForms {
         }
     }
 
-    fun loginBody(username: String, password: String): RequestBody {
+    fun loginBody(username: String, password: String, gresp: String? = null): RequestBody {
         return FormBody.Builder()
             .add("ctl00\$PageContent\$LoginPanel\$UserName", username)
             .add("ctl00\$PageContent\$LoginPanel\$Password", password)
@@ -47,7 +47,12 @@ object SagresForms {
             .add("__EVENTARGUMENT", "")
             .add("__VIEWSTATE", Constants.getParameter("LOGIN_VIEW_STATE"))
             .add("__VIEWSTATEGENERATOR", Constants.getParameter("LOGIN_VW_STT_GEN"))
-            .add("__EVENTVALIDATION", Constants.getParameter("LOGIN_VIEW_VALID"))
+            .add("__EVENTVALIDATION", Constants.getParameter("LOGIN_VIEW_VALID")).also {
+                if (gresp != null) {
+                    println("adding sauce")
+                    it.add("g-recaptcha-response", gresp)
+                }
+            }
             .build()
     }
 
