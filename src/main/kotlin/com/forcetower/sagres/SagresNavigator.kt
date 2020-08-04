@@ -43,8 +43,8 @@ import com.forcetower.sagres.operation.semester.SemesterCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.persist.CachedPersistence
 import io.reactivex.subjects.Subject
-import okhttp3.OkHttpClient
 import java.io.File
+import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
 
 abstract class SagresNavigator {
