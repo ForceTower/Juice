@@ -25,7 +25,7 @@ buildscript {
 
 plugins {
     java
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.4.10"
     maven
     `maven-publish`
     signing
@@ -122,13 +122,13 @@ signing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.71")
-    implementation("org.jsoup:jsoup:1.11.2")
-    implementation("com.squareup.okhttp3:okhttp:4.3.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10")
+    implementation("org.jsoup:jsoup:1.13.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.google.code.gson:gson:2.8.5")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0-RC3")
     implementation("androidx.annotation:annotation:1.1.0")
-    implementation("com.google.code.gson:gson:2.8.5")
+    implementation("com.google.code.gson:gson:2.8.6")
     implementation("org.json:json:20180130")
     implementation("commons-codec:commons-codec:1.13")
 
