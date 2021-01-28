@@ -122,7 +122,7 @@ signing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.21")
     implementation("org.jsoup:jsoup:1.13.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.google.code.gson:gson:2.8.6")
