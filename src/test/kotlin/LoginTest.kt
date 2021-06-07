@@ -45,6 +45,13 @@ class LoginTest : BaseSagresTest() {
     }
 
     @Test
+    fun loginWithCookies() = runBlockingTest {
+        val callback = instance.messagesHtml()
+        assertEquals(Status.SUCCESS, callback.status)
+        assertNotNull(callback.messages)
+    }
+
+    @Test
     fun loginIncorrectly() = runBlockingTest {
         val callback = instance.login("johnwickdauefs", "eu virei um cachorro da uefs")
         assertEquals(401, callback.code)

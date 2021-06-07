@@ -25,11 +25,11 @@ buildscript {
 
 plugins {
     java
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.5.10"
     maven
     `maven-publish`
     signing
-    id("org.jmailen.kotlinter") version "2.2.0"
+    id("org.jmailen.kotlinter") version "3.4.4"
 }
 
 repositories {
