@@ -39,7 +39,7 @@ repositories {
 
 val artifactVersion: String by project
 
-group = "com.github.forcetower"
+group = "dev.forcetower.unes"
 version = artifactVersion
 
 val sourcesJar = task<Jar> ("sourcesJar") {
@@ -62,14 +62,14 @@ artifacts {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.github.forcetower"
+            groupId = "dev.forcetower.unes"
             artifactId = "juice"
             version = artifactVersion
 
             pom {
                 name.set("Juice")
                 description.set("A SAGRES Scrapper Library")
-                url.set("http://github.com/ForceTower/Juice")
+                url.set("https://github.com/ForceTower/Juice")
                 from(components["java"])
 
                 licenses {
@@ -89,7 +89,7 @@ publishing {
                 scm {
                     connection.set("scm:git:git://github.com/juice.git")
                     developerConnection.set("scm:git:ssh://github.com/juice.git")
-                    url.set("http://www.forcetower.dev/juice")
+                    url.set("https://juice.forcetower.dev")
                 }
             }
 
@@ -122,7 +122,7 @@ signing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.30")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.10")
     implementation("org.jsoup:jsoup:1.13.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.google.code.gson:gson:2.8.6")
@@ -133,7 +133,7 @@ dependencies {
     implementation("commons-codec:commons-codec:1.13")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
 }
 
 configure<JavaPluginConvention> {
