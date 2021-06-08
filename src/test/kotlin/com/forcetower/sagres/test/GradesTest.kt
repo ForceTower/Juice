@@ -26,7 +26,7 @@ class GradesTest : BaseSagresTest() {
 
         val selected = SagresGradesParser.getSelectedSemester(document)
         assertNotNull(selected)
-        assertEquals(true, selected!!.first)
+        assertTrue(selected!!.first)
         assertEquals(1000000861, selected.second)
 
         val semesters = SagresGradesParser.extractSemesterCodes(document)

@@ -17,11 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-buildscript {
-    repositories {
-        jcenter()
-    }
-}
 
 plugins {
     java
@@ -39,7 +34,7 @@ repositories {
 
 val artifactVersion: String by project
 
-group = "dev.forcetower.juice"
+group = "dev.forcetower.unes"
 version = artifactVersion
 
 val sourcesJar = task<Jar> ("sourcesJar") {
@@ -62,7 +57,7 @@ artifacts {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "dev.forcetower.juice"
+            groupId = "dev.forcetower.unes"
             artifactId = "juice"
             version = artifactVersion
 
