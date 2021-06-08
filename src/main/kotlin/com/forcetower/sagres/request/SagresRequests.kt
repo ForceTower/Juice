@@ -27,48 +27,51 @@ import okhttp3.RequestBody
 import org.jsoup.nodes.Document
 
 object SagresRequests {
-    private const val BASE_URL = "http://academico2.uefs.br/Api/SagresApi"
-
-    val currentGrades: Request
-        get() = Request.Builder()
-            .url(Constants.getUrl("SAGRES_GRADE_PAGE"))
+    fun currentGrades(institution: String): Request {
+        return Request.Builder()
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_GRADE_PAGE"))
             .addHeader("content-type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
+    }
 
-    val demandPage: Request
-        get() = Request.Builder()
-            .url(Constants.getUrl("SAGRES_DEMAND_OFFERS"))
+    fun demandPage(institution: String): Request {
+        return Request.Builder()
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_DEMAND_OFFERS"))
             .addHeader("content-type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
+    }
 
-    val requestedServices: Request
-        get() = Request.Builder()
-            .url(Constants.getUrl("SAGRES_REQUESTED_SERVICES"))
+    fun requestedServices(institution: String): Request {
+        return Request.Builder()
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_REQUESTED_SERVICES"))
             .addHeader("content-type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
+    }
 
-    val messagesPage: Request
-        get() = Request.Builder()
-            .url(Constants.getUrl("SAGRES_MESSAGES_PAGE"))
+    fun messagesPage(institution: String): Request {
+        return Request.Builder()
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_MESSAGES_PAGE"))
             .addHeader("content-type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
+    }
 
-    val allDisciplinesPage: Request
-        get() = Request.Builder()
-            .url(Constants.getUrl("SAGRES_ALL_DISCIPLINES_PAGE"))
+    fun allDisciplinesPage(institution: String): Request {
+        return Request.Builder()
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_ALL_DISCIPLINES_PAGE"))
             .tag("disciplines")
             .get()
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
+    }
 
-    fun loginRequest(body: RequestBody): Request {
+    fun loginRequest(body: RequestBody, institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_LOGIN_PAGE"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_LOGIN_PAGE"))
             .tag("aLogin")
             .post(body)
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -87,51 +90,15 @@ object SagresRequests {
             .build()
     }
 
-    fun me(): Request {
+    fun startPage(institution: String): Request {
         return Request.Builder()
-            .url("$BASE_URL/eu")
-            .build()
-    }
-
-    //    public static Request link(SLinker linker) {
-    //        String link = linker.getLink();
-    //        String url = BASE_URL + (link.startsWith("/") ? link : "/" + link);
-    //        return new Request.Builder().url(url).build();
-    //    }
-
-    fun link(href: String): Request {
-        val url = BASE_URL + if (href.startsWith("/")) href else "/$href"
-        return Request.Builder().url(url).build()
-    }
-
-    fun getPerson(userId: Long): Request {
-        val url = "$BASE_URL/registro/pessoas/$userId"
-        return Request.Builder().url(url).build()
-    }
-
-    fun messages(userId: Long, amount: Int = 20): Request {
-        val url = "$BASE_URL/diario/recados?idPessoa=$userId&quantidade=$amount"
-        return Request.Builder()
-            .url(url)
-            .build()
-    }
-
-    fun startPage(): Request {
-        return Request.Builder()
-            .url(Constants.getUrl("SAGRES_DIARY_PAGE"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_DIARY_PAGE"))
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
     }
 
-    fun getSemesters(userId: Long): Request {
-        val url = "$BASE_URL/diario/periodos-letivos?idPessoa=$userId&perfil=1"
-        return Request.Builder()
-            .url(url)
-            .build()
-    }
-
-    fun getGradesForSemester(semester: Long, document: Document, variant: Long?): Request {
+    fun getGradesForSemester(semester: Long, document: Document, variant: Long?, institution: String): Request {
         val formBody = FormBody.Builder()
 
         val elements = document.select("input[value][type=\"hidden\"]")
@@ -151,7 +118,7 @@ object SagresRequests {
         }
         formBody.add("ctl00\$MasterPlaceHolder\$imRecuperar", "Exibir")
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_GRADE_ANY"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_GRADE_ANY"))
             .post(formBody.build())
             .addHeader("x-requested-with", "XMLHttpRequest")
             .addHeader("content-type", "application/x-www-form-urlencoded")
@@ -172,35 +139,35 @@ object SagresRequests {
             .build()
     }
 
-    fun postAtStudentPage(builder: FormBody.Builder): Request {
+    fun postAtStudentPage(builder: FormBody.Builder, institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_DIARY_PAGE"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_DIARY_PAGE"))
             .post(builder.build())
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
     }
 
-    fun getDisciplinePageWithParams(params: FormBody.Builder): Request {
+    fun getDisciplinePageWithParams(params: FormBody.Builder, institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_CLASS_PAGE"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_CLASS_PAGE"))
             .post(params.build())
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .addHeader("cache-control", "no-cache")
             .build()
     }
 
-    fun createDemandWithParams(body: RequestBody): Request {
+    fun createDemandWithParams(body: RequestBody, institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_DEMAND_OFFERS"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_DEMAND_OFFERS"))
             .post(body)
             .addHeader("content-type", "application/x-www-form-urlencoded")
             .build()
     }
 
-    fun postAllDisciplinesParams(body: RequestBody): Request {
+    fun postAllDisciplinesParams(body: RequestBody, institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_ALL_DISCIPLINES_PAGE"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_ALL_DISCIPLINES_PAGE"))
             .tag("disciplines")
             .post(body)
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -208,9 +175,9 @@ object SagresRequests {
             .build()
     }
 
-    fun ohMyZsh(): Request {
+    fun ohMyZsh(institution: String): Request {
         return Request.Builder()
-            .url(Constants.getUrl("SAGRES_SHITTY_URL"))
+            .url(Constants.forInstitution(institution).getUrl("SAGRES_SHITTY_URL"))
             .tag("shitty_url")
             .build()
     }

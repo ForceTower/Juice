@@ -24,43 +24,43 @@ import com.forcetower.sagres.database.model.SagresCourseVariant
 import com.forcetower.sagres.database.model.SagresDisciplineMissedClass
 import com.forcetower.sagres.database.model.SagresGrade
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresGradesParser
 import com.forcetower.sagres.parsers.SagresMissedClassesParser
 import com.forcetower.sagres.request.SagresCalls
+import org.jsoup.nodes.Document
 import java.io.IOException
 import java.lang.Exception
-import java.util.concurrent.Executor
-import org.jsoup.nodes.Document
 
-class GradesOperation(private val semester: Long?, private val document: Document?, executor: Executor?) : Operation<GradesCallback>(executor) {
-    init {
-        this.perform()
-    }
+class GradesOperation(
+    private val semester: Long?,
+    private val document: Document?,
+    private val caller: SagresCalls
+) : Operation<GradesCallback> {
 
-    override fun execute() {
-        val call = SagresCalls.getGrades(semester, document)
-        try {
-            publishProgress(GradesCallback(Status.LOADING))
-            val response = call.execute()
+    override suspend fun execute(): GradesCallback {
+        val call = caller.getGrades(semester, document)
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 processResults(body)
             } else {
-                publishProgress(GradesCallback(Status.RESPONSE_FAILED).code(response.code).message(response.message))
+                GradesCallback(Status.RESPONSE_FAILED).code(response.code).message(response.message)
             }
         } catch (e: IOException) {
-            publishProgress(GradesCallback(Status.NETWORK_ERROR).throwable(e))
+            GradesCallback(Status.NETWORK_ERROR).throwable(e)
         }
     }
 
-    private fun processResults(body: String) {
+    private suspend fun processResults(body: String): GradesCallback {
         val document = body.asDocument()
         val codes = SagresGradesParser.extractSemesterCodes(document)
         val selected = SagresGradesParser.getSelectedSemester(document)
 
-        if (selected != null) {
+        return if (selected != null) {
             if (SagresGradesParser.canExtractGrades(document)) {
                 val grades = SagresGradesParser.extractGrades(document, selected.second)
                 val frequency = SagresMissedClassesParser.extractMissedClasses(document, selected.second)
@@ -68,22 +68,23 @@ class GradesOperation(private val semester: Long?, private val document: Documen
             } else {
                 val variants = SagresGradesParser.extractCourseVariants(document)
                 if (variants.isEmpty()) {
-                    publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't extract grades and there's no variant. Page error?"))
+                    GradesCallback(Status.APPROVAL_ERROR).message("Can't extract grades and there's no variant. Page error?")
                 } else {
                     variantRequester(variants, document, selected.second, codes)
                 }
             }
         } else {
-            publishProgress(GradesCallback(Status.APPROVAL_ERROR).message("Can't find semester on situation. Nothing is selected"))
+            GradesCallback(Status.APPROVAL_ERROR).message("Can't find semester on situation. Nothing is selected")
         }
     }
 
-    private fun variantRequester(
+    // This scaled really quickly
+    private suspend fun variantRequester(
         variants: List<SagresCourseVariant>,
         document: Document,
         semester: Long,
         codes: List<Pair<Long, String>>
-    ) {
+    ): GradesCallback {
         val grades = mutableListOf<SagresGrade>()
         val frequency = mutableListOf<SagresDisciplineMissedClass>()
         var doc = document
@@ -93,13 +94,13 @@ class GradesOperation(private val semester: Long?, private val document: Documen
             frequency += result.frequency
             doc = result.document
         }
-        successMeasures(document, codes, grades, true to frequency)
+        return successMeasures(document, codes, grades, true to frequency)
     }
 
-    private fun requestVariant(semester: Long, document: Document, variant: Long? = null): GradeResult {
-        val call = SagresCalls.getGrades(semester, document, variant)
+    private suspend fun requestVariant(semester: Long, document: Document, variant: Long? = null): GradeResult {
+        val call = caller.getGrades(semester, document, variant)
         return try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             val body = response.body!!.string()
             processVariant(body, semester)
         } catch (e: Exception) {
@@ -123,12 +124,12 @@ class GradesOperation(private val semester: Long?, private val document: Documen
         codes: List<Pair<Long, String>>,
         grades: List<SagresGrade>,
         frequency: Pair<Boolean, List<SagresDisciplineMissedClass>>
-    ) {
-        publishProgress(GradesCallback(Status.SUCCESS)
-                .document(document)
-                .grades(grades)
-                .frequency(if (frequency.first) null else frequency.second)
-                .codes(codes))
+    ): GradesCallback {
+        return GradesCallback(Status.SUCCESS)
+            .document(document)
+            .grades(grades)
+            .frequency(if (frequency.first) null else frequency.second)
+            .codes(codes)
     }
 
     private data class GradeResult(

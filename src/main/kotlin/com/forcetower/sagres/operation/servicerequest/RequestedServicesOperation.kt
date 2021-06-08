@@ -21,44 +21,33 @@
 package com.forcetower.sagres.operation.servicerequest
 
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresRequestedServicesParser
 import com.forcetower.sagres.request.SagresCalls
-import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
 
-class RequestedServicesOperation(
-    executor: Executor?
-) : Operation<RequestedServicesCallback>(executor) {
-    init {
-        this.perform()
-    }
+class RequestedServicesOperation(private val caller: SagresCalls) : Operation<RequestedServicesCallback> {
 
-    override fun execute() {
-        publishProgress(RequestedServicesCallback(Status.STARTED))
-        afterLogin()
-    }
-
-    private fun afterLogin() {
-        val call = SagresCalls.getRequestedServices()
-        try {
-            val response = call.execute()
+    override suspend fun execute(): RequestedServicesCallback {
+        val call = caller.getRequestedServices()
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 val document = body.asDocument()
                 successMeasures(document)
             } else {
-                publishProgress(RequestedServicesCallback(Status.RESPONSE_FAILED))
+                RequestedServicesCallback(Status.RESPONSE_FAILED).code(response.code)
             }
         } catch (e: Exception) {
-            publishProgress(RequestedServicesCallback(Status.NETWORK_ERROR).throwable(e))
+            RequestedServicesCallback(Status.NETWORK_ERROR).throwable(e)
         }
     }
 
-    private fun successMeasures(document: Document) {
+    private fun successMeasures(document: Document): RequestedServicesCallback {
         val services = SagresRequestedServicesParser.extractRequestedServices(document)
-
-        publishProgress(RequestedServicesCallback(Status.SUCCESS).services(services))
+        return RequestedServicesCallback(Status.SUCCESS).services(services)
     }
 }

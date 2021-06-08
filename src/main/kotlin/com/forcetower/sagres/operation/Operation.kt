@@ -20,34 +20,6 @@
 
 package com.forcetower.sagres.operation
 
-import com.google.gson.Gson
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
-import java.util.concurrent.Executor
-
-abstract class Operation<Result : BaseCallback<*>> constructor(private val executor: Executor?) {
-    private val _result: PublishSubject<Result> = PublishSubject.create()
-    val result: Subject<Result>
-        get() = _result
-
-    protected val gson: Gson = Gson()
-    lateinit var finishedResult: Result
-        protected set
-    var isSuccess: Boolean = false
-        protected set
-
-    protected fun perform() {
-        if (executor != null) {
-            executor.execute { this.execute() }
-        } else {
-            this.execute()
-        }
-    }
-
-    protected abstract fun execute()
-
-    fun publishProgress(value: Result) {
-        finishedResult = value
-        result.onNext(value)
-    }
+interface Operation<Result> {
+    suspend fun execute(): Result
 }

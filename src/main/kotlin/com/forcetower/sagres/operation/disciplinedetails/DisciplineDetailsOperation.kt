@@ -21,53 +21,38 @@
 package com.forcetower.sagres.operation.disciplinedetails
 
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
+import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.extension.asDocument
-import com.forcetower.sagres.operation.BaseCallback
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
-import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.DOWNLOADING
-import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.INITIAL
-import com.forcetower.sagres.operation.disciplinedetails.DisciplineDetailsCallback.Companion.PROCESSING
+import com.forcetower.sagres.operation.initial.StartPageCallback
 import com.forcetower.sagres.operation.initial.StartPageOperation
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsFetcherParser
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsParser
 import com.forcetower.sagres.parsers.SagresMaterialsParser
 import com.forcetower.sagres.request.SagresCalls
-import java.io.IOException
-import java.util.concurrent.Executor
 import okhttp3.FormBody
-import org.apache.commons.codec.binary.Base64
 import org.json.JSONObject
 import org.jsoup.nodes.Document
+import java.io.IOException
 
 class DisciplineDetailsOperation(
     private val semester: String?,
     private val code: String?,
     private val group: String?,
     private val partialLoad: Boolean,
-    executor: Executor?
-) : Operation<DisciplineDetailsCallback>(executor) {
+    private val encoder: Base64Encoder,
+    private val caller: SagresCalls
+) : Operation<DisciplineDetailsCallback> {
+    override suspend fun execute(): DisciplineDetailsCallback {
+        val initial = initialPage() ?: return DisciplineDetailsCallback(Status.NETWORK_ERROR)
 
-    init {
-        this.perform()
-    }
-
-    override fun execute() {
-        executeSteps()
-    }
-
-    private fun executeSteps() {
-        publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(INITIAL))
-        val initial = initialPage() ?: return
-        publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(PROCESSING))
         val forms = SagresDisciplineDetailsFetcherParser.extractFormBodies(initial.document!!, semester, code, group)
         val groups = mutableListOf<SagresDisciplineGroup>()
 
         var failureCount = 0
-
-        val total = forms.size
-        for ((index, form) in forms.withIndex()) {
-            publishProgress(DisciplineDetailsCallback(Status.LOADING).flags(DOWNLOADING).current(index).total(total))
+        for (form in forms) {
             val document = initialFormConnect(form.first)
             if (document != null) {
                 val params = SagresDisciplineDetailsFetcherParser.extractParamsForDiscipline(document)
@@ -87,47 +72,38 @@ class DisciplineDetailsOperation(
                 failureCount++
             }
         }
-        publishProgress(DisciplineDetailsCallback(Status.COMPLETED).groups(groups).failureCount(failureCount))
+        return DisciplineDetailsCallback(Status.COMPLETED).groups(groups).failureCount(failureCount)
     }
 
-    private fun initialPage(): BaseCallback<*>? {
-        val initial = StartPageOperation(null).finishedResult
+    private suspend fun initialPage(): StartPageCallback? {
+        val initial = StartPageOperation(caller).execute()
         if (initial.status != Status.SUCCESS) {
-            publishProgress(DisciplineDetailsCallback.copyFrom(initial))
             return null
         }
         return initial
     }
 
-    private fun initialFormConnect(form: FormBody.Builder): Document? {
-        val call = SagresCalls.getDisciplinePageFromInitial(form)
+    private suspend fun initialFormConnect(form: FormBody.Builder): Document? {
+        val call = caller.getDisciplinePageFromInitial(form)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 return body.asDocument()
-            } else {
-                publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response").code(response.code))
             }
-        } catch (e: IOException) {
-            publishProgress(DisciplineDetailsCallback(Status.NETWORK_ERROR).throwable(e).message("Failed at initial form connect"))
-        }
+        } catch (_: IOException) {}
         return null
     }
 
-    private fun disciplinePageParams(params: FormBody.Builder): Document? {
-        val call = SagresCalls.getDisciplinePageWithParams(params)
+    private suspend fun disciplinePageParams(params: FormBody.Builder): Document? {
+        val call = caller.getDisciplinePageWithParams(params)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 return body.asDocument()
-            } else {
-                publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at params").code(response.code))
             }
-        } catch (e: IOException) {
-            publishProgress(DisciplineDetailsCallback(Status.NETWORK_ERROR).throwable(e).message("Failed at params setup"))
-        }
+        } catch (_: IOException) { }
         return null
     }
 
@@ -135,7 +111,7 @@ class DisciplineDetailsOperation(
         return SagresDisciplineDetailsParser.extractDisciplineGroup(document)
     }
 
-    private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
+    private suspend fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
         val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             val json = JSONObject()
@@ -143,7 +119,7 @@ class DisciplineDetailsOperation(
             json.put("showForm", true)
             json.put("popupLinkColumn", "cpt_material_apoio")
             json.put("retrieveArguments", item.materialLink)
-            val encoded = Base64.encodeBase64String(json.toString().toByteArray())
+            val encoded = encoder.encodeString(json.toString())
             val materials = executeMaterialCall(document, encoded)
             if (materials != null) {
                 item.materials = SagresMaterialsParser.extractMaterials(materials)
@@ -151,19 +127,15 @@ class DisciplineDetailsOperation(
         }
     }
 
-    private fun executeMaterialCall(document: Document, encoded: String): Document? {
-        val call = SagresCalls.getDisciplineMaterials(encoded, document)
+    private suspend fun executeMaterialCall(document: Document, encoded: String): Document? {
+        val call = caller.getDisciplineMaterials(encoded, document)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 return body.asDocument()
-            } else {
-                publishProgress(DisciplineDetailsCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at material download"))
             }
-        } catch (e: IOException) {
-            publishProgress(DisciplineDetailsCallback(Status.NETWORK_ERROR).throwable(e).message("Failed to fetch material"))
-        }
+        } catch (_: IOException) {}
         return null
     }
 }

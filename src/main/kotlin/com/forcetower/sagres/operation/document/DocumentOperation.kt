@@ -22,58 +22,54 @@ package com.forcetower.sagres.operation.document
 
 import com.forcetower.sagres.Constants
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresLinkFinder
 import com.forcetower.sagres.request.SagresCalls
-import java.io.File
-import java.io.IOException
-import java.util.concurrent.Executor
 import okio.buffer
 import okio.sink
+import okio.source
 import org.jsoup.nodes.Document
+import java.io.File
+import java.io.IOException
 
 class DocumentOperation(
     private val file: File,
     private val endpoint: String,
-    executor: Executor?
-) : Operation<DocumentCallback>(executor) {
+    private val caller: SagresCalls
+) : Operation<DocumentCallback> {
 
-    init {
-        this.perform()
-    }
-
-    override fun execute() {
-        val url = Constants.getUrl(endpoint)
-        val call = SagresCalls.getPageCall(url)
-        publishProgress(DocumentCallback(Status.LOADING))
-        try {
-            val response = call.execute()
+    override suspend fun execute(): DocumentCallback {
+        val url = Constants.forInstitution(caller.selectedInstitution()).getUrl(endpoint)
+        val call = caller.getPageCall(url)
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val string = response.body!!.string()
                 val document = string.asDocument()
                 onFirstResponse(document)
             } else {
-                publishProgress(DocumentCallback(Status.RESPONSE_FAILED).message("Load error").code(500))
+                DocumentCallback(Status.RESPONSE_FAILED).message("Load error").code(500)
             }
         } catch (e: IOException) {
-            publishProgress(DocumentCallback(Status.NETWORK_ERROR).message(e.message).throwable(e))
+            DocumentCallback(Status.NETWORK_ERROR).message(e.message).throwable(e)
         }
     }
 
-    private fun onFirstResponse(document: Document) {
+    private suspend fun onFirstResponse(document: Document): DocumentCallback {
         val link = SagresLinkFinder.findLink(document)
-        if (link == null) {
-            publishProgress(DocumentCallback(Status.RESPONSE_FAILED).code(600).message("Link not found"))
+        return if (link == null) {
+            DocumentCallback(Status.RESPONSE_FAILED).code(600).message("Link not found")
         } else {
             downloadDocument(link)
         }
     }
 
-    private fun downloadDocument(link: String) {
-        try {
-            val call = SagresCalls.getPageCall(link)
-            val response = call.execute()
+    private suspend fun downloadDocument(link: String): DocumentCallback {
+        return try {
+            val call = caller.getPageCall(link)
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 if (file.exists()) file.delete()
                 file.createNewFile()
@@ -81,12 +77,12 @@ class DocumentOperation(
                 val sink = file.sink().buffer()
                 sink.writeAll(response.body!!.source())
                 sink.close()
-                publishProgress(DocumentCallback(Status.SUCCESS).code(200))
+                DocumentCallback(Status.SUCCESS).code(200)
             } else {
-                publishProgress(DocumentCallback(Status.RESPONSE_FAILED).code(response.code).message("Error..."))
+                DocumentCallback(Status.RESPONSE_FAILED).code(response.code).message("Error...")
             }
         } catch (e: IOException) {
-            publishProgress(DocumentCallback(Status.NETWORK_ERROR).code(500).message(e.message).throwable(e))
+            DocumentCallback(Status.NETWORK_ERROR).code(500).message(e.message).throwable(e)
         }
     }
 }

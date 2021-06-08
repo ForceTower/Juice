@@ -37,7 +37,8 @@ class DemandOffersCallback(status: Status) : BaseCallback<DemandOffersCallback>(
     companion object {
         fun copyFrom(callback: BaseCallback<*>): DemandOffersCallback {
             return DemandOffersCallback(callback.status).message(callback.message).code(callback.code).throwable(
-                callback.throwable).document(callback.document)
+                callback.throwable
+            ).document(callback.document)
         }
     }
 }

@@ -21,39 +21,33 @@
 package com.forcetower.sagres.operation.messages
 
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresMessageParser
 import com.forcetower.sagres.request.SagresCalls
-import java.util.concurrent.Executor
 
-class OldMessagesOperation(
-    executor: Executor?
-) : Operation<MessagesCallback>(executor) {
-
-    init { this.perform() }
-
-    override fun execute() {
-        publishProgress(MessagesCallback(Status.LOADING))
-        val call = SagresCalls.startPage
-        try {
-            val response = call.execute()
+class OldMessagesOperation(private val caller: SagresCalls) : Operation<MessagesCallback> {
+    override suspend fun execute(): MessagesCallback {
+        val call = caller.startPage
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 processResponse(response.body!!.string())
             } else {
-                publishProgress(MessagesCallback(Status.RESPONSE_FAILED))
+                MessagesCallback(Status.RESPONSE_FAILED)
             }
         } catch (e: Exception) {
-            publishProgress(MessagesCallback(Status.NETWORK_ERROR))
+            MessagesCallback(Status.NETWORK_ERROR)
         }
     }
 
-    private fun processResponse(response: String) {
+    private fun processResponse(response: String): MessagesCallback {
         val document = response.asDocument()
         val messages = SagresMessageParser.getMessages(document)
         messages.reversed().forEachIndexed { index, message ->
             message.processingTime = System.currentTimeMillis() + index
         }
-        publishProgress(MessagesCallback(Status.SUCCESS).messages(messages))
+        return MessagesCallback(Status.SUCCESS).messages(messages)
     }
 }

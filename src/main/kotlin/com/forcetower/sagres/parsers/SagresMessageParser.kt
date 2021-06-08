@@ -21,8 +21,8 @@
 package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresMessage
-import java.util.Locale
 import org.jsoup.nodes.Document
+import java.util.Locale
 
 /**
  * Created by João Paulo on 06/03/2018.
@@ -39,30 +39,30 @@ object SagresMessageParser {
             val scope = article.selectFirst("span[class=\"recado-escopo\"]")?.text()?.trim()
             val dated = article.selectFirst("span[class=\"recado-data\"]")?.text()?.trim()
             val message = article.selectFirst("p[class=\"recado-texto\"]")
-                    ?.wholeText()
-                    ?.trim()
-                    ?.removePrefix("Descrição do Recado:")
-                    ?.trim()
+                ?.wholeText()
+                ?.trim()
+                ?.removePrefix("Descrição do Recado:")
+                ?.trim()
 
             val (attachmentName, attachmentLink) = article.selectFirst("span[class=\"material_apoio_arquivo\"]")
-                    ?.run {
-                        val link = selectFirst("a[href]")?.attr("href")
-                        val name = parent().children().run {
-                            if (size >= 3) {
-                                get(1).text().trim()
-                            }
-                            null
+                ?.run {
+                    val link = selectFirst("a[href]")?.attr("href")
+                    val name = parent().children().run {
+                        if (size >= 3) {
+                            get(1).text().trim()
                         }
-                        name to link
-                    } ?: null to null
+                        null
+                    }
+                    name to link
+                } ?: null to null
 
             val info = article.selectFirst("i[class=\"recado-remetente\"]")?.text()
-                    ?.trim()
-                    ?.removePrefix("De")
-                    ?.trim()
+                ?.trim()
+                ?.removePrefix("De")
+                ?.trim()
 
             val information = SagresMessage(
-                message?.toLowerCase(Locale.getDefault()).hashCode().toLong(),
+                message?.lowercase(Locale.getDefault()).hashCode().toLong(),
                 null,
                 null,
                 message,

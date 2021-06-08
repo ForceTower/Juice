@@ -20,9 +20,9 @@
 
 package com.forcetower.sagres.cookies
 
-import java.util.ArrayList
 import okhttp3.Cookie
 import okhttp3.HttpUrl
+import java.util.ArrayList
 
 class PersistentCookieJar(
     private val cache: CookieCache,

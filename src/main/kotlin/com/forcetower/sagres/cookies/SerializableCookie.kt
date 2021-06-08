@@ -20,14 +20,14 @@
 
 package com.forcetower.sagres.cookies
 
+import okhttp3.Cookie
+import okhttp3.internal.and
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import okhttp3.Cookie
-import okhttp3.internal.and
 
 class SerializableCookie : Serializable {
     @Transient
@@ -153,8 +153,10 @@ class SerializableCookie : Serializable {
             val data = ByteArray(len / 2)
             var i = 0
             while (i < len) {
-                data[i / 2] = ((Character.digit(hexString[i], 16) shl 4) + Character
-                    .digit(hexString[i + 1], 16)).toByte()
+                data[i / 2] = (
+                    (Character.digit(hexString[i], 16) shl 4) + Character
+                        .digit(hexString[i + 1], 16)
+                    ).toByte()
                 i += 2
             }
             return data

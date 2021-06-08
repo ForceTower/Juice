@@ -21,43 +21,34 @@
 package com.forcetower.sagres.request
 
 import com.forcetower.sagres.database.model.SagresDemandOffer
-import com.forcetower.sagres.impl.SagresNavigatorImpl
 import okhttp3.Call
 import okhttp3.FormBody
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import org.jsoup.nodes.Document
 
-object SagresCalls {
-
-    @JvmStatic
-    val me: Call
-        get() {
-            val request = SagresRequests.me()
-            return getCall(request)
-        }
-
-    @JvmStatic
+class SagresCalls(
+    private val client: OkHttpClient,
+    val selectedInstitution: () -> String
+) {
     val startPage: Call
         get() {
-            val request = SagresRequests.startPage()
+            val request = SagresRequests.startPage(selectedInstitution())
             return getCall(request)
         }
 
     private fun getCall(request: Request): Call {
-        val client = SagresNavigatorImpl.instance.client
         return client.newCall(request)
     }
 
-    @JvmStatic
     fun login(username: String, password: String, gresp: String? = null): Call {
-        val body = SagresForms.loginBody(username, password, gresp)
-        val request = SagresRequests.loginRequest(body)
+        val body = SagresForms.loginBody(username, password, gresp, selectedInstitution())
+        val request = SagresRequests.loginRequest(body, selectedInstitution())
         return getCall(request)
     }
 
-    @JvmStatic
     fun loginApproval(document: Document, response: Response): Call {
         val responsePath = response.request.url.toUrl()
         val url = responsePath.host + responsePath.path
@@ -66,36 +57,11 @@ object SagresCalls {
         return getCall(request)
     }
 
-    @JvmStatic
-    fun getPerson(userId: Long?): Call {
-        val request = SagresRequests.getPerson(userId!!)
-        return getCall(request)
-    }
-
-    @JvmStatic
-    fun getLink(href: String): Call {
-        val request = SagresRequests.link(href)
-        return getCall(request)
-    }
-
-    @JvmStatic
-    fun getMessages(userId: Long): Call {
-        val request = SagresRequests.messages(userId)
-        return getCall(request)
-    }
-
-    @JvmStatic
-    fun getSemesters(userId: Long): Call {
-        val request = SagresRequests.getSemesters(userId)
-        return getCall(request)
-    }
-
-    @JvmStatic
     fun getGrades(semester: Long?, document: Document?, variant: Long? = null): Call {
         val request = if (semester == null) {
-            SagresRequests.currentGrades
+            SagresRequests.currentGrades(selectedInstitution())
         } else {
-            SagresRequests.getGradesForSemester(semester, document!!, variant)
+            SagresRequests.getGradesForSemester(semester, document!!, variant, selectedInstitution())
         }
 
         return getCall(request)
@@ -106,54 +72,54 @@ object SagresCalls {
     }
 
     fun getDisciplinePageFromInitial(form: FormBody.Builder): Call {
-        return getCall(SagresRequests.postAtStudentPage(form))
+        return getCall(SagresRequests.postAtStudentPage(form, selectedInstitution()))
     }
 
     fun getDisciplinePageWithParams(params: FormBody.Builder): Call {
-        return getCall(SagresRequests.getDisciplinePageWithParams(params))
+        return getCall(SagresRequests.getDisciplinePageWithParams(params, selectedInstitution()))
     }
 
     fun getDisciplineMaterials(encoded: String, document: Document): Call {
         val body = SagresForms.makeFormBodyForDisciplineMaterials(document, encoded)
-        val request = SagresRequests.getDisciplinePageWithParams(body)
+        val request = SagresRequests.getDisciplinePageWithParams(body, selectedInstitution())
         return getCall(request)
     }
 
     fun getDemandPage(): Call {
-        return getCall(SagresRequests.demandPage)
+        return getCall(SagresRequests.demandPage(selectedInstitution()))
     }
 
     fun createDemand(list: List<SagresDemandOffer>, document: Document): Call {
         val body = SagresForms.makeFormBodyForDemand(list, document)
-        val request = SagresRequests.createDemandWithParams(body)
+        val request = SagresRequests.createDemandWithParams(body, selectedInstitution())
         return getCall(request)
     }
 
     fun getRequestedServices(): Call {
-        return getCall(SagresRequests.requestedServices)
+        return getCall(SagresRequests.requestedServices(selectedInstitution()))
     }
 
     fun getMessagesPage(): Call {
-        return getCall(SagresRequests.messagesPage)
+        return getCall(SagresRequests.messagesPage(selectedInstitution()))
     }
 
     fun getAllDisciplinesPage(): Call {
-        return getCall(SagresRequests.allDisciplinesPage)
+        return getCall(SagresRequests.allDisciplinesPage(selectedInstitution()))
     }
 
     fun postAllDisciplinesParams(document: Document): Call {
         val body = SagresForms.makeFormBodyForAllDisciplines(document)
-        val request = SagresRequests.postAllDisciplinesParams(body)
+        val request = SagresRequests.postAllDisciplinesParams(body, selectedInstitution())
         return getCall(request)
     }
 
     fun goToDisciplineAlternate(body: RequestBody): Call {
-        val request = SagresRequests.postAllDisciplinesParams(body)
+        val request = SagresRequests.postAllDisciplinesParams(body, selectedInstitution())
         return getCall(request)
     }
 
     fun onMyZsH(): Call {
-        val request = SagresRequests.ohMyZsh()
+        val request = SagresRequests.ohMyZsh(selectedInstitution())
         return getCall(request)
     }
 }

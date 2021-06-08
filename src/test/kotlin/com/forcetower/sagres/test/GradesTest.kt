@@ -1,12 +1,14 @@
+package com.forcetower.sagres.test
+
 import com.forcetower.sagres.database.model.SagresGrade
 import com.forcetower.sagres.extension.asDocument
 import com.forcetower.sagres.parsers.SagresGradesParser
 import com.google.gson.reflect.TypeToken
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 class GradesTest : BaseSagresTest() {
     @Test

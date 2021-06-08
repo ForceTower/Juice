@@ -20,12 +20,20 @@
 
 package com.forcetower.sagres.extension
 
-import java.nio.charset.Charset
+import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.nio.charset.Charset
 
 fun String.asDocument(): Document {
     val document = Jsoup.parse(this)
+    document.charset(Charset.forName("ISO-8859-1"))
+    return document
+}
+
+fun ResponseBody.asDocument(): Document? {
+    val stream = this.charStream()
+    val document = Jsoup.parse(stream.readText())
     document.charset(Charset.forName("ISO-8859-1"))
     return document
 }

@@ -21,8 +21,8 @@
 package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresSemester
-import java.util.ArrayList
 import org.jsoup.nodes.Document
+import java.util.ArrayList
 
 object SagresSemesterParser {
 
@@ -33,7 +33,7 @@ object SagresSemesterParser {
         val strings = ArrayList<String>()
         for (element in classes) {
             var period = element.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
-            period = period.toLowerCase()
+            period = period.lowercase()
             if (!strings.contains(period)) strings.add(period)
         }
 

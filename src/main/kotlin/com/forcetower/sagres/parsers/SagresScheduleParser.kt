@@ -22,10 +22,10 @@ package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
 import com.forcetower.sagres.utils.DateUtils.getDayOfWeek
-import java.util.ArrayList
-import java.util.HashMap
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.util.ArrayList
+import java.util.HashMap
 
 /**
  * Created by João Paulo on 07/03/2018.
@@ -158,7 +158,8 @@ object SagresScheduleParser {
                             lesson.addAtToSpecificClass(
                                 parts[2].trim { it <= ' ' },
                                 parts[1].trim { it <= ' ' },
-                                parts[0].trim { it <= ' ' })
+                                parts[0].trim { it <= ' ' }
+                            )
                         else {
                         }
                     }

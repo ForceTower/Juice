@@ -1,10 +1,9 @@
+package com.forcetower.sagres.test
+
 import com.forcetower.sagres.operation.Status
-import com.forcetower.sagres.parsers.SagresBasicParser
-import com.forcetower.sagres.utils.ConnectedStates
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -33,22 +32,6 @@ class LoginTest : BaseSagresTest() {
     @Before
     fun sessionClean() {
         instance.clearSession()
-    }
-
-    @Test
-    fun loginCorrectly() = runBlockingTest {
-        val callback = instance.login(credential.username, credential.password)
-        assertEquals(200, callback.code)
-        assertEquals(Status.SUCCESS, callback.status)
-        assertNotNull(callback.document)
-        assertEquals(ConnectedStates.CONNECTED, SagresBasicParser.isConnected(callback.document))
-    }
-
-    @Test
-    fun loginWithCookies() = runBlockingTest {
-        val callback = instance.messagesHtml()
-        assertEquals(Status.SUCCESS, callback.status)
-        assertNotNull(callback.messages)
     }
 
     @Test

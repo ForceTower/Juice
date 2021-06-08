@@ -33,23 +33,27 @@ data class SagresGradeInfo(
     }
 
     fun hasGrade(): Boolean {
-        return (!grade.trim { it <= ' ' }.isEmpty() &&
+        return (
+            !grade.trim { it <= ' ' }.isEmpty() &&
                 !grade.trim { it <= ' ' }.equals("Não Divulgada", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("-", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("--", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("*", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("**", ignoreCase = true) &&
-                !grade.trim { it <= ' ' }.equals("-1", ignoreCase = true))
+                !grade.trim { it <= ' ' }.equals("-1", ignoreCase = true)
+            )
     }
 
     fun hasDate(): Boolean {
-        return (!grade.trim { it <= ' ' }.isEmpty() &&
+        return (
+            !grade.trim { it <= ' ' }.isEmpty() &&
                 !grade.trim { it <= ' ' }.equals("Não Divulgada", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("Não informada", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("-", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("--", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("*", ignoreCase = true) &&
                 !grade.trim { it <= ' ' }.equals("**", ignoreCase = true) &&
-                !grade.trim { it <= ' ' }.equals("-1", ignoreCase = true))
+                !grade.trim { it <= ' ' }.equals("-1", ignoreCase = true)
+            )
     }
 }

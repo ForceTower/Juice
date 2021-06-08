@@ -21,6 +21,7 @@
 package com.forcetower.sagres.operation.initial
 
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
@@ -31,34 +32,30 @@ import com.forcetower.sagres.parsers.SagresMessageParser
 import com.forcetower.sagres.parsers.SagresScheduleParser
 import com.forcetower.sagres.parsers.SagresSemesterParser
 import com.forcetower.sagres.request.SagresCalls
-import java.io.IOException
-import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
+import java.io.IOException
 
-class StartPageOperation(executor: Executor?) : Operation<StartPageCallback>(executor) {
-    init {
-        this.perform()
-    }
-
-    override fun execute() {
-        publishProgress(StartPageCallback(Status.STARTED))
-        val call = SagresCalls.startPage
-        try {
-            val response = call.execute()
+class StartPageOperation(
+    private val caller: SagresCalls
+) : Operation<StartPageCallback> {
+    override suspend fun execute(): StartPageCallback {
+        val call = caller.startPage
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 val document = body.asDocument()
                 successMeasures(document)
             } else {
-                publishProgress(StartPageCallback(Status.RESPONSE_FAILED).message(response.message).code(response.code))
+                StartPageCallback(Status.RESPONSE_FAILED).message(response.message).code(response.code)
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            publishProgress(StartPageCallback(Status.NETWORK_ERROR).throwable(e))
+            StartPageCallback(Status.NETWORK_ERROR).throwable(e)
         }
     }
 
-    private fun successMeasures(document: Document) {
+    private fun successMeasures(document: Document): StartPageCallback {
         val calendar = SagresCalendarParser.getCalendar(document)
         val semesters = SagresSemesterParser.getSemesters(document)
         val disciplines = SagresDisciplineParser.getDisciplines(document)
@@ -67,7 +64,7 @@ class StartPageOperation(executor: Executor?) : Operation<StartPageCallback>(exe
         val messages = SagresMessageParser.getMessages(document)
         val demandOpen = SagresBasicParser.isDemandOpen(document)
 
-        val callback = StartPageCallback(Status.SUCCESS)
+        return StartPageCallback(Status.SUCCESS)
             .document(document)
             .calendar(calendar)
             .semesters(semesters)
@@ -76,6 +73,5 @@ class StartPageOperation(executor: Executor?) : Operation<StartPageCallback>(exe
             .locations(locations)
             .demandOpen(demandOpen)
             .messages(messages)
-        publishProgress(callback)
     }
 }

@@ -45,7 +45,8 @@ class FastDisciplinesCallback(status: Status) : BaseCallback<FastDisciplinesCall
             val value = entry.value
             val code = entry.key
 
-            val creditsSum = value.groupBy { it.semester }.map { it.value.distinctBy { clazz -> clazz.group }.sumBy { group -> group.credits } }.max() ?: 0
+            val creditsSum = value.groupBy { it.semester }.map { it.value.distinctBy { clazz -> clazz.group }.sumOf { group -> group.credits } }
+                .maxOrNull() ?: 0
             val first = value.first()
             SagresDiscipline(first.semester, first.name!!, code).apply {
                 credits = creditsSum
@@ -86,7 +87,8 @@ class FastDisciplinesCallback(status: Status) : BaseCallback<FastDisciplinesCall
     companion object {
         fun copyFrom(callback: BaseCallback<*>): FastDisciplinesCallback {
             return FastDisciplinesCallback(callback.status).message(callback.message).code(callback.code).throwable(
-                    callback.throwable).document(callback.document)
+                callback.throwable
+            ).document(callback.document)
         }
 
         const val LOGIN = 1

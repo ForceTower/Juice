@@ -21,46 +21,39 @@
 package com.forcetower.sagres.operation.demand
 
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresDemandParser
 import com.forcetower.sagres.request.SagresCalls
-import java.util.concurrent.Executor
 import org.jsoup.nodes.Document
 
-class LoadDemandOffersOperation(executor: Executor?) : Operation<DemandOffersCallback>(executor) {
-    init {
-        perform()
-    }
+class LoadDemandOffersOperation(private val caller: SagresCalls) : Operation<DemandOffersCallback> {
+    override suspend fun execute(): DemandOffersCallback {
+        val (document, callback) = demandPage()
+        if (document == null) return callback!!
 
-    override fun execute() {
-        executeSteps()
-    }
-
-    private fun executeSteps() {
-        val document = demandPage() ?: return
         val offers = SagresDemandParser.getOffers(document)
-        if (offers != null) {
-            publishProgress(DemandOffersCallback(Status.SUCCESS).offers(offers).document(document))
+        return if (offers != null) {
+            DemandOffersCallback(Status.SUCCESS).offers(offers).document(document)
         } else {
-            publishProgress(DemandOffersCallback(Status.APPROVAL_ERROR).message("Not able to find the demand object").document(document))
+            DemandOffersCallback(Status.APPROVAL_ERROR).message("Not able to find the demand object").document(document)
         }
     }
 
-    private fun demandPage(): Document? {
-        val call = SagresCalls.getDemandPage()
+    private suspend fun demandPage(): Pair<Document?, DemandOffersCallback?> {
+        val call = caller.getDemandPage()
 
-        try {
-            val response = call.execute()
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
-                return body.asDocument()
+                return body.asDocument() to null
             } else {
-                publishProgress(DemandOffersCallback(Status.RESPONSE_FAILED).code(response.code).message("Failed loading"))
+                null to DemandOffersCallback(Status.RESPONSE_FAILED).code(response.code).message("Failed loading")
             }
         } catch (t: Throwable) {
-            publishProgress(DemandOffersCallback(Status.NETWORK_ERROR).throwable(t))
+            null to DemandOffersCallback(Status.NETWORK_ERROR).throwable(t)
         }
-        return null
     }
 }

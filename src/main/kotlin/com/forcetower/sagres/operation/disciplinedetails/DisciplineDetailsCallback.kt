@@ -65,7 +65,8 @@ class DisciplineDetailsCallback(status: Status) : BaseCallback<DisciplineDetails
     companion object {
         fun copyFrom(callback: BaseCallback<*>): DisciplineDetailsCallback {
             return DisciplineDetailsCallback(callback.status).message(callback.message).code(callback.code).throwable(
-                callback.throwable).document(callback.document)
+                callback.throwable
+            ).document(callback.document)
         }
 
         const val LOGIN = 1

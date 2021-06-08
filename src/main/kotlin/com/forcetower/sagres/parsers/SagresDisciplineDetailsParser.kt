@@ -25,10 +25,10 @@ import com.forcetower.sagres.database.model.SagresDisciplineClassLocation
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
 import com.forcetower.sagres.utils.ValueUtils.toInteger
 import com.forcetower.sagres.utils.WordUtils
-import java.util.ArrayList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import java.util.ArrayList
 
 object SagresDisciplineDetailsParser {
 

@@ -20,8 +20,8 @@
 
 package com.forcetower.sagres.cookies
 
-import java.util.HashSet
 import okhttp3.Cookie
+import java.util.HashSet
 
 class SetCookieCache : CookieCache {
     private val cookies: MutableSet<IdentifiableCookie>

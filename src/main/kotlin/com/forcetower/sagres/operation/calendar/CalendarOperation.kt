@@ -22,14 +22,12 @@ package com.forcetower.sagres.operation.calendar
 
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
-import java.util.concurrent.Executor
+import com.forcetower.sagres.request.SagresCalls
 
-class CalendarOperation(executor: Executor?) : Operation<CalendarCallback>(executor) {
-    init {
-        this.perform()
-    }
-
-    override fun execute() {
-        publishProgress(CalendarCallback(Status.STARTED))
+class CalendarOperation(
+    private val caller: SagresCalls
+) : Operation<CalendarCallback> {
+    override suspend fun execute(): CalendarCallback {
+        return CalendarCallback(Status.STARTED)
     }
 }

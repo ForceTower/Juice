@@ -20,15 +20,12 @@
 
 package com.forcetower.sagres.impl
 
-import androidx.annotation.RestrictTo
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.cookies.CookiePersistor
 import com.forcetower.sagres.cookies.PersistentCookieJar
 import com.forcetower.sagres.cookies.SetCookieCache
-import com.forcetower.sagres.database.model.SagresCredential
 import com.forcetower.sagres.database.model.SagresDemandOffer
 import com.forcetower.sagres.decoders.Base64Encoder
-import com.forcetower.sagres.executor.SagresTaskExecutor
 import com.forcetower.sagres.operation.calendar.CalendarCallback
 import com.forcetower.sagres.operation.calendar.CalendarOperation
 import com.forcetower.sagres.operation.demand.CreateDemandOperation
@@ -48,231 +45,106 @@ import com.forcetower.sagres.operation.initial.StartPageOperation
 import com.forcetower.sagres.operation.login.LoginCallback
 import com.forcetower.sagres.operation.login.LoginOperation
 import com.forcetower.sagres.operation.messages.MessagesCallback
-import com.forcetower.sagres.operation.messages.MessagesOperation
 import com.forcetower.sagres.operation.messages.OldMessagesOperation
 import com.forcetower.sagres.operation.ohmyzsh.DoneCallback
 import com.forcetower.sagres.operation.ohmyzsh.JustDoIt
-import com.forcetower.sagres.operation.person.PersonCallback
-import com.forcetower.sagres.operation.person.PersonOperation
-import com.forcetower.sagres.operation.semester.SemesterCallback
-import com.forcetower.sagres.operation.semester.SemesterOperation
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesCallback
 import com.forcetower.sagres.operation.servicerequest.RequestedServicesOperation
-import com.forcetower.sagres.persist.CachedPersistence
-import io.reactivex.subjects.Subject
-import java.io.File
-import java.util.concurrent.TimeUnit
+import com.forcetower.sagres.request.SagresCalls
 import okhttp3.Call
 import okhttp3.ConnectionSpec
 import okhttp3.Cookie
 import okhttp3.CookieJar
-import okhttp3.Credentials
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.jsoup.nodes.Document
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?,
     private val base64Encoder: Base64Encoder,
-    private val persistence: CachedPersistence,
     baseClient: OkHttpClient?
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
     private val cookieJar = createCookieJar(cookies, persist)
-    val client: OkHttpClient = createClient(cookieJar, baseClient)
+    private val client: OkHttpClient = createClient(cookieJar, baseClient)
     private var selectedInstitution = "UEFS"
-
-    private var credential: SagresCredential? = null
+    private val caller = SagresCalls(client) { selectedInstitution }
 
     private fun createClient(cookies: CookieJar, baseClient: OkHttpClient?): OkHttpClient {
         return (baseClient?.newBuilder() ?: OkHttpClient.Builder())
             .connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))
             .followRedirects(true)
             .cookieJar(cookies)
-            .addInterceptor(createInterceptor())
             .connectTimeout(1, TimeUnit.MINUTES)
             .readTimeout(1, TimeUnit.MINUTES)
             .writeTimeout(1, TimeUnit.MINUTES)
             .build()
     }
 
-    private fun createInterceptor(): Interceptor {
-        return Interceptor { chain ->
-            val nRequest = chain.request().newBuilder()
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
-                .build()
-
-            val cred = credential
-            if (cred == null) {
-                chain.proceed(nRequest)
-            } else {
-                val credentials = Credentials.basic(cred.username, cred.password)
-                if (nRequest.header("Authorization") != null) {
-                    chain.proceed(nRequest)
-                } else {
-                    val cRequest = nRequest.newBuilder()
-                        .addHeader("Authorization", credentials)
-                        .addHeader("Accept", "application/json")
-                        .build()
-
-                    chain.proceed(cRequest)
-                }
-            }
-        }
-    }
-
     private fun createCookieJar(cookies: SetCookieCache, persist: CookiePersistor?): PersistentCookieJar {
         return PersistentCookieJar(cookies, persist)
     }
 
-    override fun login(username: String, password: String, gresp: String?): LoginCallback {
-        return LoginOperation(username, password, gresp, null).finishedResult
+    override suspend fun login(username: String, password: String, gresp: String?): LoginCallback {
+        return LoginOperation(username, password, gresp, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun me(): PersonCallback {
-        return PersonOperation(null, null).finishedResult
+    override suspend fun messagesHtml(): MessagesCallback {
+        return OldMessagesOperation(caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun messages(userId: Long, fetchAll: Boolean): MessagesCallback {
-        return MessagesOperation(null, userId, fetchAll).finishedResult
+    override suspend fun calendar(): CalendarCallback {
+        return CalendarOperation(caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun messagesHtml(): MessagesCallback {
-        return OldMessagesOperation(null).finishedResult
+    override suspend fun startPage(): StartPageCallback {
+        return StartPageOperation(caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun calendar(): CalendarCallback {
-        return CalendarOperation(null).finishedResult
+    override suspend fun getCurrentGrades(): GradesCallback {
+        return GradesOperation(null, null, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun semesters(userId: Long): SemesterCallback {
-        return SemesterOperation(null, userId).finishedResult
+    override suspend fun getGradesFromSemester(semesterSagresId: Long, document: Document): GradesCallback {
+        return GradesOperation(semesterSagresId, document, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun startPage(): StartPageCallback {
-        return StartPageOperation(null).finishedResult
+    override suspend fun downloadEnrollment(file: File): DocumentCallback {
+        return DocumentOperation(file, "SAGRES_ENROLL_CERT", caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun getCurrentGrades(): GradesCallback {
-        return GradesOperation(null, null, null).finishedResult
+    override suspend fun downloadFlowchart(file: File): DocumentCallback {
+        return DocumentOperation(file, "SAGRES_FLOWCHART", caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun getGradesFromSemester(semesterSagresId: Long, document: Document): GradesCallback {
-        return GradesOperation(semesterSagresId, document, null).finishedResult
+    override suspend fun downloadHistory(file: File): DocumentCallback {
+        return DocumentOperation(file, "SAGRES_HISTORY", caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun downloadEnrollment(file: File): DocumentCallback {
-        return DocumentOperation(file, "SAGRES_ENROLL_CERT", null).finishedResult
+    override suspend fun loadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean): DisciplineDetailsCallback {
+        return DisciplineDetailsOperation(semester, code, group, partialLoad, base64Encoder, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun downloadFlowchart(file: File): DocumentCallback {
-        return DocumentOperation(file, "SAGRES_FLOWCHART", null).finishedResult
+    override suspend fun loadDemandOffers(): DemandOffersCallback {
+        return LoadDemandOffersOperation(caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun downloadHistory(file: File): DocumentCallback {
-        return DocumentOperation(file, "SAGRES_HISTORY", null).finishedResult
+    override suspend fun createDemandOffer(offers: List<SagresDemandOffer>): DemandCreatorCallback {
+        return CreateDemandOperation(offers, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun loadDisciplineDetails(semester: String?, code: String?, group: String?, partialLoad: Boolean): DisciplineDetailsCallback {
-        return DisciplineDetailsOperation(semester, code, group, partialLoad, null).finishedResult
+    override suspend fun getRequestedServices(): RequestedServicesCallback {
+        return RequestedServicesOperation(caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun loadDemandOffers(): DemandOffersCallback {
-        return LoadDemandOffersOperation(null).finishedResult
+    override suspend fun disciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): FastDisciplinesCallback {
+        return FastDisciplinesOperation(semester, code, group, partialLoad, discover, base64Encoder, caller).execute()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun createDemandOffer(offers: List<SagresDemandOffer>): DemandCreatorCallback {
-        return CreateDemandOperation(offers, null).finishedResult
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun getRequestedServices(): RequestedServicesCallback {
-        return RequestedServicesOperation(null).finishedResult
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun disciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): FastDisciplinesCallback {
-        return FastDisciplinesOperation(semester, code, group, partialLoad, discover, null).finishedResult
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aLogin(username: String, password: String, gresp: String?): Subject<LoginCallback> {
-        return LoginOperation(username, password, gresp, SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aMe(): Subject<PersonCallback> {
-        return PersonOperation(null, SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aMessages(userId: Long, fetchAll: Boolean): Subject<MessagesCallback> {
-        return MessagesOperation(SagresTaskExecutor.networkThreadExecutor, userId, fetchAll).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aMessagesHtml(needsAuth: Boolean): Subject<MessagesCallback> {
-        return OldMessagesOperation(SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aCalendar(): Subject<CalendarCallback> {
-        return CalendarOperation(SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aSemesters(userId: Long): Subject<SemesterCallback> {
-        return SemesterOperation(SagresTaskExecutor.networkThreadExecutor, userId).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aStartPage(): Subject<StartPageCallback> {
-        return StartPageOperation(SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aGetCurrentGrades(): Subject<GradesCallback> {
-        return GradesOperation(null, null, SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aLoadDisciplineDetails(
-        semester: String?,
-        code: String?,
-        group: String?,
-        partialLoad: Boolean
-    ): Subject<DisciplineDetailsCallback> {
-        return DisciplineDetailsOperation(semester, code, group, partialLoad, SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aLoadDemandOffers(): Subject<DemandOffersCallback> {
-        return LoadDemandOffersOperation(SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aGetRequestedServices(login: Boolean): Subject<RequestedServicesCallback> {
-        return RequestedServicesOperation(SagresTaskExecutor.networkThreadExecutor).result
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun aDisciplinesExperimental(semester: String?, code: String?, group: String?, partialLoad: Boolean, discover: Boolean): Subject<FastDisciplinesCallback> {
-        return FastDisciplinesOperation(semester, code, group, partialLoad, discover, SagresTaskExecutor.networkThreadExecutor).result
+    override suspend fun ohMyZsh(): DoneCallback {
+        return JustDoIt(caller).execute()
     }
 
     override fun getSelectedInstitution() = selectedInstitution
@@ -300,12 +172,6 @@ class SagresNavigatorImpl private constructor(
 
     override fun getBase64Encoder() = base64Encoder
 
-    override fun getCachingPersistence() = persistence
-
-    override fun putCredentials(cred: SagresCredential?) {
-        credential = cred
-    }
-
     override fun setCookiesOnClient(cookies: String) {
         val cookiesStr = cookies.split(";")
         val url = "http://academico2.uefs.br".toHttpUrl()
@@ -313,33 +179,13 @@ class SagresNavigatorImpl private constructor(
         cookieJar.saveFromResponse(url, elements)
     }
 
-    override fun ohMyZsh(): DoneCallback {
-        return JustDoIt(null).finishedResult
-    }
-
     companion object {
-        private lateinit var sDefaultInstance: SagresNavigatorImpl
-        private val sLock = Any()
-
-        val instance: SagresNavigatorImpl
-            get() = synchronized(sLock) {
-                if (::sDefaultInstance.isInitialized)
-                    return sDefaultInstance
-                else
-                    throw IllegalStateException("Sagres navigator was not initialized")
-            }
-
-        fun initialize(
+        fun create(
             persist: CookiePersistor?,
             encoder: Base64Encoder,
-            persistence: CachedPersistence,
             baseClient: OkHttpClient?
-        ) {
-            synchronized(sLock) {
-                if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, persistence, baseClient)
-                }
-            }
+        ): SagresNavigator {
+            return SagresNavigatorImpl(persist, encoder, baseClient)
         }
     }
 }

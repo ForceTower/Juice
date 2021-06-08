@@ -1,9 +1,11 @@
+package com.forcetower.sagres.test
+
 import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresCredential
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import java.io.File
 import org.junit.BeforeClass
+import java.io.File
 
 /*
  * This file is part of the UNES Open Source Project.
@@ -41,10 +43,8 @@ abstract class BaseSagresTest {
 
             val environment = File("environment.json").readText()
             credential = gson.fromJson(environment, SagresCredential::class.java)
-            SagresNavigator.initialize(null)
-            instance = SagresNavigator.instance
+            instance = SagresNavigator.initialize(null)
             instance.setSelectedInstitution(credential.institution)
-            instance.putCredentials(credential)
         }
 
         protected fun toJson(source: Any) = gson.toJson(source)

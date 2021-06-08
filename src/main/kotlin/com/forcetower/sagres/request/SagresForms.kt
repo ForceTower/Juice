@@ -22,13 +22,12 @@ package com.forcetower.sagres.request
 
 import com.forcetower.sagres.Constants
 import com.forcetower.sagres.database.model.SagresDemandOffer
-import java.util.HashMap
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
+import java.util.HashMap
 
 object SagresForms {
-
     private fun extractHiddenFields(document: Document, formBody: FormBody.Builder) {
         val elements = document.select("input[value][type=\"hidden\"]")
         for (element in elements) {
@@ -38,16 +37,17 @@ object SagresForms {
         }
     }
 
-    fun loginBody(username: String, password: String, gresp: String? = null): RequestBody {
+    fun loginBody(username: String, password: String, gresp: String? = null, institution: String): RequestBody {
+        val constants = Constants.forInstitution(institution)
         return FormBody.Builder()
             .add("ctl00\$PageContent\$LoginPanel\$UserName", username)
             .add("ctl00\$PageContent\$LoginPanel\$Password", password)
             .add("ctl00\$PageContent\$LoginPanel\$LoginButton", "Entrar")
             .add("__EVENTTARGET", "")
             .add("__EVENTARGUMENT", "")
-            .add("__VIEWSTATE", Constants.getParameter("LOGIN_VIEW_STATE"))
-            .add("__VIEWSTATEGENERATOR", Constants.getParameter("LOGIN_VW_STT_GEN"))
-            .add("__EVENTVALIDATION", Constants.getParameter("LOGIN_VIEW_VALID")).also {
+            .add("__VIEWSTATE", constants.getParameter("LOGIN_VIEW_STATE"))
+            .add("__VIEWSTATEGENERATOR", constants.getParameter("LOGIN_VW_STT_GEN"))
+            .add("__EVENTVALIDATION", constants.getParameter("LOGIN_VIEW_VALID")).also {
                 if (gresp != null) {
                     println("adding sauce")
                     it.add("g-recaptcha-response", gresp)

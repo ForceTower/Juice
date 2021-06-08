@@ -21,51 +21,46 @@
 package com.forcetower.sagres.operation.login
 
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
 import com.forcetower.sagres.request.SagresCalls
 import com.forcetower.sagres.utils.ConnectedStates
-import java.io.IOException
-import java.util.concurrent.Executor
 import okhttp3.Response
 import org.jsoup.nodes.Document
+import java.io.IOException
 
 class LoginOperation constructor(
     private val username: String,
     private val password: String,
     private val gresp: String?,
-    executor: Executor?
-) : Operation<LoginCallback>(executor) {
-    init {
-        this.perform()
-    }
+    private val caller: SagresCalls
+) : Operation<LoginCallback> {
+    override suspend fun execute(): LoginCallback {
+        val call = caller.login(username, password, gresp)
 
-    override fun execute() {
-        publishProgress(LoginCallback.started())
-        val call = SagresCalls.login(username, password, gresp)
-
-        try {
-            val response = call.execute()
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
-                val body = response.body
-                val string = body!!.string()
+                val body = response.body ?: throw IOException("empty body")
+                val string = body.string()
                 resolveLogin(string, response)
             } else {
                 val body = response.body!!.string()
                 val doc = body.asDocument()
-                publishProgress(LoginCallback.Builder(Status.RESPONSE_FAILED).document(doc).code(response.code).build())
+                LoginCallback.Builder(Status.RESPONSE_FAILED).document(doc).code(response.code).build()
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            publishProgress(LoginCallback.Builder(Status.NETWORK_ERROR).throwable(e).build())
+            LoginCallback.Builder(Status.NETWORK_ERROR).throwable(e).build()
         }
     }
 
-    private fun resolveLogin(string: String, response: Response) {
+    private suspend fun resolveLogin(string: String, response: Response): LoginCallback {
         val document = string.asDocument()
 
-        when (SagresBasicParser.isConnected(document)) {
+        return when (SagresBasicParser.isConnected(document)) {
             ConnectedStates.CONNECTED -> continueWithResolve(document, response)
             ConnectedStates.INVALID -> continueWithInvalidation(document)
             ConnectedStates.SESSION_TIMEOUT -> continueWithStopFlags(document)
@@ -73,55 +68,43 @@ class LoginOperation constructor(
         }
     }
 
-    private fun continueWithUnknownFlags(document: Document) {
-        val callback = LoginCallback.Builder(Status.INVALID_LOGIN).code(500).document(document).build()
-        publishProgress(callback)
+    private fun continueWithUnknownFlags(document: Document): LoginCallback {
+        return LoginCallback.Builder(Status.INVALID_LOGIN).code(500).document(document).build()
     }
 
-    private fun continueWithStopFlags(document: Document) {
-        val callback = LoginCallback.Builder(Status.INVALID_LOGIN).code(440).document(document).build()
-        publishProgress(callback)
+    private fun continueWithStopFlags(document: Document): LoginCallback {
+        return LoginCallback.Builder(Status.INVALID_LOGIN).code(440).document(document).build()
     }
 
-    private fun continueWithInvalidation(document: Document) {
-        val callback = LoginCallback.Builder(Status.INVALID_LOGIN).code(401).document(document).build()
-        publishProgress(callback)
+    private fun continueWithInvalidation(document: Document): LoginCallback {
+        return LoginCallback.Builder(Status.INVALID_LOGIN).code(401).document(document).build()
     }
 
-    private fun continueWithResolve(document: Document, response: Response) {
-        if (SagresBasicParser.needApproval(document)) {
-            publishProgress(LoginCallback.Builder(Status.LOADING).message("Need approval").code(200).build())
+    private suspend fun continueWithResolve(document: Document, response: Response): LoginCallback {
+        return if (SagresBasicParser.needApproval(document)) {
             approval(document, response)
         } else {
             successMeasures(document)
         }
     }
 
-    private fun approval(approvalDocument: Document, oldResp: Response) {
-        val call = SagresCalls.loginApproval(approvalDocument, oldResp)
-        try {
-            val response = call.execute()
+    private suspend fun approval(approvalDocument: Document, oldResp: Response): LoginCallback {
+        val call = caller.loginApproval(approvalDocument, oldResp)
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val document = response.body!!.string().asDocument()
                 successMeasures(document)
             } else {
-                publishProgress(LoginCallback.Builder(Status.APPROVAL_ERROR).code(response.code).build())
+                LoginCallback.Builder(Status.APPROVAL_ERROR).code(response.code).build()
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            publishProgress(LoginCallback.Builder(Status.NETWORK_ERROR).throwable(e).build())
+            LoginCallback.Builder(Status.NETWORK_ERROR).throwable(e).build()
         }
     }
 
-    private fun successMeasures(document: Document) {
-        isSuccess = true
-
-//        TODO Insertion to database
-//        val database = SagresNavigatorImpl.instance.database
-//        val access = database.accessDao().accessDirect
-//        val created = SAccess(username, password)
-//        if (access == null || access != created) database.accessDao().insert(created)
-
-        publishProgress(LoginCallback.Builder(Status.SUCCESS).document(document).build())
+    private fun successMeasures(document: Document): LoginCallback {
+        return LoginCallback.Builder(Status.SUCCESS).document(document).build()
     }
 }

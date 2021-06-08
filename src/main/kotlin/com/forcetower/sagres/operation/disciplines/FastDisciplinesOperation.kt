@@ -20,24 +20,21 @@
 
 package com.forcetower.sagres.operation.disciplines
 
-import com.forcetower.sagres.SagresNavigator
 import com.forcetower.sagres.database.model.SagresDisciplineGroup
+import com.forcetower.sagres.decoders.Base64Encoder
 import com.forcetower.sagres.extension.asDocument
+import com.forcetower.sagres.extension.executeSuspend
 import com.forcetower.sagres.operation.Operation
 import com.forcetower.sagres.operation.Status
-import com.forcetower.sagres.operation.disciplines.FastDisciplinesCallback.Companion.DOWNLOADING
-import com.forcetower.sagres.operation.disciplines.FastDisciplinesCallback.Companion.INITIAL
-import com.forcetower.sagres.operation.disciplines.FastDisciplinesCallback.Companion.PROCESSING
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsFetcherParser
 import com.forcetower.sagres.parsers.SagresDisciplineDetailsParser
 import com.forcetower.sagres.parsers.SagresMaterialsParser
 import com.forcetower.sagres.request.SagresCalls
-import java.io.IOException
-import java.util.concurrent.Executor
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.json.JSONObject
 import org.jsoup.nodes.Document
+import java.io.IOException
 
 class FastDisciplinesOperation(
     private val semester: String?,
@@ -45,40 +42,34 @@ class FastDisciplinesOperation(
     private val group: String?,
     private val partialLoad: Boolean,
     private val discover: Boolean,
-    executor: Executor?
-) : Operation<FastDisciplinesCallback>(executor) {
+    private val encoder: Base64Encoder,
+    private val caller: SagresCalls
+) : Operation<FastDisciplinesCallback> {
 
-    init {
-        this.perform()
-    }
+    override suspend fun execute(): FastDisciplinesCallback {
+        val (initial, iniCallback) = initial()
+        if (initial == null) return iniCallback!!
 
-    override fun execute() {
-        executeSteps()
-    }
+        val (disciplines, disCallback) = disciplines(initial)
+        if (disciplines == null) return disCallback!!
 
-    private fun executeSteps() {
-        publishProgress(FastDisciplinesCallback(Status.LOADING).flags(INITIAL))
-        val initial = initial() ?: return
-        publishProgress(FastDisciplinesCallback(Status.LOADING).flags(INITIAL))
-        val disciplines = disciplines(initial) ?: return
-        publishProgress(FastDisciplinesCallback(Status.LOADING).flags(PROCESSING))
         val semesters = processSemesters(disciplines)
-        val discovered = if (discover && semester == null) semesters.maxBy { it.first }?.second else semester
-        val bodies = processDisciplines(disciplines, discovered) ?: return
-        executeCalls(bodies, semesters)
+        val discovered = if (discover && semester == null) semesters.maxByOrNull { it.first }?.second else semester
+        val bodies = processDisciplines(disciplines, discovered) ?: return FastDisciplinesCallback(Status.UNKNOWN_FAILURE)
+        return executeCalls(bodies, semesters)
     }
 
     private fun processSemesters(document: Document): List<Pair<Long, String>> {
         return SagresDisciplineDetailsFetcherParser.extractSemesters(document)
     }
 
-    private fun executeCalls(bodies: List<RequestBody?>, semesters: List<Pair<Long, String>>) {
+    private suspend fun executeCalls(bodies: List<RequestBody?>, semesters: List<Pair<Long, String>>): FastDisciplinesCallback {
         val groups = mutableListOf<SagresDisciplineGroup>()
         var failureCount = 0
-        val total = bodies.filterNotNull().size
+//        val total = bodies.filterNotNull().size
 
-        for ((index, body) in bodies.filterNotNull().withIndex()) {
-            publishProgress(FastDisciplinesCallback(Status.LOADING).flags(DOWNLOADING).current(index).total(total))
+        for (body in bodies.filterNotNull()) {
+//            publishProgress(FastDisciplinesCallback(Status.LOADING).flags(DOWNLOADING).current(index).total(total))
             val document = initialFormConnect(body)
             if (document != null) {
                 val params = SagresDisciplineDetailsFetcherParser.extractParamsForDiscipline(document, true)
@@ -94,45 +85,33 @@ class FastDisciplinesOperation(
                 failureCount++
             }
         }
-        publishProgress(
-                FastDisciplinesCallback(Status.COMPLETED)
-                        .groups(groups)
-                        .failureCount(failureCount)
-                        .semesters(semesters)
-        )
+        return FastDisciplinesCallback(Status.COMPLETED)
+            .groups(groups)
+            .failureCount(failureCount)
+            .semesters(semesters)
     }
 
-    private fun initialFormConnect(body: RequestBody?): Document? {
-        body ?: return null
-        val call = SagresCalls.goToDisciplineAlternate(body)
+    private suspend fun initialFormConnect(body: RequestBody): Document? {
+        val call = caller.goToDisciplineAlternate(body)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val value = response.body!!.string()
-                val document = value.asDocument()
-                return document
-            } else {
-                publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).message("Unsuccessful response").code(response.code))
+                return value.asDocument()
             }
-        } catch (e: IOException) {
-            publishProgress(FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(e).message("Failed at initial form connect"))
-        }
+        } catch (_: IOException) {}
         return null
     }
 
-    private fun disciplinePageParams(params: FormBody.Builder): Document? {
-        val call = SagresCalls.getDisciplinePageWithParams(params)
+    private suspend fun disciplinePageParams(params: FormBody.Builder): Document? {
+        val call = caller.getDisciplinePageWithParams(params)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 return body.asDocument()
-            } else {
-                publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at params").code(response.code))
             }
-        } catch (e: IOException) {
-            publishProgress(FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(e).message("Failed at params setup"))
-        }
+        } catch (_: IOException) { }
         return null
     }
 
@@ -140,7 +119,7 @@ class FastDisciplinesOperation(
         return SagresDisciplineDetailsParser.extractDisciplineGroup(document)
     }
 
-    private fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
+    private suspend fun downloadMaterials(document: Document, group: SagresDisciplineGroup) {
         val items = group.classItems.filter { it.numberOfMaterials > 0 }
         for (item in items) {
             if (item.numberOfMaterials <= 0) continue
@@ -149,7 +128,6 @@ class FastDisciplinesOperation(
             json.put("showForm", true)
             json.put("popupLinkColumn", "cpt_material_apoio")
             json.put("retrieveArguments", item.materialLink)
-            val encoder = SagresNavigator.instance.getBase64Encoder()
             val encoded = encoder.encodeString(json.toString())
             val materials = executeMaterialCall(document, encoded)
             if (materials != null) {
@@ -158,19 +136,15 @@ class FastDisciplinesOperation(
         }
     }
 
-    private fun executeMaterialCall(document: Document, encoded: String): Document? {
-        val call = SagresCalls.getDisciplineMaterials(encoded, document)
+    private suspend fun executeMaterialCall(document: Document, encoded: String): Document? {
+        val call = caller.getDisciplineMaterials(encoded, document)
         try {
-            val response = call.execute()
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val body = response.body!!.string()
                 return body.asDocument()
-            } else {
-                publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).message("Unsuccessful response at material download"))
             }
-        } catch (e: IOException) {
-            publishProgress(FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(e).message("Failed to fetch material"))
-        }
+        } catch (_: IOException) { }
         return null
     }
 
@@ -178,35 +152,33 @@ class FastDisciplinesOperation(
         return SagresDisciplineDetailsFetcherParser.extractFastForms(document, semester, code, group)
     }
 
-    private fun disciplines(document: Document): Document? {
-        val call = SagresCalls.postAllDisciplinesParams(document)
-        try {
-            val response = call.execute()
+    private suspend fun disciplines(document: Document): Pair<Document?, FastDisciplinesCallback?> {
+        val call = caller.postAllDisciplinesParams(document)
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val value = response.body!!.string()
-                return value.asDocument()
+                value.asDocument() to null
             } else {
-                publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).code(response.code))
+                null to FastDisciplinesCallback(Status.RESPONSE_FAILED).code(response.code)
             }
         } catch (t: Throwable) {
-            publishProgress(FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(t))
+            null to FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(t)
         }
-        return null
     }
 
-    private fun initial(): Document? {
-        val call = SagresCalls.getAllDisciplinesPage()
-        try {
-            val response = call.execute()
+    private suspend fun initial(): Pair<Document?, FastDisciplinesCallback?> {
+        val call = caller.getAllDisciplinesPage()
+        return try {
+            val response = call.executeSuspend()
             if (response.isSuccessful) {
                 val value = response.body!!.string()
-                return value.asDocument()
+                return value.asDocument() to null
             } else {
-                publishProgress(FastDisciplinesCallback(Status.RESPONSE_FAILED).code(response.code))
+                null to FastDisciplinesCallback(Status.RESPONSE_FAILED).code(response.code)
             }
         } catch (t: Throwable) {
-            publishProgress(FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(t))
+            null to FastDisciplinesCallback(Status.NETWORK_ERROR).throwable(t)
         }
-        return null
     }
 }

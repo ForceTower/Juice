@@ -27,7 +27,8 @@ class DemandCreatorCallback(status: Status) : BaseCallback<DemandCreatorCallback
     companion object {
         fun copyFrom(callback: BaseCallback<*>): DemandCreatorCallback {
             return DemandCreatorCallback(callback.status).message(callback.message).code(callback.code).throwable(
-                callback.throwable).document(callback.document)
+                callback.throwable
+            ).document(callback.document)
         }
     }
 }

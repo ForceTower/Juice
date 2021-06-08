@@ -20,10 +20,10 @@
 
 package com.forcetower.sagres.parsers
 
-import java.util.ArrayList
 import okhttp3.FormBody
 import okhttp3.RequestBody
 import org.jsoup.nodes.Document
+import java.util.ArrayList
 
 object SagresDisciplineDetailsFetcherParser {
 
@@ -175,12 +175,15 @@ object SagresDisciplineDetailsFetcherParser {
     @JvmStatic
     private fun extractFastFormBodies(pos: String, document: Document): RequestBody {
         val formBody = FormBody.Builder()
-        extractHiddenFields(document, formBody, listOf(
+        extractHiddenFields(
+            document, formBody,
+            listOf(
                 "__EVENTTARGET",
                 "__EVENTARGUMENT",
                 "ctl00_MasterPlaceHolder_FiltroClasses_txbFiltroNome",
                 "ctl00_MasterPlaceHolder_ctl00_ddMostrar"
-        ))
+            )
+        )
         formBody.add("__EVENTTARGET", "Selecionar")
         formBody.add("__EVENTARGUMENT", pos)
         formBody.add("ctl00_MasterPlaceHolder_FiltroClasses_txbFiltroNome", "")

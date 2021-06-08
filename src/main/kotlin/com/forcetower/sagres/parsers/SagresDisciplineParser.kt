@@ -23,9 +23,9 @@ package com.forcetower.sagres.parsers
 import com.forcetower.sagres.database.model.SagresDiscipline
 import com.forcetower.sagres.utils.ValueUtils
 import com.forcetower.sagres.utils.WordUtils
-import java.util.ArrayList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.util.ArrayList
 
 object SagresDisciplineParser {
     @JvmStatic
@@ -56,7 +56,7 @@ object SagresDisciplineParser {
                 dElement.selectFirst("div[class=\"webpart-aluno-resultado estado-nao\"]")
             if (situationPart != null && situationPart.children().size == 2) {
                 situation = situationPart.children()[1].text()
-                situation = situation!!.toLowerCase()
+                situation = situation!!.lowercase()
                 situation = WordUtils.toTitleCase(situation)
                 if (situation!!.equals("Não existe resultado final divulgado pelo professor.", ignoreCase = true))
                     situation = "Em aberto"

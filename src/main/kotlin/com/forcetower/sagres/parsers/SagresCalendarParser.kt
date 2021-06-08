@@ -21,8 +21,8 @@
 package com.forcetower.sagres.parsers
 
 import com.forcetower.sagres.database.model.SagresCalendar
-import java.util.ArrayList
 import org.jsoup.nodes.Document
+import java.util.ArrayList
 
 /**
  * Created by João Paulo on 06/03/2018.
