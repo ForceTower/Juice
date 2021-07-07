@@ -1,12 +1,14 @@
 import com.forcetower.sagres.operation.Status
 import com.forcetower.sagres.parsers.SagresBasicParser
 import com.forcetower.sagres.utils.ConnectedStates
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 /*
  * This file is part of the UNES Open Source Project.
@@ -46,8 +48,13 @@ class LoginTest : BaseSagresTest() {
 
     @Test
     fun loginWithCookies() = runBlockingTest {
+        val elements = File("cookies.json").readText()
+        val biscuit = gson.fromJson(elements, SavedCookie::class.java)
+        val bigStr = ".PORTALAUTH=${biscuit.auth};ASP.NET_SessionId=${biscuit.sessionId}"
+        instance.setCookiesOnClient(bigStr)
         val callback = instance.messagesHtml()
         assertEquals(Status.SUCCESS, callback.status)
+        println(callback.messages)
         assertNotNull(callback.messages)
     }
 
@@ -57,4 +64,10 @@ class LoginTest : BaseSagresTest() {
         assertEquals(401, callback.code)
         assertEquals(Status.INVALID_LOGIN, callback.status)
     }
+
+    data class SavedCookie(
+        val auth: String,
+        @SerializedName("session_id")
+        val sessionId: String
+    )
 }

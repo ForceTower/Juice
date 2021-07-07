@@ -26,7 +26,8 @@ import okhttp3.HttpUrl
 
 class PersistentCookieJar(
     private val cache: CookieCache,
-    private val persistor: CookiePersistor? = null
+    private val persistor: CookiePersistor? = null,
+    private val caching: CookiePersistor? = null
 ) : ClearableCookieJar {
     init {
         if (persistor != null)
@@ -36,6 +37,7 @@ class PersistentCookieJar(
     @Synchronized
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         cache.addAll(cookies)
+        caching?.saveAll(cookies)
         persistor?.saveAll(filterPersistentCookies(cookies))
     }
 

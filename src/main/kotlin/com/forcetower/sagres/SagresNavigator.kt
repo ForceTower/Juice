@@ -87,6 +87,7 @@ abstract class SagresNavigator {
 
     abstract fun getBase64Encoder(): Base64Encoder
     abstract fun getCachingPersistence(): CachedPersistence
+    abstract fun getCachingCookie(): CookiePersistor?
     abstract fun putCredentials(cred: SagresCredential?)
 
     abstract fun setCookiesOnClient(cookies: String)
@@ -101,6 +102,7 @@ abstract class SagresNavigator {
         @JvmStatic
         fun initialize(
             persist: CookiePersistor? = null,
+            cachedCookie: CookiePersistor? = null,
             institution: String = "UEFS",
             // Android implementation of this is different, so we need to adapt
             // The baseline is to use Apache things
@@ -108,7 +110,7 @@ abstract class SagresNavigator {
             persistence: CachedPersistence = InMemoryCachePersistence(),
             baseClient: OkHttpClient? = null
         ) {
-            SagresNavigatorImpl.initialize(persist, base64Encoder, persistence, baseClient)
+            SagresNavigatorImpl.initialize(persist, base64Encoder, persistence, cachedCookie, baseClient)
             instance.setSelectedInstitution(institution)
         }
 

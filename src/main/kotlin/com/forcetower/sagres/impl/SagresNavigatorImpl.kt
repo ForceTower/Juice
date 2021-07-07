@@ -75,11 +75,12 @@ import org.jsoup.nodes.Document
 class SagresNavigatorImpl private constructor(
     persist: CookiePersistor?,
     private val base64Encoder: Base64Encoder,
+    private val cachedCookie: CookiePersistor?,
     private val persistence: CachedPersistence,
     baseClient: OkHttpClient?
 ) : SagresNavigator() {
     private val cookies = SetCookieCache()
-    private val cookieJar = createCookieJar(cookies, persist)
+    private val cookieJar = createCookieJar(cookies, persist, cachedCookie)
     val client: OkHttpClient = createClient(cookieJar, baseClient)
     private var selectedInstitution = "UEFS"
 
@@ -122,8 +123,8 @@ class SagresNavigatorImpl private constructor(
         }
     }
 
-    private fun createCookieJar(cookies: SetCookieCache, persist: CookiePersistor?): PersistentCookieJar {
-        return PersistentCookieJar(cookies, persist)
+    private fun createCookieJar(cookies: SetCookieCache, persist: CookiePersistor?, cached: CookiePersistor?): PersistentCookieJar {
+        return PersistentCookieJar(cookies, persist, cached)
     }
 
     override fun login(username: String, password: String, gresp: String?): LoginCallback {
@@ -302,6 +303,8 @@ class SagresNavigatorImpl private constructor(
 
     override fun getCachingPersistence() = persistence
 
+    override fun getCachingCookie() = cachedCookie
+
     override fun putCredentials(cred: SagresCredential?) {
         credential = cred
     }
@@ -333,11 +336,12 @@ class SagresNavigatorImpl private constructor(
             persist: CookiePersistor?,
             encoder: Base64Encoder,
             persistence: CachedPersistence,
+            cachedCookie: CookiePersistor?,
             baseClient: OkHttpClient?
         ) {
             synchronized(sLock) {
                 if (!::sDefaultInstance.isInitialized) {
-                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, persistence, baseClient)
+                    sDefaultInstance = SagresNavigatorImpl(persist, encoder, cachedCookie, persistence, baseClient)
                 }
             }
         }
