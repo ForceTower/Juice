@@ -72,7 +72,7 @@ object SagresDisciplineDetailsParser {
                 missLimits = element.child(1).text()
                 missLimits = missLimits.replace("[^\\d]".toRegex(), "").trim()
             } else if (bText.equals("Período de aulas:", ignoreCase = true)) {
-                classPeriod = element.selectFirst("span").text()
+                classPeriod = element.selectFirst("span")?.text().orEmpty()
             } else if (bText.equals("Departamento:", ignoreCase = true)) {
                 department = WordUtils.toTitleCase(element.child(1).text())
             } else if (bText.equals("Horário:", ignoreCase = true)) {

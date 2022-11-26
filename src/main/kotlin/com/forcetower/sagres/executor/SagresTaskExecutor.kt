@@ -20,11 +20,9 @@
 
 package com.forcetower.sagres.executor
 
-import androidx.annotation.RestrictTo
 import io.reactivex.annotations.NonNull
 import java.util.concurrent.Executor
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class SagresTaskExecutor private constructor() : TaskExecutor() {
     private var mDelegate: TaskExecutor
     private val mDefaultTaskExecutor: TaskExecutor

@@ -40,8 +40,8 @@ object SagresDisciplineDetailsFetcherParser {
         val classes = document.select("section[class=\"webpart-aluno-item\"]")
 
         for (clazz in classes) {
-            val title = clazz.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]").text()
-            val period = clazz.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
+            val title = clazz.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]")?.text().orEmpty()
+            val period = clazz.selectFirst("span[class=\"webpart-aluno-periodo\"]")?.text().orEmpty()
 
             val code = title.substring(0, title.indexOf("-")).trim()
             val ul = clazz.selectFirst("ul")
@@ -50,13 +50,13 @@ object SagresDisciplineDetailsFetcherParser {
                 val lis = ul.select("li")
                 for (li in lis) {
                     val element = li.selectFirst("a[href]")
-                    var values = element.attr("href")
+                    var values = element?.attr("href").orEmpty()
                     val start = values.indexOf("'")
                     values = values.substring(start + 1)
                     val end = values.indexOf("'")
 
                     values = values.substring(0, end)
-                    var type = element.text()
+                    var type = element?.text().orEmpty()
                     val refGroupPos = type.lastIndexOf("(")
                     type = type.substring(0, refGroupPos).trim { it <= ' ' }
 
@@ -81,8 +81,8 @@ object SagresDisciplineDetailsFetcherParser {
                 }
             } else {
                 val webPart = clazz.selectFirst("div[class=\"webpart-dropdown webpart-dropdown-up\"]")
-                val anchor = webPart.selectFirst("a[href]")
-                var values = anchor.attr("href")
+                val anchor = webPart?.selectFirst("a[href]")
+                var values = anchor?.attr("href").orEmpty()
                 val start = values.indexOf("'")
                 values = values.substring(start + 1)
                 val end = values.indexOf("'")
@@ -135,7 +135,7 @@ object SagresDisciplineDetailsFetcherParser {
         classGroup: String?
     ): List<RequestBody?>? {
         try {
-            val elements = document.select("tr").filter { it.attr("id").startsWith("objdwForm_detail_") }
+            val elements = document.select("tr").orEmpty().filter { it.attr("id").startsWith("objdwForm_detail_") }
             return elements.mapNotNull { row ->
                 val index = (row.attr("id").split("_")[2].toIntOrNull() ?: 0) + 1
 

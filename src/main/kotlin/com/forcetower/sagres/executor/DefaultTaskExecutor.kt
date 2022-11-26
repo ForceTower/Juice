@@ -20,12 +20,10 @@
 
 package com.forcetower.sagres.executor
 
-import androidx.annotation.RestrictTo
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class DefaultTaskExecutor : TaskExecutor() {
 
     private val mLock = Any()

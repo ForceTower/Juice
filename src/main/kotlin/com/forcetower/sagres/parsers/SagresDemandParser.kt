@@ -36,15 +36,15 @@ object SagresDemandParser {
         // We iterate over each "semester"
         for (element in elements) {
             // Get the semester title
-            val title = element.selectFirst("span").text().trim()
+            val title = element.selectFirst("span")?.text().orEmpty().trim()
 
             // Find the objects that represents the disciplines
             val disciplines = element.select("div[qtcredito][nomeatividade][codigoatividade][qthoras]")
             // And iterate over it
             for (discipline in disciplines) {
                 // Extract the attributes
-                val id = discipline.selectFirst("input[type=\"hidden\"]").attr("name").trim()
-                val selected = discipline.selectFirst("input[type=\"hidden\"]").attr("value").trim()
+                val id = discipline.selectFirst("input[type=\"hidden\"]")?.attr("name").orEmpty().trim()
+                val selected = discipline.selectFirst("input[type=\"hidden\"]")?.attr("value").orEmpty().trim()
                 val name = discipline.attr("nomeatividade").trim()
                 val code = discipline.attr("codigoatividade").trim()
                 // val activityId = discipline.attr("idatividade").trim()

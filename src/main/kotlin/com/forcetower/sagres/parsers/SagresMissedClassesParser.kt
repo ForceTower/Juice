@@ -33,17 +33,17 @@ object SagresMissedClassesParser {
 
         try {
             val div = document.selectFirst("div[id=\"divBoletins\"]")
-            val classes = div.select("div[class=\"boletim-container\"]")
+            val classes = div?.select("div[class=\"boletim-container\"]").orEmpty()
 
             for (clazz in classes) {
                 val info = clazz.selectFirst("div[class=\"boletim-item-info\"]")
-                val name = info.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]")
+                val name = info?.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]") ?: continue
 
                 val text = name.text()
                 val code = text.substring(0, text.indexOf("-") - 1).trim()
 
                 val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
-                val spectrum = frequency.selectFirst("table")
+                val spectrum = frequency?.selectFirst("table")
                 if (spectrum != null) {
                     val result = mutableListOf<SagresDisciplineMissedClass>()
                     try {
@@ -53,7 +53,7 @@ object SagresMissedClassesParser {
                             val head = points[i]
                             val body = points[i + 1]
                             val groupSpan = head.selectFirst("span")
-                            val group = groupSpan.text().split("-")[0].trim()
+                            val group = groupSpan?.text().orEmpty().split("-")[0].trim()
                             result.addAll(fourier(body, code, semesterId, group, true))
                         }
                     } catch (error: Throwable) {

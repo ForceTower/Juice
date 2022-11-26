@@ -25,7 +25,7 @@ buildscript {
 
 plugins {
     java
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.6.10"
     maven
     `maven-publish`
     signing
@@ -105,8 +105,8 @@ publishing {
 
     repositories {
         maven {
-            val sonatypeUsername: String by project
-            val sonatypePassword: String by project
+            val sonatypeUsername = System.getenv("sonatypeUsername") ?: "username"
+            val sonatypePassword = System.getenv("sonatypePassword") ?: "password"
             setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
             name = "maven"
             credentials {
@@ -122,18 +122,17 @@ signing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.10")
-    implementation("org.jsoup:jsoup:1.13.1")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0-RC3")
-    implementation("androidx.annotation:annotation:1.1.0")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("org.json:json:20180130")
-    implementation("commons-codec:commons-codec:1.13")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jsoup:jsoup:1.15.3")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("org.json:json:20220924")
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    implementation("commons-codec:commons-codec:1.15")
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 }
 
 configure<JavaPluginConvention> {

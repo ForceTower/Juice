@@ -34,13 +34,13 @@ object Constants {
      */
     private val SAGRES_SERVER_CONSTANTS = mapOf(
         "UEFS" to mapOf(
-            "BASE_URL" to "http://academico2.uefs.br/Portal",
-            "LOGIN_VIEW_STATE" to "/wEPDwULLTE1ODU0NDkxODMPZBYCZg9kFgQCAQ9kFhACBA8WAh4EaHJlZgU9fi9BcHBfVGhlbWVzL05ld1RoZW1lL0FjZXNzb0V4dGVybm8uY3NzP2ZwPTYzNzAyNzc1MTk0MDAwMDAwMGQCBQ8WAh8ABTx+L0FwcF9UaGVtZXMvTmV3VGhlbWUvY2FwdGNoYS1oYWNrLmNzcz9mcD02MzcyMTMzNTQzOTYzNDg4NDdkAgYPFgIfAAU4fi9BcHBfVGhlbWVzL05ld1RoZW1lL0NvbnRldWRvLmNzcz9mcD02MzcwMjc3NTE5NDAwMDAwMDBkAgcPFgIfAAU5fi9BcHBfVGhlbWVzL05ld1RoZW1lL0VzdHJ1dHVyYS5jc3M/ZnA9NjM3MDI3NzUxOTQwMDAwMDAwZAIIDxYCHwAFOX4vQXBwX1RoZW1lcy9OZXdUaGVtZS9NZW5zYWdlbnMuY3NzP2ZwPTYzNzAyNzc1MTkwMDAwMDAwMGQCCQ8WAh8ABTZ+L0FwcF9UaGVtZXMvTmV3VGhlbWUvUG9wVXBzLmNzcz9mcD02MzcwMjc3NTE5MDAwMDAwMDBkAgoPFgIfAAU7fi9BcHBfVGhlbWVzL05ld1RoZW1lL3NvY2lhbC1oYWNrLmNzcz9mcD02MzcyMDI5ODg3NjU2OTg5NTdkAgsPFgIfAAVYL1BvcnRhbC9SZXNvdXJjZXMvU3R5bGVzL0FwcF9UaGVtZXMvTmV3VGhlbWUvTmV3VGhlbWUwMS9lc3RpbG8uY3NzP2ZwPTYzNjEwNTgyNjY0MDAwMDAwMGQCAw9kFgQCBw8PFgQeBFRleHQFDVNhZ3JlcyBQb3J0YWweB1Zpc2libGVoZGQCCw9kFgYCAQ8PFgIfAmhkZAIDDzwrAAoBAA8WAh4NUmVtZW1iZXJNZVNldGhkZAIFD2QWAgICD2QWAgIBDxYCHgtfIUl0ZW1Db3VudGZkZEQ9dOxjZzHs804b7zNS9kZWDDqS",
-            "LOGIN_VW_STT_GEN" to "BB137B96",
-            "LOGIN_VIEW_VALID" to "/wEdAAQ311wKHGQUWoLwp7PBHoaoM4nqN81slLG8uEFL8sVLUjoauXZ8QTl2nEJmPx53FYhjUq3W1Gjeb7bKHHg4dlobTvKU+hsWpu5LuPm5L8dsMwBIjEY=",
-            "REQUIRES_CAPTCHA" to "true",
-            "CAPTCHA_SITE_KEY" to "6Lc5M-UUAAAAAOFIqIdUEP2BeaqFi3f-71HscRlB",
-            "CAPTCHA_BASE" to "http://academico2.uefs.br"
+             "BASE_URL" to "http://academico.uefs.br/PortalSagres",
+            "LOGIN_VIEW_STATE" to "/wEPDwULLTE1ODU0NDkxODMPZBYCZg9kFgQCAQ9kFhACBA8WAh4EaHJlZgU9fi9BcHBfVGhlbWVzL05ld1RoZW1lL0FjZXNzb0V4dGVybm8uY3NzP2ZwPTYzNzU3MjI3NDYyMDAwMDAwMGQCBQ8WAh8ABTx+L0FwcF9UaGVtZXMvTmV3VGhlbWUvY2FwdGNoYS1oYWNrLmNzcz9mcD02MzcyMTMzNTQzOTYzNDg4NDdkAgYPFgIfAAU4fi9BcHBfVGhlbWVzL05ld1RoZW1lL0NvbnRldWRvLmNzcz9mcD02Mzc1NzIyNzQ2MjAwMDAwMDBkAgcPFgIfAAU5fi9BcHBfVGhlbWVzL05ld1RoZW1lL0VzdHJ1dHVyYS5jc3M/ZnA9NjM3NTcyMjc0NjIwMDAwMDAwZAIIDxYCHwAFOX4vQXBwX1RoZW1lcy9OZXdUaGVtZS9NZW5zYWdlbnMuY3NzP2ZwPTYzNzU3MjI3NDYyMDAwMDAwMGQCCQ8WAh8ABTZ+L0FwcF9UaGVtZXMvTmV3VGhlbWUvUG9wVXBzLmNzcz9mcD02Mzc1NzIyNzQ2MjAwMDAwMDBkAgoPFgIfAAU7fi9BcHBfVGhlbWVzL05ld1RoZW1lL3NvY2lhbC1oYWNrLmNzcz9mcD02MzcyMDI5ODg3NjU2OTg5NTdkAgsPFgIfAAVeL1BvcnRhbFNhZ3Jlcy9SZXNvdXJjZXMvU3R5bGVzL0FwcF9UaGVtZXMvTmV3VGhlbWUvTmV3VGhlbWUwMS9lc3RpbG8uY3NzP2ZwPTYzNzgwMTkwMDIyMDAwMDAwMGQCAw9kFgQCBw8PFgQeBFRleHQFDVNhZ3JlcyBQb3J0YWweB1Zpc2libGVoZGQCCw9kFgYCAQ8PFgIfAmhkZAIDDzwrAAoBAA8WAh4NUmVtZW1iZXJNZVNldGhkFgJmD2QWAgIPD2QWAmYPDxYCHwJoZGQCBQ9kFgICAg9kFgICAQ8WAh4LXyFJdGVtQ291bnRmZGSMNJYraQOsQJNlO69wPlzysYLlkA==",
+            "LOGIN_VW_STT_GEN" to "065EA922",
+            "LOGIN_VIEW_VALID" to "/wEdAASghUMoDaeYRChm7kqvyUTAM4nqN81slLG8uEFL8sVLUjoauXZ8QTl2nEJmPx53FYhjUq3W1Gjeb7bKHHg4dlobL27eSlFljLIyiR3NoH7nUTgrWxs=",
+            "REQUIRES_CAPTCHA" to "false",
+            "CAPTCHA_SITE_KEY" to "",
+            "CAPTCHA_BASE" to ""
         ),
         "UESC" to mapOf(
             "BASE_URL" to "http://www.prograd.uesc.br/PortalSagres",
@@ -93,7 +93,7 @@ object Constants {
 
     @JvmStatic
     private fun getPage(institution: String): String {
-        val constants = SAGRES_SERVER_CONSTANTS[institution.toUpperCase()]
+        val constants = SAGRES_SERVER_CONSTANTS[institution.uppercase()]
         return constants?.get("BASE_URL") ?: throw IllegalArgumentException("This institution is not supported")
     }
 
@@ -101,14 +101,14 @@ object Constants {
     fun getUrl(endpoint: String): String {
         val institution = SagresNavigator.instance.getSelectedInstitution()
         val base = getPage(institution)
-        val path = SAGRES_ENDPOINTS[endpoint.toUpperCase()] ?: throw IllegalArgumentException("This endpoint is not supported")
+        val path = SAGRES_ENDPOINTS[endpoint.uppercase()] ?: throw IllegalArgumentException("This endpoint is not supported")
         return path.replace("__REPLACE__UNES__", base)
     }
 
     @JvmStatic
     fun getParameter(parameter: String): String {
         val institution = SagresNavigator.instance.getSelectedInstitution()
-        val constants = SAGRES_SERVER_CONSTANTS[institution.toUpperCase()]
+        val constants = SAGRES_SERVER_CONSTANTS[institution.uppercase()]
         return constants?.get(parameter) ?: throw IllegalArgumentException("This parameter is not supported")
     }
 }

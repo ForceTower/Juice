@@ -41,7 +41,7 @@ class SagresPerson(
     var link: String? = null
 
     val unique: String
-        get() = cpf?.toLowerCase() + ".." + id
+        get() = cpf?.lowercase() + ".." + id
 
     init {
         this.name = name

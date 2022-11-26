@@ -34,8 +34,8 @@ object SagresDcpGroupsParser {
 
         val disciplines = document.select("section[class=\"webpart-aluno-item\"]")
         for (discipline in disciplines) {
-            val semester = discipline.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
-            val title = discipline.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]").text()
+            val semester = discipline.selectFirst("span[class=\"webpart-aluno-periodo\"]")?.text().orEmpty()
+            val title = discipline.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]")?.text().orEmpty()
             val codePos = title.indexOf("-")
             val code = title.substring(0, codePos).trim { it <= ' ' }
 
@@ -48,7 +48,7 @@ object SagresDcpGroupsParser {
                 val lis = ul.select("li")
                 for (li in lis) {
                     val element = li.selectFirst("a[href]")
-                    var type = element.text()
+                    var type = element?.text().orEmpty()
                     val refGroupPos = type.lastIndexOf("(")
                     type = type.substring(0, refGroupPos).trim { it <= ' ' }
 

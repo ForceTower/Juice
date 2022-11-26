@@ -29,7 +29,7 @@ object WordUtils {
     fun toTitleCase(str: String?): String? {
         str ?: return null
 
-        val givenString = str.toLowerCase()
+        val givenString = str.lowercase()
 
         val arr = givenString.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val sb = StringBuilder()
@@ -38,24 +38,24 @@ object WordUtils {
             val anArr = arr[i]
 
             if (i == arr.size - 1 && anArr.length <= 2) {
-                sb.append(anArr.toUpperCase())
+                sb.append(anArr.uppercase())
                 continue
             }
 
             if (isGreekOneToTen(anArr)) {
-                sb.append(anArr.toUpperCase()).append(" ")
+                sb.append(anArr.uppercase()).append(" ")
                 continue
             }
 
             // Special case only for "MI's". PBL!!!!
             if (anArr.equals("MI", ignoreCase = true)) {
-                sb.append(anArr.toUpperCase()).append(" ")
+                sb.append(anArr.uppercase()).append(" ")
                 continue
             }
 
             // The word "para" is lower case :)
             if (anArr.equals("para", ignoreCase = true) && i != 0) {
-                sb.append(anArr.toLowerCase()).append(" ")
+                sb.append(anArr.lowercase()).append(" ")
                 continue
             }
 
@@ -88,7 +88,7 @@ object WordUtils {
     fun capitalize(str: String?): String? {
         str ?: return null
 
-        val givenString = str.toLowerCase()
+        val givenString = str.lowercase()
 
         val arr = givenString.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val sb = StringBuilder()

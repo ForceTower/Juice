@@ -45,16 +45,16 @@ object SagresMessageParser {
                     ?.trim()
 
             val (attachmentName, attachmentLink) = article.selectFirst("span[class=\"material_apoio_arquivo\"]")
-                    ?.run {
-                        val link = selectFirst("a[href]")?.attr("href")
-                        val name = parent().children().run {
-                            if (size >= 3) {
-                                get(1).text().trim()
-                            }
-                            null
+                ?.run {
+                    val link = selectFirst("a[href]")?.attr("href")
+                    val name = parent()?.children()?.run {
+                        if (size >= 3) {
+                            get(1).text().trim()
                         }
-                        name to link
-                    } ?: null to null
+                        null
+                    }
+                    name to link
+                } ?: (null to null)
 
             val info = article.selectFirst("i[class=\"recado-remetente\"]")?.text()
                     ?.trim()
@@ -62,7 +62,7 @@ object SagresMessageParser {
                     ?.trim()
 
             val information = SagresMessage(
-                message?.toLowerCase(Locale.getDefault()).hashCode().toLong(),
+                message?.lowercase(Locale.getDefault()).hashCode().toLong(),
                 null,
                 null,
                 message,
