@@ -58,3 +58,4 @@ app/src/main/play/*
 !app/src/main/play/release-notes/*
 
 app/release/output\.json
+secring.gpg
