@@ -1,4 +1,4 @@
-name: Java CI
+name: Publication CI
 
 on: [push]
 
@@ -18,7 +18,7 @@ jobs:
         java-version: 17
 
     - name: Decode Signature
-      run: gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.SEC_RING_DECRYPT_PASSWORD }}" --output secring.gpg private.gpg.gpg
+      run: gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.SEC_RING_DECRYPT_PASSWORD }}" --output secring.gpg secring.gpg.gpg
 
     - name: Publish Maven Repository
       run: ./gradlew publishMavenPublicationToMavenRepository -Psigning.secretKeyRingFile=./secring.gpg -Psigning.password="${{ secrets.SEC_RING_PASSWORD }}" -Psigning.keyId="${{ secrets.SEC_RING_KEY_ID }}"
