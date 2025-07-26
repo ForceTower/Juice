@@ -34,8 +34,8 @@ object SagresDisciplineParser {
 
         val elements = document.select("section[class=\"webpart-aluno-item\"]")
         for (dElement in elements) {
-            val title = dElement.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]").text()
-            val period = dElement.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
+            val title = dElement.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]")?.text() ?: continue
+            val period = dElement.selectFirst("span[class=\"webpart-aluno-periodo\"]")?.text() ?: continue
             var credits = dElement.select("span[class=\"webpart-aluno-codigo\"]").text()
             credits = credits.replace("[^\\d]".toRegex(), "")
 
@@ -45,7 +45,7 @@ object SagresDisciplineParser {
                 studentLinks = dElement.selectFirst("div[class=\"webpart-aluno-links webpart-aluno-links-down\"]")
             val misses = studentLinks!!.child(1)
             val missesSpan = misses.selectFirst("span")
-            var missedClasses = missesSpan.text()
+            var missedClasses = missesSpan?.text().orEmpty()
             missedClasses = missedClasses.replace("[^\\d]".toRegex(), "")
 
             var situation: String? = null
@@ -65,14 +65,14 @@ object SagresDisciplineParser {
             var last = ""
             var next = ""
             val lastAndNextClasses = dElement.select("div[class=\"webpart-aluno-detalhe\"]")
-            if (lastAndNextClasses.size > 0) {
+            if (lastAndNextClasses.isNotEmpty()) {
                 val lastSpan = lastAndNextClasses[0].selectFirst("span")
-                last = lastSpan.text()
+                last = lastSpan?.text().orEmpty()
             }
 
             if (lastAndNextClasses.size > 1) {
                 val nextSpan = lastAndNextClasses[1].selectFirst("span")
-                next = nextSpan.text()
+                next = nextSpan?.text().orEmpty()
             }
 
             val codePos = title.indexOf("-")

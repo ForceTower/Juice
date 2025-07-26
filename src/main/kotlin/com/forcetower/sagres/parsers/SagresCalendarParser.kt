@@ -40,7 +40,7 @@ object SagresCalendarParser {
 
         val items = ArrayList<SagresCalendar>()
         val events = element.child(1)
-        val ul = events.selectFirst("ul")
+        val ul = events.selectFirst("ul") ?: return emptyList()
 
         for (li in ul.select("li")) {
             val text = li.text()

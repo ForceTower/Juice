@@ -32,17 +32,17 @@ object SagresMissedClassesParser {
         val values = mutableListOf<SagresDisciplineMissedClass>()
 
         try {
-            val div = document.selectFirst("div[id=\"divBoletins\"]")
+            val div = document.selectFirst("div[id=\"divBoletins\"]") ?: return Pair(true, emptyList())
             val classes = div.select("div[class=\"boletim-container\"]")
 
             for (clazz in classes) {
-                val info = clazz.selectFirst("div[class=\"boletim-item-info\"]")
-                val name = info.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]")
+                val info = clazz.selectFirst("div[class=\"boletim-item-info\"]") ?: continue
+                val name = info.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]") ?: continue
 
                 val text = name.text()
                 val code = text.substring(0, text.indexOf("-") - 1).trim()
 
-                val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]")
+                val frequency = clazz.selectFirst("div[class=\"boletim-frequencia\"]") ?: continue
                 val spectrum = frequency.selectFirst("table")
                 if (spectrum != null) {
                     val result = mutableListOf<SagresDisciplineMissedClass>()
@@ -52,7 +52,7 @@ object SagresMissedClassesParser {
                         for (i in points.indices step 2) {
                             val head = points[i]
                             val body = points[i + 1]
-                            val groupSpan = head.selectFirst("span")
+                            val groupSpan = head.selectFirst("span") ?: continue
                             val group = groupSpan.text().split("-")[0].trim()
                             result.addAll(fourier(body, code, semesterId, group, true))
                         }

@@ -20,11 +20,9 @@
 
 plugins {
     java
-    kotlin("jvm") version "1.5.10"
-    maven
+    kotlin("jvm") version "2.1.20"
     `maven-publish`
     signing
-    id("org.jmailen.kotlinter") version "3.3.0"
 }
 
 repositories {
@@ -37,12 +35,12 @@ val artifactVersion: String by project
 group = "dev.forcetower.unes"
 version = artifactVersion
 
-val sourcesJar = task<Jar> ("sourcesJar") {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
-val javadocJar = task<Jar>("javadocJar") {
+val javadocJar = tasks.register<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
     val task = project.tasks["javadoc"] as Javadoc
     from(task.destinationDir)
@@ -50,8 +48,8 @@ val javadocJar = task<Jar>("javadocJar") {
 }
 
 artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
+    archives(sourcesJar.get())
+    archives(javadocJar.get())
 }
 
 publishing {
@@ -117,28 +115,24 @@ signing {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation("org.jsoup:jsoup:1.13.1")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("org.json:json:20210307")
+    implementation("org.jsoup:jsoup:1.15.3")
+    implementation("com.squareup.okhttp3:okhttp:5.1.0")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.json:json:20231013")
     implementation("commons-codec:commons-codec:1.13")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
     }
 }

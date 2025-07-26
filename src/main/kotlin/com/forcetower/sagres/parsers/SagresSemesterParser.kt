@@ -32,7 +32,7 @@ object SagresSemesterParser {
 
         val strings = ArrayList<String>()
         for (element in classes) {
-            var period = element.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
+            var period = element.selectFirst("span[class=\"webpart-aluno-periodo\"]")?.text() ?: continue
             period = period.lowercase()
             if (!strings.contains(period)) strings.add(period)
         }

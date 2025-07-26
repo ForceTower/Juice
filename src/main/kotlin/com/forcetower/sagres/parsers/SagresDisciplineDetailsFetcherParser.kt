@@ -40,8 +40,8 @@ object SagresDisciplineDetailsFetcherParser {
         val classes = document.select("section[class=\"webpart-aluno-item\"]")
 
         for (clazz in classes) {
-            val title = clazz.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]").text()
-            val period = clazz.selectFirst("span[class=\"webpart-aluno-periodo\"]").text()
+            val title = clazz.selectFirst("a[class=\"webpart-aluno-nome cor-destaque\"]")?.text() ?: continue
+            val period = clazz.selectFirst("span[class=\"webpart-aluno-periodo\"]")?.text() ?: continue
 
             val code = title.substring(0, title.indexOf("-")).trim()
             val ul = clazz.selectFirst("ul")
@@ -50,7 +50,7 @@ object SagresDisciplineDetailsFetcherParser {
                 val lis = ul.select("li")
                 for (li in lis) {
                     val element = li.selectFirst("a[href]")
-                    var values = element.attr("href")
+                    var values = element?.attr("href") ?: continue
                     val start = values.indexOf("'")
                     values = values.substring(start + 1)
                     val end = values.indexOf("'")
@@ -81,7 +81,7 @@ object SagresDisciplineDetailsFetcherParser {
                 }
             } else {
                 val webPart = clazz.selectFirst("div[class=\"webpart-dropdown webpart-dropdown-up\"]")
-                val anchor = webPart.selectFirst("a[href]")
+                val anchor = webPart?.selectFirst("a[href]")  ?: continue
                 var values = anchor.attr("href")
                 val start = values.indexOf("'")
                 values = values.substring(start + 1)

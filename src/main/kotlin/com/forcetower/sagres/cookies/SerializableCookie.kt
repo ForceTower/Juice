@@ -21,7 +21,6 @@
 package com.forcetower.sagres.cookies
 
 import okhttp3.Cookie
-import okhttp3.internal.and
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -133,7 +132,7 @@ class SerializableCookie : Serializable {
         private fun byteArrayToHexString(bytes: ByteArray): String {
             val sb = StringBuilder(bytes.size * 2)
             for (element in bytes) {
-                val v = element and 0xff
+                val v = element.toInt() and 0xff
                 if (v < 16) {
                     sb.append('0')
                 }

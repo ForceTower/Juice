@@ -115,18 +115,18 @@ object SagresGradesParser {
     fun extractGrades(document: Document, semesterId: Long): List<SagresGrade> {
         val grades: MutableList<SagresGrade> = ArrayList()
         val bulletin = document.selectFirst("div[id=\"divBoletins\"]")
-        val classes = bulletin.select("div[class=\"boletim-container\"]")
+        val classes = bulletin?.select("div[class=\"boletim-container\"]") ?: return emptyList()
 
         for (clazz in classes) {
             try {
-                val info = clazz.selectFirst("div[class=\"boletim-item-info\"]")
-                val name = info.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]")
+                val info = clazz.selectFirst("div[class=\"boletim-item-info\"]") ?: continue
+                val name = info.selectFirst("span[class=\"boletim-item-titulo cor-destaque\"]") ?: continue
 
                 val discipline = name.text().trim()
                 val grade = SagresGrade(semesterId, discipline)
 
-                val gradeInfo = clazz.selectFirst("div[class=\"boletim-notas\"]")
-                val table = gradeInfo.selectFirst("table")
+                val gradeInfo = clazz.selectFirst("div[class=\"boletim-notas\"]") ?: continue
+                val table = gradeInfo.selectFirst("table") ?: continue
                 val body = table.selectFirst("tbody")
 
                 body?.run {
