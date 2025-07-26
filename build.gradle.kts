@@ -19,7 +19,7 @@
  */
 plugins {
     java
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.1.21"
     `maven-publish`
     signing
 }
@@ -97,9 +97,9 @@ publishing {
 
     repositories {
         maven {
-            val sonatypeUsername = System.getenv("sonatypeUsername") ?: "username"
-            val sonatypePassword = System.getenv("sonatypePassword") ?: "password"
-            setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            val sonatypeUsername = System.getenv("MAVEN_CENTRAL_USERNAME") ?: System.getenv("sonatypeUsername")
+            val sonatypePassword = System.getenv("MAVEN_CENTRAL_PASSWORD") ?: System.getenv("sonatypePassword")
+            setUrl("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
             name = "maven"
             credentials {
                 username = sonatypeUsername
