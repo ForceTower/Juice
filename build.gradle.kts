@@ -17,19 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-buildscript {
-    repositories {
-        jcenter()
-    }
-}
-
 plugins {
     java
-    kotlin("jvm") version "1.6.10"
-    maven
+    kotlin("jvm") version "2.1.20"
     `maven-publish`
     signing
-    id("org.jmailen.kotlinter") version "3.4.4"
 }
 
 repositories {
@@ -42,12 +34,12 @@ val artifactVersion: String by project
 group = "dev.forcetower.unes"
 version = artifactVersion
 
-val sourcesJar = task<Jar> ("sourcesJar") {
+val sourcesJar = tasks.register<Jar> ("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
-val javadocJar = task<Jar>("javadocJar") {
+val javadocJar = tasks.register<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
     val task = project.tasks["javadoc"] as Javadoc
     from(task.destinationDir)
@@ -55,8 +47,8 @@ val javadocJar = task<Jar>("javadocJar") {
 }
 
 artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
+    archives(sourcesJar.get())
+    archives(javadocJar.get())
 }
 
 publishing {
@@ -125,9 +117,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jsoup:jsoup:1.15.3")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.google.code.gson:gson:2.10")
-    implementation("org.json:json:20220924")
+    implementation("com.squareup.okhttp3:okhttp:5.1.0")
+    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("org.json:json:20231013")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation("commons-codec:commons-codec:1.15")
 
@@ -135,15 +127,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
     }
 }
